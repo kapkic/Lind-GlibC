@@ -5,3 +5,6 @@
 # library) can introduce redirects.
 default-rpath = /lib
 default-dl-dst-lib = /lib
+
+# Do not build ldconfig.
+use-ldconfig = no
