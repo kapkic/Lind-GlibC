@@ -1,9 +1,10 @@
+#include "lind_syscalls.h"
+#include "strace.h"
 
 /* The purpose of this file is to be #included by generic readdir
    implementations.  */
 
-static const int d_name_shift = offsetof (DIRENT_TYPE, d_name) -
-    offsetof (struct nacl_abi_dirent, nacl_abi_d_name);
+static const int d_name_shift = offsetof (DIRENT_TYPE, d_name) - offsetof (struct nacl_abi_dirent, nacl_abi_d_name);
 
 /* Calls __nacl_irt_getdents and converts resulting buffer to glibc abi.
    This wrapper is required since glibc abi for DIRENT_TYPE differs from
@@ -19,6 +20,9 @@ __ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
      syscall. To avoid overwhelming of buf it is necessary to make nacl_buf
      smaller. It is ok to make nacl_buf_size equal buf_size * 0.9 because
      minimal size of nacl_abi_dirent is 12 bytes. */
+  //SAI: the below commented block is the new nacl implementation of getdents
+  //SAI: since get directory entries should be lind version, I commented it out 
+  /*
   int nacl_buf_size = buf_size - buf_size / 10 - 1;
   char nacl_buf[nacl_buf_size];
   size_t nbytes;
@@ -52,5 +56,10 @@ __ssize_t internal_function __GETDENTS (int fd, char *buf, size_t buf_size)
       offset += dp->d_reclen;
       nacl_offset += nacl_dp->nacl_abi_d_reclen;
     }
-  return offset;
+  return offset;*/
+
+  //SAI: LIND version below
+  int result = lind_getdents_rpc(fd, buf_size, buf);
+
+  return (ssize_t) result;
 }

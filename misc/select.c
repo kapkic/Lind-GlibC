@@ -20,6 +20,12 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include <lind_syscalls.h>
+#include <nacl_syscalls.h>
+#include <strace.h>
+#include <nacl_util.h>
+
+
 /* Check the first NFDS descriptors each in READFDS (if not NULL) for read
    readiness, in WRITEFDS (if not NULL) for write readiness, and in EXCEPTFDS
    (if not NULL) for exceptional conditions.  If TIMEOUT is not NULL, time out
@@ -33,11 +39,33 @@ __select (nfds, readfds, writefds, exceptfds, timeout)
      fd_set *exceptfds;
      struct timeval *timeout;
 {
-  __set_errno (ENOSYS);
-  return -1;
-}
-libc_hidden_def (__select)
-stub_warning (select)
 
+    
+    /* __set_errno (ENOSYS); */
+    /* return -1; */
+    /* this works, but breaks wget. */
+    struct select_results s;
+
+    memset(&s, 0, sizeof(struct select_results));
+
+    int rc = -1;
+    dbp("in glibc: calling __select."); 
+    rc = lind_select_rpc(nfds, readfds, writefds, exceptfds, timeout, &s);
+
+    if (readfds != NULL) {
+        memcpy(readfds, &(s.r), sizeof(fd_set));
+     }
+    if (writefds != NULL) {
+        memcpy(writefds, &(s.w), sizeof(fd_set));
+     }
+    if (exceptfds != NULL) {
+        memcpy(exceptfds, &(s.e), sizeof(fd_set));
+     }
+    if (timeout != NULL) {
+        memcpy(timeout, &(s.used_t), sizeof(struct timeval));
+    }
+    return rc;
+}
+
+libc_hidden_def (__select)
 weak_alias (__select, select)
-#include <stub-tag.h>

@@ -5,6 +5,11 @@
 #include <nacl_stat.h>
 #include <irt_syscalls.h>
 
+#include "nacl_util.h"
+#include "lind_syscalls.h"
+#include "strace.h"
+
+
 int __xstat (int version, const char *path, struct stat *buf)
 {
   if (buf == NULL || path == NULL)
@@ -12,8 +17,16 @@ int __xstat (int version, const char *path, struct stat *buf)
       errno = EFAULT;
       return -1;
     }
-  struct nacl_abi_stat st;
-  int result = __nacl_irt_stat (path, &st);
+  nacl_strace("xstat");
+
+  //struct nacl_abi_stat st;
+  //int result = __nacl_irt_stat (path, &st);
+
+  /* struct nacl_abi_stat st; */
+
+  int result = lind_xstat_rpc(version, path, buf);
+   /* int result = NACL_SYSCALL (stat) (path, &st); */
+
   if (result != 0)
     {
       errno = result;
@@ -21,7 +34,7 @@ int __xstat (int version, const char *path, struct stat *buf)
     }
   else
     {
-      __nacl_abi_stat_to_stat (&st, buf);
+      /*__nacl_abi_stat_to_stat (&st, buf);*/
       return 0;
     }
 }

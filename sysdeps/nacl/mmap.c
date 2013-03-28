@@ -1,14 +1,17 @@
-
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <errno.h>
 
 #include <irt_syscalls.h>
 
+#include <nacl_syscalls.h>
+#include "strace.h"
+#include "nacl_util.h"
 
 __ptr_t __mmap (__ptr_t addr, size_t len, int prot, int flags,
 		int fd, off_t offset)
 {
+  nacl_strace("mmap");  /*concat("mmap",nacl_itoa(fd)));*/
   int result = __nacl_irt_mmap (&addr, len, prot, flags, fd, offset);
   if (result != 0) {
     errno = result;

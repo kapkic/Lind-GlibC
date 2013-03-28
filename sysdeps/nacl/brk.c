@@ -4,12 +4,15 @@
 #include <sysdep.h>
 
 #include <irt_syscalls.h>
+#include <nacl_syscalls.h>
+#include "strace.h"
 
 void *__curbrk = 0;
 weak_alias (__curbrk, ___brk_addr)
 
 int __brk (void *addr)
 {
+  nacl_strace("brk");
   int rv = __nacl_irt_sysbrk (&addr);
 
   if (rv != 0) {
