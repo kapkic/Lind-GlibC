@@ -392,9 +392,137 @@ int (*__nacl_irt_open_resource) (const char* file, int *fd);
 int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
+#define LIND
+
+#ifdef LIND
+#include "lind_syscalls.h"
+size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
+
+int nacl_irt_mkdir_lind (const char* pathname, mode_t mode)
+{
+    return -lind_mkdir_rpc(mode, pathname);
+}
+
+int nacl_irt_rmdir_lind (const char* pathname)
+{
+    return -lind_rmdir_rpc(pathname);
+}
+
+int nacl_irt_chdir_lind (const char* pathname)
+{
+    return -lind_chdir_rpc(pathname);
+}
+
+void __nacl_abi_stat_from_stat(struct nacl_abi_stat *nacl_st, struct stat *st)
+{
+#define copy_element(from, to) \
+    (nacl_st->to) = (st->from);
+  copy_element(st_dev, nacl_abi_st_dev);
+  copy_element(st_mode, nacl_abi_st_mode);
+  copy_element(st_nlink, nacl_abi_st_nlink);
+  copy_element(st_uid, nacl_abi_st_uid);
+  copy_element(st_gid, nacl_abi_st_gid);
+  copy_element(st_rdev, nacl_abi_st_rdev);
+  copy_element(st_size, nacl_abi_st_size);
+  copy_element(st_blksize, nacl_abi_st_blksize);
+  copy_element(st_blocks, nacl_abi_st_blocks);
+  copy_element(st_atim.tv_sec, nacl_abi_st_atime);
+  copy_element(st_mtim.tv_sec, nacl_abi_st_mtime);
+  copy_element(st_ctim.tv_sec, nacl_abi_st_ctime);
+  copy_element(st_ino, nacl_abi_st_ino);
+#undef copy_element
+}
+
+static int nacl_irt_stat_lind (const char *pathname, struct nacl_abi_stat *st) {
+  struct stat _stat;
+  //version fixed to 1
+  int rc = -lind_xstat_rpc(1, pathname, &_stat);
+  __nacl_abi_stat_from_stat(st, &_stat);
+  return rc;
+}
+
+static int nacl_irt_fstat_lind (int fd, struct nacl_abi_stat *st) {
+    struct stat _stat;
+    //version fixed to 1
+    int rc = -lind_fxstat_rpc(fd, 1, &_stat);
+    __nacl_abi_stat_from_stat(st, &_stat);
+    return rc;
+}
+
+static int nacl_irt_open_lind (const char *pathname, int oflag, mode_t cmode,
+                          int *newfd) {
+  int rv = lind_open_rpc(oflag, cmode, pathname);
+  if (rv < 0)
+    return -rv;
+  *newfd = rv;
+  return 0;
+}
+
+static int nacl_irt_close_lind (int fd) {
+  return -lind_close_rpc (fd);
+}
+
+static int nacl_irt_read_lind (int fd, void *buf, size_t count, size_t *nread) {
+  int rv = lind_read_rpc (fd, count, buf);
+  if (rv < 0)
+    return -rv;
+  *nread = rv;
+  return 0;
+}
+
+static int nacl_irt_write_lind (int fd, const void *buf, size_t count,
+                           size_t *nwrote) {
+  int rv = lind_write_rpc (fd, count, buf);
+  if (rv < 0)
+    return -rv;
+  *nwrote = rv;
+  return 0;
+}
+
+static int nacl_irt_seek_lind (int fd, nacl_abi_off_t offset, int whence,
+                          off_t *new_offset) {
+  off_t returned_offset = 0;
+  int rv = lind_lseek_rpc (offset, fd, whence, &returned_offset);
+  if (rv < 0)
+    return -rv;
+  *new_offset = returned_offset;
+  return 0;
+}
+
+static int nacl_irt_dup_lind (int fd, int *newfd) {
+  int rv = lind_dup_rpc (fd);
+  if (rv < 0)
+    return -rv;
+  *newfd = rv;
+  return 0;
+}
+
+static int nacl_irt_dup2_lind (int fd, int newfd) {
+  int rv = lind_dup2_rpc (fd, newfd);
+  if (rv < 0)
+    return -rv;
+  return 0;
+}
+
+static int nacl_irt_getdents_lind (int fd, struct dirent *buf, size_t count,
+                              size_t *nread) {
+  int rv = lind_getdents_rpc (fd, count, buf);
+  if (rv < 0)
+    return -rv;
+  *nread = rv;
+  return 0;
+}
+
+#endif
+
 void
 init_irt_table (void)
 {
+#ifdef LIND
+    saved_nacl_irt_query = __nacl_irt_query;
+    //currently we manually bind all IRT calls
+    __nacl_irt_query = 0;
+#endif
   union {
     struct nacl_irt_basic nacl_irt_basic;
     struct nacl_irt_fdio nacl_irt_fdio;
@@ -445,6 +573,7 @@ init_irt_table (void)
     }
   else
     {
+#ifndef LIND
       __nacl_irt_close = nacl_irt_close;
       __nacl_irt_dup = nacl_irt_dup;
       __nacl_irt_dup2 = nacl_irt_dup2;
@@ -453,6 +582,16 @@ init_irt_table (void)
       __nacl_irt_seek = nacl_irt_seek;
       __nacl_irt_fstat = nacl_irt_fstat;
       __nacl_irt_getdents = nacl_irt_getdents;
+#else
+      __nacl_irt_close = nacl_irt_close_lind;
+      __nacl_irt_dup = nacl_irt_dup_lind;
+      __nacl_irt_dup2 = nacl_irt_dup2_lind;
+      __nacl_irt_read = nacl_irt_read_lind;
+      __nacl_irt_write = nacl_irt_write_lind;
+      __nacl_irt_seek = nacl_irt_seek_lind;
+      __nacl_irt_fstat = nacl_irt_fstat_lind;
+      __nacl_irt_getdents = nacl_irt_getdents_lind;
+#endif
     }
 
   if (__nacl_irt_query &&
@@ -464,8 +603,13 @@ init_irt_table (void)
     }
   else
     {
+#ifndef LIND
       __nacl_irt_open = nacl_irt_open;
       __nacl_irt_stat = nacl_irt_stat;
+#else
+      __nacl_irt_open = nacl_irt_open_lind;
+      __nacl_irt_stat = nacl_irt_stat_lind;
+#endif
     }
 
   if (__nacl_irt_query &&
@@ -605,9 +749,15 @@ init_irt_table (void)
   if (!__nacl_irt_query)
     __nacl_irt_query = no_interface;
 
+#ifndef LIND
   __nacl_irt_mkdir = not_implemented;
   __nacl_irt_chdir = not_implemented;
   __nacl_irt_rmdir = not_implemented;
+#else
+  __nacl_irt_mkdir = nacl_irt_mkdir_lind;
+  __nacl_irt_chdir = nacl_irt_chdir_lind;
+  __nacl_irt_rmdir = nacl_irt_rmdir_lind;
+#endif
   __nacl_irt_getcwd = not_implemented;
 
   __nacl_irt_epoll_create = not_implemented;

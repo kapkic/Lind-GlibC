@@ -1,0 +1,14 @@
+/autom4te.cache
+/manual/*.c.texi
+/manual/libc.info*
+/manual/stamp-*
+/manual/chapters.texi
+/manual/dir-add.texi
+/manual/libm-err.texi
+/manual/summary.texi
+/manual/texis
+/manual/top-menu.texi
+/po/*.mo
+/.cproject
+/.project
+

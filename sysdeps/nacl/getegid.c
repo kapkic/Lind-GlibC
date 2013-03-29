@@ -1,4 +1,4 @@
-/* Copyright (C) 1991,1995,1996,1997,2001,2005 Free Software Foundation, Inc.
+/* Copyright (C) 2000, 2003, 2006 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,19 +17,32 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include <sys/socket.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include "lind_syscalls.h"
+#include "lind_util.h"
 
-/* Read N bytes into BUF from socket FD.
-   Returns the number read or -1 for errors.  */
-ssize_t
-__recv (fd, buf, n, flags)
-     int fd;
-     void *buf;
-     size_t n;
-     int flags;
+/* Get the effective group ID of the calling process.  */
+gid_t
+__getegid ()
 {
-  SET_ERR_AND_RETURN(lind_recv_rpc(fd, n, flags, buf));
+    static int firstrun = 1;
+    if (firstrun) {
+        firstrun = 0;
+        __set_errno(ENOSYS);
+        return -1;
+    }
+     
+    uid_t buf = 0; 
+    int rc = lind_getegid_rpc(&buf);
+
+    if (sizeof(gid_t) != rc) {
+        __set_errno(ENOSYS);
+        return -1;
+    }
+
+    return buf;
 }
-weak_alias (__recv, recv)
+
+weak_alias (__getegid, getegid)
 
