@@ -19,6 +19,10 @@
 #include <errno.h>
 #include <sys/socket.h>
 
+#include "lind_strace.h"
+#include "lind_util.h"
+#include "lind_syscalls.h"
+
 /* Send N bytes of BUF on socket FD to peer at address ADDR (which is
    ADDR_LEN bytes long).  Returns the number sent, or -1 for errors.  */
 ssize_t
@@ -30,8 +34,13 @@ __sendto (fd, buf, n, flags, addr, addr_len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t addr_len;
 {
-  __set_errno (ENOSYS);
-  return -1;
+    SET_ERR_AND_RETURN( lind_sendto_rpc(fd,
+                                        n,
+                                        flags,
+                                        *addr_len,
+                                        addr_len,
+                                        buf,
+                                        addr) );
 }
 
 weak_alias (__sendto, sendto)

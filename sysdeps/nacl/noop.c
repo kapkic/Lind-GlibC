@@ -1,4 +1,4 @@
-/* Copyright (C) 1991,1995,1996,1997,2001,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,19 +17,32 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include <sys/socket.h>
+#include <stddef.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
+#include "lind_strace.h"
+#include "lind_util.h"
 #include "lind_syscalls.h"
 
-/* Read N bytes into BUF from socket FD.
-   Returns the number read or -1 for errors.  */
-ssize_t
-__recv (fd, buf, n, flags)
-     int fd;
-     void *buf;
-     size_t n;
-     int flags;
-{
-  SET_ERR_AND_RETURN(lind_recv_rpc(fd, n, flags, buf));
-}
-weak_alias (__recv, recv)
+/* Create a directory named PATH with protections MODE.  */
+int
+__lind_noop (void) {
+  nacl_strace("no-op");
 
+  /* since everything is okay, forward to lind server. */
+  int return_code = lind_noop_rpc();
+
+  if (return_code < 0) {
+    __set_errno ( -1 * return_code);
+    return -1;
+  } else {
+    return return_code;
+  }
+
+}
+weak_alias (__lind_noop,lind_noop)
+
+int lind_noop2(void) {
+  return lind_noop();
+}

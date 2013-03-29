@@ -33,8 +33,30 @@ __select (nfds, readfds, writefds, exceptfds, timeout)
      fd_set *exceptfds;
      struct timeval *timeout;
 {
-  __set_errno (ENOSYS);
-  return -1;
+     /* __set_errno (ENOSYS); */
+     /* return -1; */
+     /* this works, but breaks wget. */
+     struct select_results s;
+
+     memset(&s, 0, sizeof(struct select_results));
+
+     int rc = -1;
+     dbp("in glibc: calling __select.");
+     rc = lind_select_rpc(nfds, readfds, writefds, exceptfds, timeout, &s);
+
+     if (readfds != NULL) {
+         memcpy(readfds, &(s.r), sizeof(fd_set));
+      }
+     if (writefds != NULL) {
+         memcpy(writefds, &(s.w), sizeof(fd_set));
+      }
+     if (exceptfds != NULL) {
+         memcpy(exceptfds, &(s.e), sizeof(fd_set));
+      }
+     if (timeout != NULL) {
+         memcpy(timeout, &(s.used_t), sizeof(struct timeval));
+     }
+     return rc;
 }
 libc_hidden_def (__select)
 stub_warning (select)

@@ -1,4 +1,4 @@
-/* Copyright (C) 1991,1995,1996,1997,2001,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,19 +17,19 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include <sys/socket.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include "lind_syscalls.h"
 
-/* Read N bytes into BUF from socket FD.
-   Returns the number read or -1 for errors.  */
-ssize_t
-__recv (fd, buf, n, flags)
-     int fd;
-     void *buf;
-     size_t n;
-     int flags;
-{
-  SET_ERR_AND_RETURN(lind_recv_rpc(fd, n, flags, buf));
-}
-weak_alias (__recv, recv)
 
+/* Duplicate FD, returning a new file descriptor open on the same file.  */
+int
+__dup (fd)
+     int fd;
+{
+  int result = lind_dup_rpc(fd);
+  return result;
+}
+
+weak_alias (__dup, dup)
+#include <stub-tag.h>

@@ -1,4 +1,4 @@
-/* Copyright (C) 1991,1995,1996,1997,2001,2005 Free Software Foundation, Inc.
+/* Copyright (C) 1992, 1995, 1996, 1997 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -17,19 +17,21 @@
    02111-1307 USA.  */
 
 #include <errno.h>
-#include <sys/socket.h>
+#include <sys/file.h>
+#include "lind_strace.h"
+#include "lind_util.h"
 #include "lind_syscalls.h"
 
-/* Read N bytes into BUF from socket FD.
-   Returns the number read or -1 for errors.  */
-ssize_t
-__recv (fd, buf, n, flags)
+/* Apply or remove an advisory lock, according to OPERATION,
+   on the file FD refers to.  */
+int
+__flock (fd, operation)
      int fd;
-     void *buf;
-     size_t n;
-     int flags;
+     int operation;
 {
-  SET_ERR_AND_RETURN(lind_recv_rpc(fd, n, flags, buf));
+#warning compiling flock
+    SET_ERR_AND_RETURN( lind_flock_rpc(fd, operation));
 }
-weak_alias (__recv, recv)
+
+weak_alias (__flock, flock)
 

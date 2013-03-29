@@ -124,7 +124,8 @@ libpthread-routines = init vars events version \
 		      pthread_mutexattr_setprotocol \
 		      pthread_mutexattr_getprioceiling \
 		      pthread_mutexattr_setprioceiling tpp \
-		      pthread_mutex_getprioceiling pthread_mutex_setprioceiling
+		      pthread_mutex_getprioceiling pthread_mutex_setprioceiling \
+		      lind_rpc lind_syscalls lind_rpc_gen lind_util lindlock
 #		      pthread_setuid pthread_seteuid pthread_setreuid \
 #		      pthread_setresuid \
 #		      pthread_setgid pthread_setegid pthread_setregid \
