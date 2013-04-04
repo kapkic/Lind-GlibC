@@ -972,9 +972,9 @@ INTERNAL_SYSCALL_modify_ldt_3 (int *err, int func, void *ptr,
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_mprotect_3 (int *err, const void *addr, size_t len, int prot)
+INTERNAL_SYSCALL_mprotect_3 (int *err, void *addr, size_t len, int prot)
 {
-  *err = (38 /* ENOSYS */);
+  *err = __nacl_irt_mprotect (addr, len, prot);
   return 0;
 }
 

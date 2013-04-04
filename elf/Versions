@@ -93,6 +93,7 @@ ld {
     __nacl_irt_gettod;
     __nacl_irt_mmap;
     __nacl_irt_munmap;
+    __nacl_irt_mprotect;
     __nacl_irt_mutex_create;
     __nacl_irt_mutex_destroy;
     __nacl_irt_mutex_lock;

@@ -50,6 +50,8 @@
 
 #define NACL_sys_getdents               23
 
+#define NACL_sys_mprotect               24
+
 #define NACL_sys_exit                   30
 #define NACL_sys_getpid                 31
 #define NACL_sys_sched_yield            32
@@ -143,6 +145,8 @@ typedef void *(*TYPE_nacl_mmap) (void *start, size_t length,
                                  nacl_abi_off_t *offset);
 
 typedef int (*TYPE_nacl_munmap) (void *start, size_t length);
+
+typedef int (*TYPE_nacl_mprotect) (void *addr, size_t length, int prot);
 
 typedef void (*TYPE_nacl_thread_exit) (int32_t *stack_flag);
 typedef int (*TYPE_nacl_thread_create) (void *start_user_address,

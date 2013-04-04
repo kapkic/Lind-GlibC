@@ -145,6 +145,10 @@ static int nacl_irt_munmap (void *addr, size_t len) {
   return -NACL_SYSCALL (munmap) (addr, len);
 }
 
+static int nacl_irt_mprotect (void *addr, size_t len, int prot) {
+  return -NACL_SYSCALL (mprotect) (addr, len, prot);
+}
+
 static int nacl_irt_dyncode_create(void *dest, const void *src, size_t size) {
   return -NACL_SYSCALL(dyncode_create)(dest, src, size);
 }
@@ -360,6 +364,7 @@ int (*__nacl_irt_sysbrk) (void **newbrk);
 int (*__nacl_irt_mmap) (void **addr, size_t len, int prot, int flags,
 			int fd, off_t off);
 int (*__nacl_irt_munmap) (void *addr, size_t len);
+int (*__nacl_irt_mprotect) (void *addr, size_t len, int prot);
 
 int (*__nacl_irt_dyncode_create) (void *dest, const void *src, size_t size);
 int (*__nacl_irt_dyncode_modify) (void *dest, const void *src, size_t size);
@@ -399,7 +404,7 @@ init_irt_table (void)
     struct nacl_irt_basic nacl_irt_basic;
     struct nacl_irt_fdio nacl_irt_fdio;
     struct nacl_irt_filename nacl_irt_filename;
-    struct nacl_irt_memory nacl_irt_memory;
+    struct nacl_irt_memory_v0_2 nacl_irt_memory;
     struct nacl_irt_dyncode nacl_irt_dyncode;
     struct nacl_irt_thread nacl_irt_thread;
     struct nacl_irt_mutex nacl_irt_mutex;
@@ -469,18 +474,30 @@ init_irt_table (void)
     }
 
   if (__nacl_irt_query &&
-      __nacl_irt_query (NACL_IRT_MEMORY_v0_1, &u.nacl_irt_memory,
+      __nacl_irt_query (NACL_IRT_MEMORY_v0_2, &u.nacl_irt_memory,
 		        sizeof(u.nacl_irt_memory)) == sizeof(u.nacl_irt_memory))
     {
       __nacl_irt_sysbrk = u.nacl_irt_memory.sysbrk;
       __nacl_irt_mmap = u.nacl_irt_memory.mmap;
       __nacl_irt_munmap = u.nacl_irt_memory.munmap;
+      __nacl_irt_mprotect = u.nacl_irt_memory.mprotect;
+    }
+  else if (__nacl_irt_query &&
+           __nacl_irt_query (NACL_IRT_MEMORY_v0_1, &u.nacl_irt_memory,
+                             sizeof(struct nacl_irt_memory_v0_1)) ==
+               sizeof(struct nacl_irt_memory_v0_1))
+    {
+      __nacl_irt_sysbrk = u.nacl_irt_memory.sysbrk;
+      __nacl_irt_mmap = u.nacl_irt_memory.mmap;
+      __nacl_irt_munmap = u.nacl_irt_memory.munmap;
+      __nacl_irt_mprotect = not_implemented;
     }
   else
     {
       __nacl_irt_sysbrk = nacl_irt_sysbrk;
       __nacl_irt_mmap = nacl_irt_mmap;
       __nacl_irt_munmap = nacl_irt_munmap;
+      __nacl_irt_mprotect = nacl_irt_mprotect;
     }
 
   if (__nacl_irt_query &&

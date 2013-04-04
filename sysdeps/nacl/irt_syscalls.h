@@ -109,6 +109,7 @@ extern int (*__nacl_irt_sysbrk)(void **newbrk);
 extern int (*__nacl_irt_mmap)(void **addr, size_t len, int prot, int flags,
                               int fd, nacl_abi_off_t off);
 extern int (*__nacl_irt_munmap)(void *addr, size_t len);
+extern int (*__nacl_irt_mprotect)(void *addr, size_t len, int prot);
 
 extern int (*__nacl_irt_dyncode_create) (void *dest, const void *src,
             size_t size);
