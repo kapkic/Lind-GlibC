@@ -43,6 +43,8 @@
 
 #include <assert.h>
 
+#include <lind_file.h>
+
 /* Avoid PLT use for our local calls at startup.  */
 extern __typeof (__mempcpy) __mempcpy attribute_hidden;
 
@@ -1035,6 +1037,8 @@ of this helper program; chances are you did not intend to run this program.\n\
       ++_dl_skip_args;
       --_dl_argc;
       ++INTUSE(_dl_argv);
+
+      init_lind_file_map();
 
       /* The initialization of _dl_stack_flags done below assumes the
 	 executable's PT_GNU_STACK may have been honored by the kernel, and
