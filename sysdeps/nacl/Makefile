@@ -1,5 +1,5 @@
 ifeq ($(subdir),io)
-sysdep_routines += lind_rpc lind_util lind_syscalls lind_rpc_gen lindlock
+sysdep_routines += lind_rpc lind_util lind_syscalls lind_rpc_gen lindlock lind_file
 endif
 
 rtld-installed-name = $(patsubst %.$(NACL_FAKE_SONAME),%.1,$(ld.so-version))
