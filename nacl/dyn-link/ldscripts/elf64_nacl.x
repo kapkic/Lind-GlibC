@@ -17,8 +17,9 @@ PHDRS
 }
 SECTIONS
 {
-  PROVIDE (__executable_start = 0x1000000); . = 0x1000000 + SIZEOF_HEADERS;
-  . = ALIGN(32);
+  . = 0x1000000;
+  PROVIDE (__executable_start = .);
+
   /* The ALIGN(32) instructions below are workarounds.
      TODO(mseaborn): Get the object files to include the correct
      alignments and padding themselves.
@@ -40,13 +41,13 @@ SECTIONS
   .fini           :
   {
     KEEP (*(.fini))
-    . = ALIGN(32); /* ensures NOP fill */
+    . = ALIGN(CONSTANT (MAXPAGESIZE)); /* ensures NOP fill */
   } =0x90909090
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
 
-  . = 0x11000000 + (. & (CONSTANT (MAXPAGESIZE) - 1));
+  . = 0x11000000;
   .interp	  : { *(.interp) } :seg_rodata :seg_interp
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }

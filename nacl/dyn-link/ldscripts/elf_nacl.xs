@@ -17,12 +17,9 @@ PHDRS
 }
 SECTIONS
 {
-  /* NaCl runtime treats ld.so as an executable.  NaCl executables must have
-     page-aligned code and data segments, so linker script for ld.so is patched
-     to remove SIZEOF_HEADERS below and make code segment aligned to page
-     boundary. */
-  . = SEGMENT_START("text", 0) + SIZEOF_HEADERS;
+  . = SEGMENT_START("text", 0);
   _begin = .;
+
   /* The ALIGN(32) instructions below are workarounds.
      TODO(mseaborn): Get the object files to include the correct
      alignments and padding themselves.
@@ -44,21 +41,13 @@ SECTIONS
     KEEP (*(.fini))
     *(__libc_freeres_fn)
     *(__libc_thread_freeres_fn)
-    . = ALIGN(32); /* ensure nop padding */
+    . = ALIGN(CONSTANT (MAXPAGESIZE)); /* ensures NOP fill */
   } =0x90909090
   PROVIDE (__etext = .);
   PROVIDE (_etext = .);
   PROVIDE (etext = .);
 
-  /* Adjust data segment so that is has the same position within the page as
-     the end of code segment.  In this case linker can store them without any
-     zeros in between.
-     
-     NaCl runtime treats ld.so as an executable which must have page-aligned
-     read-only data segment.  So the last term is replaced with 0 while patching
-     linker script for ld.so. */
-  . = SEGMENT_START("text", 0) + 0x10000000 +
-      (. & (CONSTANT (MAXPAGESIZE) - 1));
+  . = ALIGN(SEGMENT_START("text", 0) + 0x10000000, CONSTANT (MAXPAGESIZE));
   .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
@@ -96,7 +85,7 @@ SECTIONS
   .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
   .rodata1        : { *(.rodata1) }
   .eh_frame_hdr : { *(.eh_frame_hdr) }
-  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) } 
+  .eh_frame       : ONLY_IF_RO { KEEP (*(.eh_frame)) }
   .gcc_except_table   : ONLY_IF_RO { *(.gcc_except_table .gcc_except_table.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
