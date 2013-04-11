@@ -37,10 +37,8 @@ SECTIONS
     KEEP (*(.text.*personality*))
     /* .gnu.warning sections are handled specially by elf32.em.  */
     *(.gnu.warning)
-    . = ALIGN(32); /* ensures NOP fill */
-  } =0x90909090
-  .fini           :
-  {
+    /* Putting .fini here makes the align pad correctly when there
+       are no .fini input sections.  */
     KEEP (*(.fini))
     . = ALIGN(CONSTANT (MAXPAGESIZE)); /* ensures NOP fill */
   } =0x90909090
