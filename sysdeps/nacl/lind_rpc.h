@@ -42,6 +42,12 @@ lind_rpc_status depricated_nacl_rpc_syscall(unsigned int call_number,
 
 lind_rpc_status nacl_rpc_syscall_proxy(lind_request *, lind_reply *, int nargs, ...);
 
+/* Descriptor for a bound socket that the NaCl browser plugin sets up.  */
+#define NACL_PLUGIN_BOUND_SOCK 3
+
+/* Descriptors for connected sockets that the NaCl browser plugin sets up.  */
+#define NACL_PLUGIN_ASYNC_FROM_CHILD_FD 6
+#define NACL_PLUGIN_ASYNC_TO_CHILD_FD 7
 
 /**
    Unsafe syscall is the same as regular, but error messages are not printed to
