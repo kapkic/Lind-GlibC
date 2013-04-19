@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <lind_file.h>
+#include <lind_rpc.h>
+#include <unistd.h>
 
 #define HASHSIZE (0xff)
 
@@ -19,9 +21,13 @@ void init_lind_file_map(void)
 {
     memset(lind_file_map, 0, sizeof(lind_file_map));
     //stdin, stdout, stderr
-    add_lind_file_interal(1, 0);
-    add_lind_file_interal(2, 0);
-    add_lind_file_interal(3, 0);
+    add_lind_file_interal(STDIN_FILENO, 0);
+    add_lind_file_interal(STDOUT_FILENO, 0);
+    add_lind_file_interal(STDERR_FILENO, 0);
+    //NaCl descriptors for Lind RPC
+    add_lind_file_interal(NACL_PLUGIN_BOUND_SOCK, 0);
+    add_lind_file_interal(NACL_PLUGIN_ASYNC_FROM_CHILD_FD, 0);
+    add_lind_file_interal(NACL_PLUGIN_ASYNC_TO_CHILD_FD, 0);
 }
 
 void add_lind_file_interal(int fd, int isLindFd)

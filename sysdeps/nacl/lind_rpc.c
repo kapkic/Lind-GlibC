@@ -13,14 +13,6 @@
 #include "lind_syscalls.h"
 
 
-/* Descriptor for a bound socket that the NaCl browser plugin sets up.  */
-#define NACL_PLUGIN_BOUND_SOCK 3
-
-/* Descriptors for connected sockets that the NaCl browser plugin sets up.  */
-#define NACL_PLUGIN_ASYNC_FROM_CHILD_FD 6
-#define NACL_PLUGIN_ASYNC_TO_CHILD_FD 7
-
-
 ssize_t imc_sendmsg (int fd, const struct NaClImcMsgHdr *msg, int flags);
 ssize_t imc_recvmsg (int fd, struct NaClImcMsgHdr *msg, int flags);
 int imc_accept (int fd);
