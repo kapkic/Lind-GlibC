@@ -36,6 +36,10 @@ int
 internal_function
 _dl_make_stack_executable (void **stack_endp)
 {
+#ifdef __native_client__
+  /* Native Client does not support executable stacks at all.  */
+  return EPERM;
+#else
   /* This gives us the highest/lowest page that needs to be changed.  */
   uintptr_t page = ((uintptr_t) *stack_endp
 		    & -(intptr_t) GLRO(dl_pagesize));
@@ -150,5 +154,6 @@ _dl_make_stack_executable (void **stack_endp)
 #endif
 
   return result;
+#endif
 }
 rtld_hidden_def (_dl_make_stack_executable)

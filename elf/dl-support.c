@@ -128,7 +128,12 @@ size_t _dl_phnum;
 uint64_t _dl_hwcap __attribute__ ((nocommon));
 
 /* Prevailing state of the stack, PF_X indicating it's executable.  */
+#ifdef __native_client__
+/* Native Client does not support executable stacks at all.  */
+ElfW(Word) _dl_stack_flags = PF_R|PF_W;
+#else
 ElfW(Word) _dl_stack_flags = PF_R|PF_W|PF_X;
+#endif
 
 /* If loading a shared object requires that we make the stack executable
    when it was not, we do it by calling this function.
@@ -301,6 +306,8 @@ _dl_non_dynamic_init (void)
   if (_dl_platform != NULL)
     _dl_platformlen = strlen (_dl_platform);
 
+  /* Native Client does not support executable stacks at all.  */
+#ifndef __native_client__
   /* Scan for a program header telling us the stack is nonexecutable.  */
   if (_dl_phdr != NULL)
     for (uint_fast16_t i = 0; i < _dl_phnum; ++i)
@@ -309,6 +316,7 @@ _dl_non_dynamic_init (void)
 	  _dl_stack_flags = _dl_phdr[i].p_flags;
 	  break;
 	}
+#endif
 }
 
 

@@ -123,7 +123,12 @@ INTVARDEF(_dl_starting_up)
 struct rtld_global _rtld_global =
   {
     /* Default presumption without further information is executable stack.  */
+#ifdef __native_client__
+    /* Native Client does not support executable stacks at all.  */
+    ._dl_stack_flags = PF_R|PF_W,
+#else
     ._dl_stack_flags = PF_R|PF_W|PF_X,
+#endif
 #ifdef _LIBC_REENTRANT
     ._dl_load_lock = _RTLD_LOCK_RECURSIVE_INITIALIZER
 #endif
@@ -1048,12 +1053,15 @@ of this helper program; chances are you did not intend to run this program.\n\
 	 load the program below unless it has a PT_GNU_STACK indicating
 	 nonexecutable stack is ok.  */
 
+#ifndef __native_client__
+      /* Native Client does not support executable stacks at all.  */
       for (ph = phdr; ph < &phdr[phnum]; ++ph)
 	if (ph->p_type == PT_GNU_STACK)
 	  {
 	    GL(dl_stack_flags) = ph->p_flags;
 	    break;
 	  }
+#endif
 
       if (__builtin_expect (mode, normal) == verify)
 	{

@@ -1009,8 +1009,13 @@ _dl_map_object_from_fd (const char *name, int fd, struct filebuf *fbp,
 	}
     }
 
+#ifndef __native_client__
+  /* Native Client does not support executable stacks at all.  */
+  uint_fast16_t stack_flags = PF_R|PF_W;
+#else
   /* Presumed absent PT_GNU_STACK.  */
   uint_fast16_t stack_flags = PF_R|PF_W|PF_X;
+#endif
 
   {
     /* Scan the program header table, collecting its load commands.  */
@@ -1490,12 +1495,18 @@ cannot allocate TLS data structures for initial thread");
 
   if (__builtin_expect ((stack_flags &~ GL(dl_stack_flags)) & PF_X, 0))
     {
+#ifdef __native_client__
+      /* Native Client does not support executable stacks at all.  */
+      errstring = N_("executable stacks are not supported");
+      goto call_lose;
+#else
       if (__builtin_expect (__check_caller (RETURN_ADDRESS (0), allow_ldso),
 			    0) != 0)
 	{
 	  errstring = N_("invalid caller");
 	  goto call_lose;
 	}
+#endif
 
       /* The stack is presently not executable, but this module
 	 requires that it be executable.  We must change the

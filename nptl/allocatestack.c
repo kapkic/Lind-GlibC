@@ -419,7 +419,11 @@ allocate_stack (const struct pthread_attr *attr, struct pthread **pdp,
       size_t reqsize;
       void *mem;
       const int prot = (PROT_READ | PROT_WRITE
-			| ((GL(dl_stack_flags) & PF_X) ? PROT_EXEC : 0));
+#ifndef __native_client__
+      /* Native Client does not support executable stacks at all.  */
+			| ((GL(dl_stack_flags) & PF_X) ? PROT_EXEC : 0)
+#endif
+		       );
 
 #if COLORING_INCREMENT != 0
       /* Add one more page for stack coloring.  Don't do it for stacks
@@ -555,7 +559,8 @@ allocate_stack (const struct pthread_attr *attr, struct pthread **pdp,
 
 	  lll_unlock (stack_cache_lock, LLL_PRIVATE);
 
-
+          /* Native Client does not support executable stacks at all.  */
+#ifndef __native_client__
 	  /* There might have been a race.  Another thread might have
 	     caused the stacks to get exec permission while this new
 	     stack was prepared.  Detect if this was possible and
@@ -576,7 +581,7 @@ allocate_stack (const struct pthread_attr *attr, struct pthread **pdp,
 		  return err;
 		}
 	    }
-
+#endif
 
 	  /* Note that all of the stack and the thread descriptor is
 	     zeroed.  This means we do not have to initialize fields
