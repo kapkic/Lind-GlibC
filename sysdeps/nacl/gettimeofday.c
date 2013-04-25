@@ -15,6 +15,10 @@ int __gettimeofday (struct timeval *tv, struct timezone *tz)
     errno = result;
     return -1;
   }
+  if (tz != NULL) {
+    tz->tz_dsttime = 0;
+    tz->tz_minuteswest = 0;
+  }
   return -result;
 }
 INTDEF (__gettimeofday)
