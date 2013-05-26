@@ -588,6 +588,144 @@ static int nacl_irt_dup2_lind (int fd, int newfd) {
     return 0;
 }
 
+static int nacl_irt_socket_lind (int domain, int type, int protocol, int *sd) {
+    //SAI: BUG? lind_socket_rpc just returns the reply_buffer->return_code, but the actual
+    //new socket descriptor value present in the reply_buffer->contents is being freed at the 
+    //end of the lind_socket_rpc() code? 
+    int ret = lind_socket_rpc(domain, type, protocol);
+    if(ret>0){
+	*sd = ret;
+	return 0;
+    }
+    else
+	return -ret;
+}
+
+static int nacl_irt_connect_lind (int sockfd, const struct sockaddr *addr, socklen_t addrlen){
+    int ret = lind_connect_rpc(sockfd, addrlen, addr);
+    if(ret>0){
+        return 0;
+    }
+    else
+        return -ret;
+}
+
+static int nacl_irt_accept_lind (int sockfd, struct sockaddr *addr, socklen_t *addrlen, int *sd){
+    //SAI: BUG? the lind_accept_rpc() might be calling the accept_syscall() in the nacl_repy/seattlelib/lind_net_calls.py
+    //That accept_syscall() is returning ip, port and new_fd values which might be captured in the contents block of
+    //lind_reply struct defined in lind_accept_rpc() in 
+    //the lind_rpc_gen.c file. However, the contents of the lind_reply struct are being freed and the lind_accept_rpc()
+    //is only returning the result_code nothing else. Because of that we cannot initialize the *addr and *sd fields 
+    //in the function arguments.
+    int ret = lind_accept_rpc(sockfd, *addrlen);
+
+    if(ret>0)
+	return 0;
+    else
+        return -ret;
+}
+
+static int nacl_irt_bind_lind (int sockfd, const struct sockaddr *addr, socklen_t addrlen){
+    int ret = lind_bind_rpc(sockfd, addrlen, addr);
+    if(ret>0)
+        return 0;
+    else
+        return -ret;
+}
+
+static int nacl_irt_getpeername_lind (int sockfd, struct sockaddr *addr, socklen_t *addrlen){
+    socklen_t t;
+    int ret = lind_getpeername_rpc(sockfd, *addrlen, addr, &t);
+    if(ret>0){
+      *addrlen = t; 
+      return 0;
+    }
+    else
+      return -ret;
+}
+
+static int nacl_irt_getsockopt_lind (int sockfd, int level, int optname, void *optval, socklen_t *optlen){
+    int ret = lind_getsockopt_rpc(sockfd, level, optname, *optlen, optval);
+    if(ret>0)
+	return 0;
+    else
+	return -ret;
+}
+
+static int nacl_irt_listen_lind (int sockfd, int backlog){
+    int ret = lind_listen_rpc(sockfd, backlog);
+    if(ret>0)
+	return 0;
+    else
+	return -ret;
+}
+
+static int nacl_irt_recv_lind (int sockfd, void *buf, size_t len, int flags, int *count){
+    //SAI: BUG? assuming the return value of lind_recv_rpc gives the number of characters
+    //read by the recv() call. Hence count is initialized to the return value.
+    int ret = lind_recv_rpc(sockfd, len, flags, buf);
+    if(ret>0){
+	*count = ret;
+        return 0;
+    }
+    else
+	return -ret;
+}
+
+static int nacl_irt_recvfrom_lind (int sockfd, void *buf, size_t len, int flags, struct sockaddr *dest_addr, socklen_t* addrlen, int *count){
+    int ret = lind_recvfrom_rpc(sockfd, len, flags, *addrlen, addrlen, buf, dest_addr); 
+    if(ret>0){
+	*count = ret;
+        return 0;
+    }
+    else
+	return -ret;
+}
+
+static int nacl_irt_send_lind (int sockfd, const void *buf, size_t len, int flags, int *count){
+    int ret = lind_send_rpc(sockfd, len, flags, buf);
+    if(ret>0){
+   	*count = ret;
+	return 0;
+    }
+    else
+	return -ret;
+}
+
+static int nacl_irt_sendto_lind (int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen, int *count){
+    int ret = lind_sendto_rpc(sockfd, len, flags, addrlen, dest_addr, buf);
+    if(ret>0){
+	*count = ret;
+	return 0;
+    }
+    else
+	return -ret;
+}
+
+static int nacl_irt_setsockopt_lind (int sockfd, int level, int optname, const void *optval, socklen_t optlen){
+    int ret = lind_setsockopt_rpc(sockfd, level, optname, optlen, optval);
+    if(ret>0)
+	return 0;
+    else
+	return -ret;
+}
+
+static int nacl_irt_shutdown_lind (int sockfd, int how){
+    int ret = lind_shutdown_rpc(sockfd,how);
+    if (ret>0)
+	return 0;
+    else
+	return -ret;
+}
+
+static int nacl_irt_socketpair_lind (int domain, int type, int protocol, int sv[2]){
+    int ret = lind_socketpair_rpc(domain, type, protocol, (int*)&(sv[0]));
+    if(ret>0)
+	return 0;
+    else
+	return -ret;
+}
+
 static int nacl_irt_getdents_lind (int fd, struct dirent *buf, size_t count,
                               size_t *nread) {
     struct lind_file* lf = NULL;
@@ -602,7 +740,7 @@ static int nacl_irt_getdents_lind (int fd, struct dirent *buf, size_t count,
     }
     if (rv < 0)
       return -rv;
-    *nread = rv;
+   *nread = rv;
     return 0;
 }
 
@@ -861,25 +999,25 @@ init_irt_table (void)
   __nacl_irt_epoll_wait = not_implemented;
   __nacl_irt_poll = not_implemented;
   __nacl_irt_ppoll = not_implemented;
-  __nacl_irt_socket = not_implemented;
-  __nacl_irt_accept = not_implemented;
-  __nacl_irt_bind = not_implemented;
-  __nacl_irt_listen = not_implemented;
-  __nacl_irt_connect = not_implemented;
-  __nacl_irt_send = not_implemented;
+  __nacl_irt_socket = nacl_irt_socket_lind;
+  __nacl_irt_accept = nacl_irt_accept_lind;
+  __nacl_irt_bind = nacl_irt_bind_lind;
+  __nacl_irt_listen = nacl_irt_listen_lind;
+  __nacl_irt_connect = nacl_irt_connect_lind;
+  __nacl_irt_send = nacl_irt_send_lind;
   __nacl_irt_sendmsg = not_implemented;
-  __nacl_irt_sendto = not_implemented;
-  __nacl_irt_recv = not_implemented;
+  __nacl_irt_sendto = nacl_irt_sendto_lind;
+  __nacl_irt_recv = nacl_irt_recv_lind;
   __nacl_irt_recvmsg = not_implemented;
-  __nacl_irt_recvfrom = not_implemented;
+  __nacl_irt_recvfrom =  nacl_irt_recvfrom_lind;
   __nacl_irt_select = not_implemented;
   __nacl_irt_pselect = not_implemented;
-  __nacl_irt_getpeername = not_implemented;
+  __nacl_irt_getpeername = nacl_irt_getpeername_lind;
   __nacl_irt_getsockname = not_implemented;
-  __nacl_irt_getsockopt = not_implemented;
-  __nacl_irt_setsockopt = not_implemented;
-  __nacl_irt_socketpair = not_implemented;
-  __nacl_irt_shutdown = not_implemented;
+  __nacl_irt_getsockopt = nacl_irt_getsockopt_lind;
+  __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
+  __nacl_irt_socketpair = nacl_irt_socketpair_lind;
+  __nacl_irt_shutdown = nacl_irt_shutdown_lind;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
