@@ -48,7 +48,12 @@ SECTIONS
   PROVIDE (etext = .);
 
   . = ALIGN(SEGMENT_START("text", 0) + 0x10000000, CONSTANT (MAXPAGESIZE));
-  .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
+  .note.gnu.build-id :
+  {
+    PROVIDE_HIDDEN (__note_gnu_build_id_start = .);
+    *(.note.gnu.build-id)
+    PROVIDE_HIDDEN (__note_gnu_build_id_end = .);
+  } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }

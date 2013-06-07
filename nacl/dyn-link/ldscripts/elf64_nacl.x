@@ -47,7 +47,12 @@ SECTIONS
 
   . = 0x11000000;
   .interp	  : { *(.interp) } :seg_rodata :seg_interp
-  .note.gnu.build-id : { *(.note.gnu.build-id) } :seg_rodata
+  .note.gnu.build-id :
+  {
+    PROVIDE_HIDDEN (__note_gnu_build_id_start = .);
+    *(.note.gnu.build-id)
+    PROVIDE_HIDDEN (__note_gnu_build_id_end = .);
+  } :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }
