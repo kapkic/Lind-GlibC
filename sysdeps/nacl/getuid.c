@@ -35,7 +35,7 @@ __getuid ()
      
     uid_t buf = 0; 
 
-    int rc = lind_getuid_rpc(&buf);
+    int rc = lind_getuid(&buf);
 
     if (sizeof(uid_t) != rc) {
         __set_errno(ENOSYS);

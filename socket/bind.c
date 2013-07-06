@@ -18,9 +18,6 @@
 
 #include <errno.h>
 #include <sys/socket.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
-
 
 /* Give the socket FD the local address ADDR (which is LEN bytes long).  */
 int
@@ -29,9 +26,11 @@ __bind (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-    const struct sockaddr * s = addr.__sockaddr__;
-    SET_ERR_AND_RETURN(lind_bind_rpc(fd, len, s));
-
+  __set_errno (ENOSYS);
+  return -1;
 }
 
 weak_alias (__bind, bind)
+
+stub_warning (bind)
+#include <stub-tag.h>

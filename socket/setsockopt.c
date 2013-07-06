@@ -18,8 +18,6 @@
 
 #include <errno.h>
 #include <sys/socket.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
 
 /* Set socket FD's option OPTNAME at protocol level LEVEL
    to *OPTVAL (which is OPTLEN bytes long).
@@ -32,8 +30,11 @@ __setsockopt (fd, level, optname, optval, optlen)
      const __ptr_t optval;
      socklen_t optlen;
 {
-  SET_ERR_AND_RETURN(lind_setsockopt_rpc(fd, level, optname, optlen, optval));
-
+  __set_errno (ENOSYS);
+  return -1;
 }
 
 weak_alias (__setsockopt, setsockopt)
+
+stub_warning (setsockopt)
+#include <stub-tag.h>

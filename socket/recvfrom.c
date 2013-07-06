@@ -19,10 +19,6 @@
 #include <errno.h>
 #include <sys/socket.h>
 
-#include "lind_strace.h"
-#include "lind_util.h"
-#include "lind_syscalls.h"
-
 /* Read N bytes into BUF through socket FD from peer
    at address ADDR (which is ADDR_LEN bytes long).
    Returns the number read or -1 for errors.  */
@@ -32,17 +28,11 @@ __recvfrom (fd, buf, n, flags, addr, addr_len)
      void *buf;
      size_t n;
      int flags;
-     struct sockaddr * addr;
+     __SOCKADDR_ARG addr;
      socklen_t *addr_len;
 {
-    SET_ERR_AND_RETURN( lind_recvfrom_rpc(fd,
-                                          n,
-                                          flags,
-                                          *addr_len,
-                                          addr_len,
-                                          buf,
-                                          addr) );
-  
+  __set_errno (ENOSYS);
+  return -1;
 }
 
 weak_alias (__recvfrom, recvfrom)

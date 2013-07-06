@@ -104,6 +104,8 @@
 
 #define NACL_MAX_SYSCALLS               110
 
+#define NACL_sys_lind_api         112
+
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) * 32))
@@ -198,5 +200,6 @@ typedef int (*TYPE_nacl_dyncode_modify) (void *dest, const void *src,
                                        size_t size);
 typedef int (*TYPE_nacl_dyncode_delete) (void *dest, size_t size);
 
+typedef int (*TYPE_nacl_lind_api) (uint32_t callNum, uint32_t inNum, void* inArgs, uint32_t outNum, void* outArgs);
 
 #endif

@@ -4,17 +4,14 @@
 #include <unistd.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <nacl_syscalls.h>
 
-#include "lind_rpc.h"
-#include "lind_syscalls.h"
-#include "lind_strace.h"
-#include "lind_util.h"
-#include "nacl_syscalls.h"
-#include "component.h"
-/* #include <kernel_stat.h> */
+#include <lind_syscalls.h>
+#include <lind_strace.h>
+#include <lind_util.h>
+#include <component.h>
+
 #include <nacl_stat.h>
-#include <sys/statfs.h>
-#include <sys/stat.h>
 
 
 #define MAX_FILENAME_LENGTH 512
@@ -281,37 +278,37 @@ struct lind_ioctl_rpc_s {
 
 
 
-int lind_ioctl_rpc (int fd, unsigned long int ioctl_request, ...) {
-
-  lind_request request;
-  memset(&request, 0, sizeof(request));
-  lind_reply reply;
-  memset(&reply, 0, sizeof(reply));
-  struct lind_ioctl_rpc_s args;
-  memset(&args, 0, sizeof(struct lind_ioctl_rpc_s));
-
-  int return_code = -1;
-  args.fd = fd;
-  args.request = ioctl_request;
-
-  request.call_number = NACL_sys_ioctl;
-  request.format = FMT_INT FMT_ULONG;
-
-  request.message.len = sizeof(struct lind_ioctl_rpc_s);
-  request.message.body = &args;
- 
-  nacl_rpc_syscall_proxy(&request, &reply, 0);
-
-  /* on error return negative so we can set ERRNO. */  
-  if (reply.is_error) {
-    return_code = reply.return_code * -1;
-  } else {
-    return_code = reply.return_code;
-  }
-  
-  return return_code;
-
-}
+//int lind_ioctl_rpc (int fd, unsigned long int ioctl_request, ...) {
+//
+//  lind_request request;
+//  memset(&request, 0, sizeof(request));
+//  lind_reply reply;
+//  memset(&reply, 0, sizeof(reply));
+//  struct lind_ioctl_rpc_s args;
+//  memset(&args, 0, sizeof(struct lind_ioctl_rpc_s));
+//
+//  int return_code = -1;
+//  args.fd = fd;
+//  args.request = ioctl_request;
+//
+//  request.call_number = NACL_sys_ioctl;
+//  request.format = FMT_INT FMT_ULONG;
+//
+//  request.message.len = sizeof(struct lind_ioctl_rpc_s);
+//  request.message.body = &args;
+//
+//  nacl_rpc_syscall_proxy(&request, &reply, 0);
+//
+//  /* on error return negative so we can set ERRNO. */
+//  if (reply.is_error) {
+//    return_code = reply.return_code * -1;
+//  } else {
+//    return_code = reply.return_code;
+//  }
+//
+//  return return_code;
+//
+//}
 
 
 /* struct lind_access_rpc_s { */
@@ -885,37 +882,37 @@ struct lind_fcntl_rpc_s {
 
 
 
-int lind_fcntl_noop_rpc (int fd, int cmd)  {
-
-  lind_request request;
-  memset(&request, 0, sizeof(request));
-  lind_reply reply;
-  memset(&reply, 0, sizeof(reply));
-  struct lind_fcntl_rpc_s args;
-  memset(&args, 0, sizeof(struct lind_fcntl_rpc_s));
-
-  int return_code = -1;
-  args.fd = fd;
-  args.cmd = cmd;
-
-  request.call_number = LIND_safe_fs_fcntl;
-  request.format = FMT_INT FMT_INT;
-
-  request.message.len = sizeof(struct lind_fcntl_rpc_s);
-  request.message.body = &args;
- 
-  nacl_rpc_syscall_proxy(&request, &reply, 0);
-
-  /* on error return negative so we can set ERRNO. */  
-  if (reply.is_error) {
-    return_code = reply.return_code * -1;
-  } else {
-    return_code = reply.return_code;
-  }
-  
-  return return_code;
-
-}
+//int lind_fcntl_noop_rpc (int fd, int cmd)  {
+//
+//  lind_request request;
+//  memset(&request, 0, sizeof(request));
+//  lind_reply reply;
+//  memset(&reply, 0, sizeof(reply));
+//  struct lind_fcntl_rpc_s args;
+//  memset(&args, 0, sizeof(struct lind_fcntl_rpc_s));
+//
+//  int return_code = -1;
+//  args.fd = fd;
+//  args.cmd = cmd;
+//
+//  request.call_number = LIND_safe_fs_fcntl;
+//  request.format = FMT_INT FMT_INT;
+//
+//  request.message.len = sizeof(struct lind_fcntl_rpc_s);
+//  request.message.body = &args;
+//
+//  nacl_rpc_syscall_proxy(&request, &reply, 0);
+//
+//  /* on error return negative so we can set ERRNO. */
+//  if (reply.is_error) {
+//    return_code = reply.return_code * -1;
+//  } else {
+//    return_code = reply.return_code;
+//  }
+//
+//  return return_code;
+//
+//}
 
 struct lind_fcntl_op_rpc_s {
   int fd;
@@ -924,51 +921,51 @@ struct lind_fcntl_op_rpc_s {
 };
 
 
-int lind_fcntl_op_rpc (int fd, int cmd, long set_op)  {
+//int lind_fcntl_op_rpc (int fd, int cmd, long set_op)  {
+//
+//  lind_request request;
+//  memset(&request, 0, sizeof(request));
+//  lind_reply reply;
+//  memset(&reply, 0, sizeof(reply));
+//  struct lind_fcntl_op_rpc_s args;
+//  memset(&args, 0, sizeof(struct lind_fcntl_op_rpc_s));
+//
+//  int return_code = -1;
+//  args.fd = fd;
+//  args.cmd = cmd;
+//  args.set_op = set_op;
+//
+//  request.call_number = LIND_safe_fs_fcntl;
+//  request.format = FMT_INT FMT_INT FMT_LONG;
+//
+//  request.message.len = sizeof(struct lind_fcntl_op_rpc_s);
+//  request.message.body = &args;
+//
+//  nacl_rpc_syscall_proxy(&request, &reply, 0);
+//
+//  /* on error return negative so we can set ERRNO. */
+//  if (reply.is_error) {
+//    return_code = reply.return_code * -1;
+//  } else {
+//    return_code = reply.return_code;
+//  }
+//  return return_code;
+//}
 
-  lind_request request;
-  memset(&request, 0, sizeof(request));
-  lind_reply reply;
-  memset(&reply, 0, sizeof(reply));
-  struct lind_fcntl_op_rpc_s args;
-  memset(&args, 0, sizeof(struct lind_fcntl_op_rpc_s));
-
-  int return_code = -1;
-  args.fd = fd;
-  args.cmd = cmd;
-  args.set_op = set_op;
-
-  request.call_number = LIND_safe_fs_fcntl;
-  request.format = FMT_INT FMT_INT FMT_LONG;
-
-  request.message.len = sizeof(struct lind_fcntl_op_rpc_s);
-  request.message.body = &args;
- 
-  nacl_rpc_syscall_proxy(&request, &reply, 0);
-
-  /* on error return negative so we can set ERRNO. */  
-  if (reply.is_error) {
-    return_code = reply.return_code * -1;
-  } else {
-    return_code = reply.return_code;
-  }
-  return return_code;
-}
-
-int lind_fcntl_rpc (int fd, int cmd, long set_op)  {
-  /* We break this one up to send with and without the argument. */
-  if (cmd == F_GETFD || cmd == F_GETFL || cmd == F_GETOWN ) {
-    /* these commands don't have an arg */
-    return lind_fcntl_noop_rpc(fd, cmd);
-
-  } else if (cmd == F_SETFD || cmd == F_SETFL || cmd == F_SETOWN ) {
-    /* These commands have a single long arg */
-    return lind_fcntl_op_rpc(fd, cmd, set_op);
-  } else {
-    return -1;
-  }
-
-}
+//int lind_fcntl_rpc (int fd, int cmd, long set_op)  {
+//  /* We break this one up to send with and without the argument. */
+//  if (cmd == F_GETFD || cmd == F_GETFL || cmd == F_GETOWN ) {
+//    /* these commands don't have an arg */
+//    return lind_fcntl_noop_rpc(fd, cmd);
+//
+//  } else if (cmd == F_SETFD || cmd == F_SETFL || cmd == F_SETOWN ) {
+//    /* These commands have a single long arg */
+//    return lind_fcntl_op_rpc(fd, cmd, set_op);
+//  } else {
+//    return -1;
+//  }
+//
+//}
 
 
 /* int lind_statfs_rpc (const char * path, struct statfs *buf) { */
@@ -1008,3 +1005,295 @@ int lind_fcntl_rpc (int fd, int cmd, long set_op)  {
 
 
 
+
+typedef enum _LindArgType {AT_INT, AT_STRING, AT_STRING_OPTIONAL, AT_DATA, AT_DATA_OPTIONAL} LindArgType;
+
+typedef struct _LindArg
+{
+    LindArgType arg_type;
+    uint64_t ptr;
+    uint64_t len;
+} LindArg;
+
+int lind_access (int version, const char *file)
+{
+    LindArg in_args[2] = {{AT_INT, version, 0}, {AT_STRING, (uintptr_t)file, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_access, 2, in_args, 0, NULL);
+}
+
+int lind_unlink (const char *name)
+{
+    LindArg in_args[1] = {{AT_STRING,(uintptr_t) name, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_unlink, 1, in_args, 0, NULL);
+}
+
+int lind_link (const char *from, const char *to)
+{
+    LindArg in_args[2] = {{AT_STRING, (uintptr_t)from, 0}, {AT_STRING, (uintptr_t)to, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_link, 2, in_args, 0, NULL);
+}
+
+int lind_chdir (const char *name)
+{
+    LindArg in_args[1] = {{AT_STRING, (uintptr_t)name, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_chdir, 1, in_args, 0, NULL);
+}
+
+int lind_mkdir (int mode, const char *path)
+{
+    LindArg in_args[2] = {{AT_INT, mode, 0}, {AT_STRING, (uintptr_t)path, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_mkdir, 2, in_args, 0, NULL);
+}
+
+int lind_rmdir (const char *path)
+{
+    LindArg in_args[1] = {{AT_STRING, (uintptr_t)path, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_xstat, 1, in_args, 0, NULL);
+}
+
+int lind_xstat (int version, const char *path, struct stat *buf)
+{
+    LindArg in_args[2] = {{AT_INT, version, 0}, {AT_STRING, (uintptr_t)path, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(struct stat)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_xstat, 2, in_args, 1, out_args);
+}
+
+int lind_open (int flags, int mode, const char *path)
+{
+    LindArg in_args[3] = {{AT_INT, flags, 0}, {AT_INT, mode, 0}, {AT_STRING, (uintptr_t)path, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_open, 3, in_args, 0, NULL);
+}
+
+int lind_close (int fd)
+{
+    LindArg in_args[1] = {{AT_INT, fd, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_close, 1, in_args, 0, NULL);
+}
+
+int lind_read (int fd, int size, void *buf)
+{
+    LindArg in_args[2] = {{AT_INT, fd, 0}, {AT_INT, size, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, size}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_read, 2, in_args, 1, out_args);
+}
+
+int lind_write (int fd, size_t count, const void *buf)
+{
+    LindArg in_args[3] = {{AT_INT, fd, 0}, {AT_INT, count, 0}, {AT_DATA, (uintptr_t)buf, count}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_write, 3, in_args, 0, NULL);
+}
+
+int lind_lseek (off_t offset, int fd, int whence, off_t * ret)
+{
+    LindArg in_args[3] = {{AT_INT, offset, 0}, {AT_INT, fd, 0}, {AT_INT, whence, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)ret, sizeof(off_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_lseek, 3, in_args, 1, out_args);
+}
+
+int lind_fxstat (int fd, int version, struct stat *buf)
+{
+    LindArg in_args[2] = {{AT_INT, fd, 0}, {AT_INT, version, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(struct stat)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fxstat, 2, in_args, 1, out_args);
+}
+
+int lind_fstatfs (int fd, struct statfs *buf)
+{
+    LindArg in_args[1] = {{AT_INT, fd, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(struct statfs)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fstatfs, 1, in_args, 1, out_args);
+}
+
+int lind_statfs (const char *path, struct statfs *buf)
+{
+    LindArg in_args[1] = {{AT_STRING, (uintptr_t)path, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(struct statfs)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_statfs, 1, in_args, 1, out_args);
+}
+
+int lind_noop (void)
+{
+    return NACL_SYSCALL(lind_api)(LIND_debug_noop, 0, NULL, 0, NULL);
+}
+
+int lind_getpid (pid_t* buf)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(pid_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 1, out_args);
+}
+
+int lind_dup (int oldfd)
+{
+    LindArg in_args[1] = {{AT_INT, oldfd, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_dup, 2, in_args, 0, NULL);
+}
+
+int lind_dup2 (int oldfd, int newfd)
+{
+    LindArg in_args[2] = {{AT_INT, oldfd, 0}, {AT_INT, newfd, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_dup2, 2, in_args, 0, NULL);
+}
+
+int lind_getdents (int fd, size_t nbytes, char *buf)
+{
+    LindArg in_args[2] = {{AT_INT, fd, 0}, {AT_INT, nbytes, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, nbytes}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_getdents, 2, in_args, 1, out_args);
+}
+
+int lind_fcntl_get (int fd, int cmd)
+{
+    LindArg in_args[2] = {{AT_INT, fd, 0}, {AT_INT, cmd, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fcntl, 2, in_args, 0, NULL);
+}
+
+int lind_fcntl_set (int fd, int cmd, long set_op)
+{
+    LindArg in_args[3] = {{AT_INT, fd, 0}, {AT_INT, cmd, 0}, {AT_INT, set_op, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fcntl, 3, in_args, 0, NULL);
+}
+
+int lind_socket (int domain, int type, int protocol)
+{
+    LindArg in_args[3] = {{AT_INT, domain, 0}, {AT_INT, type, 0}, {AT_INT, protocol, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_socket, 3, in_args, 0, NULL);
+}
+
+int lind_bind (int sockfd, socklen_t addrlen, const struct sockaddr *addr)
+{
+    LindArg in_args[3] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen, 0}, {AT_DATA, (uintptr_t)addr, addrlen}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_send, 3, in_args, 0, NULL);
+}
+
+int lind_send (int sockfd, size_t len, int flags, const void *buf)
+{
+    LindArg in_args[4] = {{AT_INT, sockfd, 0}, {AT_INT, len, 0}, {AT_INT, flags, 0}, {AT_DATA, (uintptr_t)buf, len}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_send, 4, in_args, 0, NULL);
+}
+
+int lind_recv (int sockfd, size_t len, int flags, void *buf)
+{
+    LindArg in_args[3] = {{AT_INT, sockfd, 0}, {AT_INT, len, 0}, {AT_INT, flags, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, len}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_recv, 3, in_args, 1, out_args);
+}
+
+int lind_connect (int sockfd, socklen_t addrlen, const struct sockaddr *src_addr)
+{
+    LindArg in_args[3] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen, 0}, {AT_DATA, (uintptr_t)src_addr, addrlen}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_connect, 3, in_args, 0, NULL);
+}
+
+int lind_listen (int sockfd, int backlog)
+{
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, backlog, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_listen, 2, in_args, 0, NULL);
+}
+
+int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf)
+{
+    return 0;
+}
+
+int lind_accept (int sockfd, socklen_t addrlen)
+{
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_accept, 2, in_args, 0, NULL);
+}
+
+int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out)
+{
+    return 0;
+}
+
+int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval)
+{
+    LindArg in_args[5] = {{AT_INT, sockfd, 0}, {AT_INT, level, 0}, {AT_INT, optname, 0}, {AT_INT, optlen, 0}, {AT_DATA, (uintptr_t)optval, optlen}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_setsockopt, 4, in_args, 0, NULL);
+}
+
+int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval)
+{
+    LindArg in_args[4] = {{AT_INT, sockfd, 0}, {AT_INT, level, 0}, {AT_INT, optname, 0}, {AT_INT, optlen, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)optval, optlen}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_getsockopt, 4, in_args, 1, out_args);
+}
+
+int lind_shutdown (int sockfd, int how)
+{
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, how, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_shutdown, 2, in_args, 0, NULL);
+}
+
+int lind_select (int nfds, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout, struct select_results *result)
+{
+    LindArg in_args[5] = {{AT_INT, nfds, 0}, {AT_DATA_OPTIONAL, (uintptr_t)readfds, sizeof(fd_set)},
+            {AT_DATA_OPTIONAL, (uintptr_t)writefds, sizeof(fd_set)}, {AT_DATA_OPTIONAL, (uintptr_t)exceptfds, sizeof(fd_set)},
+            {AT_DATA_OPTIONAL, (uintptr_t)timeout, sizeof(struct timeval)}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)result, sizeof(struct select_results)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_select, 5, in_args, 1, out_args);
+}
+
+int lind_getifaddrs (int ifaddrs_buf_siz, void *ifaddrs)
+{
+    LindArg in_args[1] = {{AT_INT, ifaddrs_buf_siz, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)ifaddrs, ifaddrs_buf_siz}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_getifaddrs, 1, in_args, 1, out_args);
+}
+
+int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen_t * addrlen_out, void *buf, struct sockaddr *src_addr)
+{
+    LindArg in_args[4] = {{AT_INT, sockfd, 0}, {AT_INT, len, 0}, {AT_INT, flags, 0}, {AT_INT, addrlen, 0}};
+    LindArg out_args[3] = {{AT_DATA, (uintptr_t)addrlen_out, sizeof(socklen_t)}, {AT_DATA, (uintptr_t)buf, sizeof(len)}, {AT_DATA, (uintptr_t)src_addr, sizeof(addrlen)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_recvfrom, 4, in_args, 3, out_args);
+}
+
+int lind_poll (int nfds, int timeout, struct pollfd *fds_in, struct pollfd *fds_out)
+{
+    LindArg in_args[3] = {{AT_INT, nfds, 0}, {AT_INT, timeout, 0}, {AT_DATA, (uintptr_t)fds_in, sizeof(struct pollfd)*nfds}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)fds_out, sizeof(struct pollfd)*nfds}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_poll, 3, in_args, 1, out_args);
+}
+
+int lind_socketpair (int domain, int type, int protocol, int *fds)
+{
+    LindArg in_args[3] = {{AT_INT, domain, 0}, {AT_INT, type, 0}, {AT_INT, protocol, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)fds, sizeof(int)*2}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_socketpair, 3, in_args, 1, out_args);
+}
+
+int lind_getuid (uid_t * buf)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(uid_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_getuid, 0, NULL, 1, out_args);
+}
+
+int lind_geteuid (uid_t * buf)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(uid_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_geteuid, 0, NULL, 1, out_args);
+}
+
+int lind_getgid (gid_t * buf)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(gid_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_getgid, 0, NULL, 1, out_args);
+}
+
+int lind_getegid (gid_t * buf)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(gid_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_getegid, 0, NULL, 1, out_args);
+}
+
+int lind_flock (int fd, int operation)
+{
+    LindArg in_args[2] = {{AT_INT, fd, 0}, {AT_INT, operation, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_flock, 2, in_args, 0, NULL);
+}
+
+int lind_strace (char* str)
+{
+    LindArg in_args[1] = {{AT_STRING, (uintptr_t)str, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_debug_trace, 1, in_args, 0, NULL);
+}

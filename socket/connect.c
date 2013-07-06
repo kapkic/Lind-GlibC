@@ -18,8 +18,6 @@
 
 #include <errno.h>
 #include <sys/socket.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
 
 #undef __connect
 
@@ -33,8 +31,11 @@ __connect (fd, addr, len)
      __CONST_SOCKADDR_ARG addr;
      socklen_t len;
 {
-    const struct sockaddr * s = addr.__sockaddr__;
-    SET_ERR_AND_RETURN(lind_connect_rpc(fd, len, s));
+  __set_errno (ENOSYS);
+  return -1;
 }
 INTDEF (__connect)
 weak_alias (__connect, connect)
+
+stub_warning (connect)
+#include <stub-tag.h>

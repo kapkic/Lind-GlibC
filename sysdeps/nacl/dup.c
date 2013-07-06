@@ -27,7 +27,7 @@ int
 __dup (fd)
      int fd;
 {
-  int result = lind_dup_rpc(fd);
+  int result = lind_dup(fd);
   return result;
 }
 

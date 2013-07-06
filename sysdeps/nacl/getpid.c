@@ -8,9 +8,8 @@
 pid_t __getpid ()
 {
   pid_t lind_pid = -1;
-  nacl_strace("getpid");
 
-  int rc = lind_getpid_rpc(&lind_pid);
+  int rc = lind_getpid(&lind_pid);
 
   if (rc != 0) {
     __set_errno(rc);

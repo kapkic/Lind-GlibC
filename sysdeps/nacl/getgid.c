@@ -34,7 +34,7 @@ __getgid ()
     }
      
     uid_t buf = 0; 
-    int rc = lind_getgid_rpc(&buf);
+    int rc = lind_getgid(&buf);
 
     if (sizeof(gid_t) != rc) {
         __set_errno(ENOSYS);

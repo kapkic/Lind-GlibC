@@ -30,7 +30,7 @@ __flock (fd, operation)
      int operation;
 {
 #warning compiling flock
-    SET_ERR_AND_RETURN( lind_flock_rpc(fd, operation));
+    SET_ERR_AND_RETURN(lind_flock(fd, operation));
 }
 
 weak_alias (__flock, flock)

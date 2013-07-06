@@ -18,10 +18,6 @@
 
 #include <errno.h>
 #include <sys/socket.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
-
-
 
 /* Create a new socket of type TYPE in domain DOMAIN, using
    protocol PROTOCOL.  If PROTOCOL is zero, one is chosen automatically.
@@ -32,7 +28,11 @@ __socket (domain, type, protocol)
      int type;
      int protocol;
 {
-  SET_ERR_AND_RETURN(lind_socket_rpc(domain, type, protocol));
+  __set_errno (ENOSYS);
+  return -1;
 }
 
+
 weak_alias (__socket, socket)
+stub_warning (socket)
+#include <stub-tag.h>

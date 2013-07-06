@@ -1,4 +1,4 @@
-#include "lindlock.h"
+#include "lind_lock.h"
 #include "nacl_syscalls.h"
 
 

@@ -5,10 +5,12 @@
 
 
 #include <sys/types.h>
-/* #include <kernel_stat.h> */
 #include <nacl_stat.h>
 #include <sys/statfs.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <sys/poll.h>
 #include <unistd.h>
 
 #define LIND_debug_noop                 1
@@ -74,6 +76,16 @@ struct select_results {
     fd_set e;
 };
 
+#define SET_ERR_AND_RETURN(x) \
+    do { \
+        int result = (x); \
+        if (result < 0) { \
+            __set_errno(-result); \
+            return -1; \
+        } \
+        return result; \
+    } while (0)
+
 
 
 
@@ -84,7 +96,7 @@ struct select_results {
 /* int lind_fstatfs_rpc (int fd, struct statfs *buf); */
 /* int lind_close_rpc(int fd); */
 /* ssize_t lind_write_rpc(int desc, void const *buf, size_t count); */
-int lind_ioctl_rpc (int fd, unsigned long int request, ...);
+//int lind_ioctl_rpc (int fd, unsigned long int request, ...);
 /* int lind_access_rpc(const char * file, int type); */
 /* int lind_unlink_rpc(const char * name); */
 /* int lind_link_rpc(const char * from, const char * to); */
@@ -95,15 +107,58 @@ int lind_ioctl_rpc (int fd, unsigned long int request, ...);
 /* int lind_getpid_rpc(pid_t * pid_buf ); */
 /* int lind_xstat_rpc (int version, const char *path, struct stat *buf); */
 /* ssize_t lind_getdents_rpc(int fd, char *buf, size_t nbytes); */
-int lind_comp_rpc(int request, int nbytes, void *buf);
+//int lind_comp_rpc(int request, int nbytes, void *buf);
 
 /* int lind_dup_rpc(int oldfd); */
 /* int lind_dup2_rpc(int oldfd, int newfd); */
-int lind_fcntl_rpc (int fd, int cmd, long set_op);
+//int lind_fcntl_rpc (int fd, int cmd, long set_op);
 /* int lind_statfs_rpc (const char * path, struct statfs *buf); */
 
-
-#include "lind_rpc_gen.h"
+int lind_access (int version, const char *file);
+int lind_unlink (const char *name);
+int lind_link (const char *from, const char *to);
+int lind_chdir (const char *name);
+int lind_mkdir (int mode, const char *path);
+int lind_rmdir (const char *path);
+int lind_xstat (int version, const char *path, struct stat *buf);
+int lind_open (int flags, int mode, const char *path);
+int lind_close (int fd);
+int lind_read (int fd, int size, void *buf);
+int lind_write (int fd, size_t count, const void *buf);
+int lind_lseek (off_t offset, int fd, int whence, off_t * ret);
+int lind_fxstat (int fd, int version, struct stat *buf);
+int lind_fstatfs (int fd, struct statfs *buf);
+int lind_statfs (const char *path, struct statfs *buf);
+int lind_noop (void);
+int lind_getpid (pid_t * buf);
+int lind_dup (int oldfd);
+int lind_dup2 (int oldfd, int newfd);
+int lind_getdents (int fd, size_t nbytes, char *buf);
+int lind_fcntl_get (int fd, int cmd);
+int lind_fcntl_set (int fd, int cmd, long set_op);
+int lind_socket (int domain, int type, int protocol);
+int lind_bind (int sockfd, socklen_t addrlen, const struct sockaddr *addr);
+int lind_send (int sockfd, size_t len, int flags, const void *buf);
+int lind_recv (int sockfd, size_t len, int flags, void *buf);
+int lind_connect (int sockfd, socklen_t addrlen, const struct sockaddr *src_addr);
+int lind_listen (int sockfd, int backlog);
+int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf);
+int lind_accept (int sockfd, socklen_t addrlen);
+int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out);
+int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval);
+int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval);
+int lind_shutdown (int sockfd, int how);
+int lind_select (int nfds, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout, struct select_results *result);
+int lind_getifaddrs (int ifaddrs_buf_siz, void *ifaddrs);
+int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen_t * addrlen_out, void *buf, struct sockaddr *src_addr);
+int lind_poll (int nfds, int timeout, struct pollfd *fds_in, struct pollfd *fds_out);
+int lind_socketpair (int domain, int type, int protocol, int *fds);
+int lind_getuid (uid_t * buf);
+int lind_geteuid (uid_t * buf);
+int lind_getgid (gid_t * buf);
+int lind_getegid (gid_t * buf);
+int lind_flock (int fd, int operation);
+int lind_strace (char* str);
 
 #endif /* _LIND_SYSCALLS_H_ */
 

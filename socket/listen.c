@@ -18,8 +18,6 @@
 
 #include <errno.h>
 #include <sys/socket.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
 
 /* Prepare to accept connections on socket FD.
    N connection requests will be queued before further requests are refused.
@@ -29,7 +27,11 @@ __listen (fd, n)
      int fd;
      int n;
 {
-  SET_ERR_AND_RETURN(lind_listen_rpc(fd, n));
+  __set_errno (ENOSYS);
+  return -1;
 }
 
 weak_alias (__listen, listen)
+
+stub_warning (listen)
+#include <stub-tag.h>

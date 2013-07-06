@@ -39,7 +39,7 @@ __dup2 (fd, fd2)
     return fd2;
   
   int result;
-  result = lind_dup2_rpc(fd, fd2);
+  result = lind_dup2(fd, fd2);
   if (result < 0) {
     __set_errno(result*-1);
     return -1;

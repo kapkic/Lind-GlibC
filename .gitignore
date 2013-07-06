@@ -11,4 +11,5 @@
 /po/*.mo
 /.cproject
 /.project
+/.pydevproject
 

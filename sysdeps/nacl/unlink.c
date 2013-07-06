@@ -13,9 +13,8 @@ __unlink (const char * name)  {
       __set_errno (EINVAL);
       return -1;
     }
-  nacl_strace(concat("unlink ",name));
   /* since everything is okay, forward to lind server. */
-  int return_code = lind_unlink_rpc(name);
+  int return_code = lind_unlink(name);
 
   if (return_code < 0) {
     __set_errno ( -1 * return_code);

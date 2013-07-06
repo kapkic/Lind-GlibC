@@ -27,7 +27,7 @@ int
 __statfs (const char *file, struct statfs *buf)
 {
   int result;
-  result = lind_statfs_rpc(file, buf);
+  result = lind_statfs(file, buf);
   if (result < 0) {
     errno = -result;
     result = -1;

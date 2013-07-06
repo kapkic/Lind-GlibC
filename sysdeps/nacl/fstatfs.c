@@ -10,16 +10,14 @@
 int
 __fstatfs (int fd, struct statfs *buf)
 {
-  nacl_strace( combine(3, "fstatfs fd=", nacl_itoa(fd), " is disabled\n" ) );
  
   if (is_system_handle(fd)) {
-      nacl_strace( "not checked becuase system handle." );
 
        __set_errno (ENOSYS);
        return -1;
   }
   
-  int lind_rc = lind_fstatfs_rpc(fd, buf);
+  int lind_rc = lind_fstatfs(fd, buf);
   
   if (lind_rc < 0) {
     __set_errno (-lind_rc);
