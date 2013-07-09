@@ -5,6 +5,7 @@
 #ifdef TESTING
 #include <stdio.h>
 #endif
+
 /* Get the string representation of integer. 
  * Caller must free memory.  */
 char* nacl_itoa(int integer)

@@ -10,13 +10,6 @@
 int
 __fstatfs (int fd, struct statfs *buf)
 {
- 
-  if (is_system_handle(fd)) {
-
-       __set_errno (ENOSYS);
-       return -1;
-  }
-  
   int lind_rc = lind_fstatfs(fd, buf);
   
   if (lind_rc < 0) {

@@ -401,7 +401,6 @@ int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
 #ifdef LIND
 #include <lind_syscalls.h>
-#include <lind_file.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
 
 static int nacl_irt_mkdir_lind (const char* pathname, mode_t mode)
@@ -440,83 +439,36 @@ static void __nacl_abi_stat_from_stat(struct nacl_abi_stat *nacl_st, struct stat
 }
 
 static int nacl_irt_stat_lind (const char *pathname, struct nacl_abi_stat *st) {
-    int lind_fd = is_lind_file(pathname);
-    if(lind_fd) {
-        struct stat _stat;
-        //version fixed to 1
-        int rc = -lind_xstat(1, pathname, &_stat);
-        __nacl_abi_stat_from_stat(st, &_stat);
-        return rc;
-    } else {
-        return -NACL_SYSCALL (stat) (pathname, st);
-    }
+    struct stat _stat;
+    //version fixed to 1
+    int rc = -lind_xstat(1, pathname, &_stat);
+    __nacl_abi_stat_from_stat(st, &_stat);
+    return rc;
 }
 
 static int nacl_irt_fstat_lind (int fd, struct nacl_abi_stat *st) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    if(lf->isLindFd) {
-        struct stat _stat;
-        //version fixed to 1
-        int rc = -lind_fxstat(fd, 1, &_stat);
-        __nacl_abi_stat_from_stat(st, &_stat);
-        return rc;
-    } else {
-        return -NACL_SYSCALL (fstat) (fd, st);
-    }
+    struct stat _stat;
+    //version fixed to 1
+    int rc = -lind_fxstat(fd, 1, &_stat);
+    __nacl_abi_stat_from_stat(st, &_stat);
+    return rc;
 }
 
 static int nacl_irt_open_lind (const char *pathname, int oflag, mode_t cmode,
                           int *newfd) {
-    int lind_fd = is_lind_file(pathname);
-    int rv = 0;
-    static unsigned int open_count = 0;
-    if(lind_fd) {
-        rv = lind_open(oflag, cmode, pathname);
-    } else {
-        if(open_count++<max_nacl_fd) {
-            rv = NACL_SYSCALL (open) (pathname, oflag, cmode);
-        } else {
-            return 1; //TODO: some other value?
-        }
-    }
+    int rv = lind_open(oflag, cmode, pathname);
     if (rv < 0)
       return -rv;
-    struct lind_file lf;
-    lf.fd = rv;
-    lf.isLindFd = lind_fd;
-    add_lind_file(&lf);
     *newfd = rv;
     return 0;
 }
 
 static int nacl_irt_close_lind (int fd) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int is_lind_file = lf->isLindFd;
-    delete_lind_file(fd);
-    if(is_lind_file) {
-        return -lind_close (fd);
-    } else {
-        return -NACL_SYSCALL (close) (fd);
-    }
+    return -lind_close (fd);
 }
 
 static int nacl_irt_read_lind (int fd, void *buf, size_t count, size_t *nread) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int rv = 0;
-    if(lf->isLindFd) {
-        rv = lind_read (fd, count, buf);
-    } else {
-        rv = NACL_SYSCALL (read) (fd, buf, count);
-    }
+    int rv = lind_read (fd, count, buf);
     if (rv < 0)
         return -rv;
     *nread = rv;
@@ -525,16 +477,7 @@ static int nacl_irt_read_lind (int fd, void *buf, size_t count, size_t *nread) {
 
 static int nacl_irt_write_lind (int fd, const void *buf, size_t count,
                            size_t *nwrote) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int rv;
-    if(lf->isLindFd) {
-        rv = lind_write (fd, count, buf);
-    } else {
-        rv = NACL_SYSCALL (write) (fd, buf, count);
-    }
+    int rv = lind_write (fd, count, buf);
     if (rv < 0)
         return -rv;
     *nwrote = rv;
@@ -543,17 +486,8 @@ static int nacl_irt_write_lind (int fd, const void *buf, size_t count,
 
 static int nacl_irt_seek_lind (int fd, nacl_abi_off_t offset, int whence,
                           off_t *new_offset) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
     off_t returned_offset = 0;
-    int rv;
-    if(lf->isLindFd) {
-        rv = lind_lseek (offset, fd, whence, &returned_offset);
-    } else {
-        rv = NACL_SYSCALL (lseek) (fd, &offset, whence);
-    }
+    int rv = lind_lseek (offset, fd, whence, &returned_offset);
     if (rv < 0)
       return -rv;
     *new_offset = returned_offset;
@@ -561,16 +495,7 @@ static int nacl_irt_seek_lind (int fd, nacl_abi_off_t offset, int whence,
 }
 
 static int nacl_irt_dup_lind (int fd, int *newfd) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int rv = 0;
-    if(lf->isLindFd) {
-        rv = lind_dup (fd);
-    } else {
-        rv = NACL_SYSCALL (dup) (fd);
-    }
+    int rv = lind_dup (fd);
     if (rv < 0)
       return -rv;
     *newfd = rv;
@@ -578,16 +503,7 @@ static int nacl_irt_dup_lind (int fd, int *newfd) {
 }
 
 static int nacl_irt_dup2_lind (int fd, int newfd) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int rv = 0;
-    if(lf->isLindFd) {
-        rv = lind_dup2 (fd, newfd);
-    } else {
-        rv = NACL_SYSCALL (dup2) (fd, newfd);
-    }
+    int rv = lind_dup2 (fd, newfd);
     if (rv < 0)
         return -rv;
     return 0;
@@ -595,16 +511,7 @@ static int nacl_irt_dup2_lind (int fd, int newfd) {
 
 static int nacl_irt_getdents_lind (int fd, struct dirent *buf, size_t count,
                               size_t *nread) {
-    struct lind_file* lf = NULL;
-    if((lf=get_lind_file(fd))==NULL) {
-        return 1; //TODO: find another value
-    }
-    int rv = 0;
-    if(lf->isLindFd) {
-        rv = lind_getdents (fd, count, buf);
-    } else {
-        rv = NACL_SYSCALL (getdents) (fd, buf, count);
-    }
+    int rv = lind_getdents (fd, count, buf);
     if (rv < 0)
       return -rv;
     *nread = rv;
@@ -620,7 +527,6 @@ init_irt_table (void)
     saved_nacl_irt_query = __nacl_irt_query;
     //currently we manually bind all IRT calls
     __nacl_irt_query = 0;
-    max_nacl_fd = 50;
 #endif
   union {
     struct nacl_irt_basic nacl_irt_basic;

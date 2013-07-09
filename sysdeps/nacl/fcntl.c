@@ -28,16 +28,12 @@
 function to the same thing.  when w*/
 int
 __fcntl (int fd, int cmd, ...) {
-  if (fd < 0) {
+    if (fd < 0) {
       __set_errno (EBADF);
       return -1;
-  }
+    }
 
-  int result = -1; 
-  if (is_system_handle(fd)) {
-    /* Nacl did not support this, so we dont either */
-    result = -ENOSYS;
-  } else {
+    int result = -1;
     /* for getops, send as they are, for set, grab the extra long argument */
     if (cmd == F_GETFD || cmd == F_GETFL || cmd == F_GETOWN ) {
       /* these commands don't have an arg */
@@ -54,14 +50,13 @@ __fcntl (int fd, int cmd, ...) {
       /*  right now repy does not support any other commands */
       result = -ENOSYS;
     }
-  }
 
-  /*fixup return code and setup errno if needed*/
-  if (result < 0) {
+    /*fixup return code and setup errno if needed*/
+    if (result < 0) {
     __set_errno ( -result);
     return -1;
-  }
-  return result;
+    }
+    return result;
 
 
 }
