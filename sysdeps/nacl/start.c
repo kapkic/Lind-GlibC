@@ -4,6 +4,12 @@
 
 #include <stdint.h>
 
+/*
+ * Alternative NaCl main entry point.  If this symbol name is found at
+ * link time it is used in favour of 'main' as the program entry point.
+ */
+int __nacl_main(int argc, char **argv, char **envp) __attribute__((weak));
+
 int main (int argc, char **argv, char **envp);
 
 int __libc_csu_init (int argc, char **argv, char **envp);
@@ -33,10 +39,14 @@ _start (uint32_t *info)
   int argc = info[2];
   char **argv = (void *) &info[3];
 
+  int (*main_ptr)(int argc, char **argv, char **envp) = &__nacl_main;
+  if (main_ptr == NULL)
+    main_ptr = &main;
+
   /* The generic code actually assumes that envp follows argv
      and that auxv follows envp.  */
 
-  __libc_start_main (&main, argc, argv,
+  __libc_start_main (main_ptr, argc, argv,
                      &__libc_csu_init, &__libc_csu_fini, rtld_fini,
                      __builtin_frame_address (0));
 
