@@ -2,6 +2,7 @@
    The initial stack and register state is arranged by the NaCl trusted
    runtime as for a normal C function call of one argument.  */
 
+#include <stddef.h>
 #include <stdint.h>
 
 /*
