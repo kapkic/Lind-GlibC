@@ -578,7 +578,7 @@ init_irt_table (void)
     }
   else
     {
-#ifndef LIND
+#ifdef LIND
       __nacl_irt_close = nacl_irt_close;
       __nacl_irt_dup = nacl_irt_dup;
       __nacl_irt_dup2 = nacl_irt_dup2;
@@ -608,7 +608,7 @@ init_irt_table (void)
     }
   else
     {
-#ifndef LIND
+#ifdef LIND
       __nacl_irt_open = nacl_irt_open;
       __nacl_irt_stat = nacl_irt_stat;
 #else
