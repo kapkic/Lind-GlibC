@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 The Native Client Authors. All rights reserved.
+ * Copyright (c) 2012 The Native Client Authors. All rights reserved.
  * Use of this source code is governed by a BSD-style license that can be
  * found in the LICENSE file.
  */
@@ -17,8 +17,10 @@ struct dirent;
 
 struct PP_StartFunctions;
 struct PP_ThreadFunctions;
+struct NaClExceptionContext;
+struct NaClMemMappingInfo;
 
-#if __cplusplus
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -43,6 +45,14 @@ typedef size_t (*TYPE_nacl_irt_query)(const char *interface_ident,
                                       void *table, size_t tablesize);
 
 /*
+ * C libraries expose this function to reach the interface query interface.
+ * If there is no IRT hook available at all, it returns zero.
+ * Otherwise it behaves as described above for TYPE_nacl_irt_query.
+ */
+size_t nacl_interface_query(const char *interface_ident,
+                            void *table, size_t tablesize);
+
+/*
  * All functions in IRT vectors return an int, which is zero for success
  * or a (positive) errno code for errors.  Any values are delivered via
  * result parameters.  The only exceptions exit/thread_exit, which can
@@ -60,7 +70,7 @@ struct nacl_irt_basic {
 };
 
 #define NACL_IRT_FDIO_v0_1      "nacl-irt-fdio-0.1"
-struct nacl_irt_fdio {
+struct nacl_irt_fdio_v0_1 {
   int (*close)(int fd);
   int (*dup)(int fd, int *newfd);
   int (*dup2)(int fd, int newfd);
@@ -71,15 +81,59 @@ struct nacl_irt_fdio {
   int (*getdents)(int fd, struct dirent *, size_t count, size_t *nread);
 };
 
+#define NACL_IRT_FDIO_v0_2      "nacl-irt-fdio-0.2"
+struct nacl_irt_fdio {
+  int (*close)(int fd);
+  int (*dup)(int fd, int *newfd);
+  int (*dup2)(int fd, int newfd);
+  int (*read)(int fd, void *buf, size_t count, size_t *nread);
+  int (*write)(int fd, const void *buf, size_t count, size_t *nwrote);
+  int (*seek)(int fd, off_t offset, int whence, off_t *new_offset);
+  int (*fstat)(int fd, struct stat *);
+  int (*getdents)(int fd, struct dirent *, size_t count, size_t *nread);
+  int (*isatty)(int fd);
+};
+
 #define NACL_IRT_FILENAME_v0_1      "nacl-irt-filename-0.1"
-struct nacl_irt_filename {
+struct nacl_irt_filename_v0_1 {
   int (*open)(const char *pathname, int oflag, mode_t cmode, int *newfd);
   int (*stat)(const char *pathname, struct stat *);
 };
 
+#define NACL_IRT_FILENAME_v0_2      "nacl-irt-filename-0.2"
+struct nacl_irt_filename {
+  int (*open)(const char *pathname, int oflag, mode_t cmode, int *newfd);
+  int (*stat)(const char *pathname, struct stat *);
+  int (*mkdir)(const char *pathname, int mode);
+  int (*rmdir)(const char *pathname);
+  int (*chdir)(const char *pathname);
+  int (*getcwd)(char *pathname, int len);
+};
+
 #define NACL_IRT_MEMORY_v0_1    "nacl-irt-memory-0.1"
 struct nacl_irt_memory_v0_1 {
+  /*
+   * sysbrk() allocates memory from the "brk" heap.  This function is
+   * deprecated; new programs should use mmap() instead.
+   *
+   * If |*newbrk| is NULL, sysbrk() sets |*newbrk| to the current
+   * break pointer and returns 0.
+   *
+   * If |*newbrk| is non-NULL and greater than the current break
+   * pointer, sysbrk() tries to allocate this memory.  If the
+   * allocation fails, it returns ENOMEM.  Otherwise, sysbrk():
+   *  * ensures the memory between the break pointer and |*newbrk| is
+   *    readable and writable, and zeroes it;
+   *  * sets the current break pointer to |*newbrk|; and
+   *  * returns 0 to indicate success.
+   *
+   * If |*newbrk| is non-NULL and less than the current break pointer,
+   * sysbrk() deallocates this memory.  sysbrk() sets the break
+   * pointer to |*newbrk| and returns 0.  If |*newbrk| is less than
+   * the process's initial break pointer, the behaviour is undefined.
+   */
   int (*sysbrk)(void **newbrk);
+  /* Note: this version of mmap silently ignores PROT_EXEC bit.  */
   int (*mmap)(void **addr, size_t len, int prot, int flags, int fd, off_t off);
   int (*munmap)(void *addr, size_t len);
 };
@@ -87,6 +141,13 @@ struct nacl_irt_memory_v0_1 {
 #define NACL_IRT_MEMORY_v0_2    "nacl-irt-memory-0.2"
 struct nacl_irt_memory_v0_2 {
   int (*sysbrk)(void **newbrk);
+  int (*mmap)(void **addr, size_t len, int prot, int flags, int fd, off_t off);
+  int (*munmap)(void *addr, size_t len);
+  int (*mprotect)(void *addr, size_t len, int prot);
+};
+
+#define NACL_IRT_MEMORY_v0_3    "nacl-irt-memory-0.3"
+struct nacl_irt_memory {
   int (*mmap)(void **addr, size_t len, int prot, int flags, int fd, off_t off);
   int (*munmap)(void *addr, size_t len);
   int (*mprotect)(void *addr, size_t len, int prot);
@@ -101,11 +162,77 @@ struct nacl_irt_dyncode {
 
 #define NACL_IRT_THREAD_v0_1   "nacl-irt-thread-0.1"
 struct nacl_irt_thread {
-  int (*thread_create)(void *start_user_address, void *stack, void *thread_ptr);
+  /*
+   * thread_create() starts a new thread which calls start_func().
+   *
+   * In the new thread, tls_get() (from nacl_irt_tls) will return
+   * |thread_ptr|.  start_func() is called with no arguments, so
+   * |thread_ptr| is the only way to pass parameters to the new
+   * thread.
+   *
+   * |stack| is a pointer to the top of the stack for the new thread.
+   * Note that this assumes the stack grows downwards.
+   *
+   * |stack| does not need to be aligned.  thread_func() will be
+   * called with a stack pointer aligned appropriately for the
+   * architecture's ABI.  (However, prior to r9299, from July 2012,
+   * |stack| did need to be aligned for thread_func() to be called
+   * with an appropriately aligned stack pointer.)
+   *
+   * The exact stack pointer that thread_func() is called with may be
+   * less than |stack|, and the system may write data to addresses
+   * below |stack| before calling start_func(), so user code may not
+   * use the stack as a way to pass parameters to start_func().
+   *
+   * If start_func() returns in the new thread, the behaviour is
+   * undefined.
+   */
+  int (*thread_create)(void (*start_func)(void), void *stack, void *thread_ptr);
+  /*
+   * thread_exit() terminates the current thread.
+   *
+   * If |stack_flag| is non-NULL, thread_exit() will write 0 to
+   * |*stack_flag|.  This is intended to be used by a threading
+   * library to determine when the thread's stack can be deallocated
+   * or reused.  The system will not read or write the thread's stack
+   * after writing 0 to |*stack_flag|.
+   */
   void (*thread_exit)(int32_t *stack_flag);
   int (*thread_nice)(const int nice);
 };
 
+/* The irt_futex interface is based on Linux's futex() system call. */
+#define NACL_IRT_FUTEX_v0_1        "nacl-irt-futex-0.1"
+struct nacl_irt_futex {
+  /*
+   * If |*addr| still contains |value|, futex_wait_abs() waits to be
+   * woken up by a futex_wake(addr,...) call from another thread;
+   * otherwise, it immediately returns EAGAIN (which is the same as
+   * EWOULDBLOCK).  If woken by another thread, it returns 0.  If
+   * |abstime| is non-NULL and the time specified by |*abstime|
+   * passes, this returns ETIMEDOUT.
+   *
+   * Note that this differs from Linux's FUTEX_WAIT in that it takes an
+   * absolute time value (relative to the Unix epoch) rather than a
+   * relative time duration.
+   */
+  int (*futex_wait_abs)(volatile int *addr, int value,
+                        const struct timespec *abstime);
+  /*
+   * futex_wake() wakes up threads that are waiting on |addr| using
+   * futex_wait().  |nwake| is the maximum number of threads that will
+   * be woken up.  The number of threads that were woken is returned
+   * in |*count|.
+   */
+  int (*futex_wake)(volatile int *addr, int nwake, int *count);
+};
+
+/*
+ * "irt-mutex" is deprecated and is disabled under PNaCl (see
+ * https://code.google.com/p/nativeclient/issues/detail?id=3484 and
+ * pnacl_irt.c).  nacl-newlib's libpthread no longer uses it.  Note,
+ * however, that nacl-glibc's futex_emulation.c still uses it.
+ */
 #define NACL_IRT_MUTEX_v0_1        "nacl-irt-mutex-0.1"
 struct nacl_irt_mutex {
   int (*mutex_create)(int *mutex_handle);
@@ -115,6 +242,12 @@ struct nacl_irt_mutex {
   int (*mutex_trylock)(int mutex_handle);
 };
 
+/*
+ * "irt-cond" is deprecated and is disabled under PNaCl (see
+ * https://code.google.com/p/nativeclient/issues/detail?id=3484 and
+ * pnacl_irt.c).  nacl-newlib's libpthread no longer uses it.  Note,
+ * however, that nacl-glibc's futex_emulation.c still uses it.
+ */
 #define NACL_IRT_COND_v0_1      "nacl-irt-cond-0.1"
 struct nacl_irt_cond {
   int (*cond_create)(int *cond_handle);
@@ -126,6 +259,14 @@ struct nacl_irt_cond {
                              const struct timespec *abstime);
 };
 
+/*
+ * The "irt-sem" interface provides semaphores.  This interface is
+ * deprecated and is disabled under PNaCl (see
+ * https://code.google.com/p/nativeclient/issues/detail?id=3484 and
+ * pnacl_irt.c).  New versions of nacl-newlib's libpthread no longer
+ * use it, and nacl-glibc has never used it.  They implement
+ * semaphores using futexes instead.
+ */
 #define NACL_IRT_SEM_v0_1       "nacl-irt-sem-0.1"
 struct nacl_irt_sem {
   int (*sem_create)(int *sem_handle, int32_t value);
@@ -140,6 +281,12 @@ struct nacl_irt_tls {
   void *(*tls_get)(void);
 };
 
+/*
+ * The "irt-blockhook" interface is disabled under PNaCl because it
+ * does not have a known-portable use case (see
+ * https://code.google.com/p/nativeclient/issues/detail?id=3539 and
+ * pnacl_irt.c).
+ */
 #define NACL_IRT_BLOCKHOOK_v0_1 "nacl-irt-blockhook-0.1"
 struct nacl_irt_blockhook {
   int (*register_block_hooks)(void (*pre)(void), void (*post)(void));
@@ -156,13 +303,46 @@ struct nacl_irt_resource_open {
   int (*open_resource)(const char *file, int *fd);
 };
 
-#define NACL_IRT_CLOCK_v0_1 "nacl-irt-clock_get-0.1"
-struct nacl_irt_clock {
-  int (*getres)(clockid_t clk_id, struct timespec *res);
-  int (*gettime)(clockid_t clk_id, struct timespec *tp);
+#define NACL_IRT_RANDOM_v0_1 "nacl-irt-random-0.1"
+struct nacl_irt_random {
+  int (*get_random_bytes)(void *buf, size_t count, size_t *nread);
 };
 
-#if __cplusplus
+#define NACL_IRT_CLOCK_v0_1 "nacl-irt-clock_get-0.1"
+struct nacl_irt_clock {
+  int (*clock_getres)(clockid_t clk_id, struct timespec *res);
+  int (*clock_gettime)(clockid_t clk_id, struct timespec *tp);
+};
+
+/*
+ * A working getpid() is not provided by NaCl inside Chromium.  We
+ * only define this interface for uses of NaCl outside the Web
+ * browser.  Inside Chromium, requests for this interface may fail, or
+ * may return a function which always returns an error.
+ */
+#define NACL_IRT_DEV_GETPID_v0_1 "nacl-irt-dev-getpid-0.1"
+struct nacl_irt_dev_getpid {
+  int (*getpid)(int *pid);
+};
+
+#define NACL_IRT_EXCEPTION_HANDLING_v0_1 \
+  "nacl-irt-exception-handling-0.1"
+typedef void (*NaClExceptionHandler)(struct NaClExceptionContext *context);
+struct nacl_irt_exception_handling {
+  int (*exception_handler)(NaClExceptionHandler handler,
+                           NaClExceptionHandler *old_handler);
+  int (*exception_stack)(void *stack, size_t size);
+  int (*exception_clear_flag)(void);
+};
+
+#define NACL_IRT_DEV_LIST_MAPPINGS_v0_1 \
+  "nacl-irt-dev-list-mappings-0.1"
+struct nacl_irt_dev_list_mappings {
+  int (*list_mappings)(struct NaClMemMappingInfo *regions,
+                       size_t count, size_t *result_count);
+};
+
+#if defined(__cplusplus)
 }
 #endif
 

@@ -397,6 +397,8 @@ int (*__nacl_irt_open_resource) (const char* file, int *fd);
 int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
+int (*__nacl_irt_getpid) (int *pid);
+
 void
 init_irt_table (void)
 {
@@ -412,6 +414,7 @@ init_irt_table (void)
     struct nacl_irt_tls nacl_irt_tls;
     struct nacl_irt_resource_open nacl_irt_resource_open;
     struct nacl_irt_clock nacl_irt_clock;
+    struct nacl_irt_dev_getpid nacl_irt_dev_getpid;
   } u;
 
   if (__nacl_irt_query &&
@@ -437,7 +440,7 @@ init_irt_table (void)
 
   if (__nacl_irt_query &&
       __nacl_irt_query (NACL_IRT_FDIO_v0_1, &u.nacl_irt_fdio,
-		        sizeof(u.nacl_irt_fdio)) == sizeof(u.nacl_irt_fdio))
+			sizeof(u.nacl_irt_fdio)) == sizeof(u.nacl_irt_fdio))
     {
       __nacl_irt_close = u.nacl_irt_fdio.close;
       __nacl_irt_dup = u.nacl_irt_fdio.dup;
@@ -462,7 +465,7 @@ init_irt_table (void)
 
   if (__nacl_irt_query &&
       __nacl_irt_query (NACL_IRT_FILENAME_v0_1, &u.nacl_irt_filename,
-		    sizeof(u.nacl_irt_filename)) == sizeof(u.nacl_irt_filename))
+			sizeof(u.nacl_irt_filename)) == sizeof(u.nacl_irt_filename))
     {
       __nacl_irt_open = u.nacl_irt_filename.open;
       __nacl_irt_stat = u.nacl_irt_filename.nacl_abi_stat;
@@ -475,7 +478,7 @@ init_irt_table (void)
 
   if (__nacl_irt_query &&
       __nacl_irt_query (NACL_IRT_MEMORY_v0_2, &u.nacl_irt_memory,
-		        sizeof(u.nacl_irt_memory)) == sizeof(u.nacl_irt_memory))
+			sizeof(u.nacl_irt_memory)) == sizeof(u.nacl_irt_memory))
     {
       __nacl_irt_sysbrk = u.nacl_irt_memory.sysbrk;
       __nacl_irt_mmap = u.nacl_irt_memory.mmap;
@@ -502,7 +505,7 @@ init_irt_table (void)
 
   if (__nacl_irt_query &&
       __nacl_irt_query (NACL_IRT_DYNCODE_v0_1, &u.nacl_irt_dyncode,
-		      sizeof(u.nacl_irt_dyncode)) == sizeof(u.nacl_irt_dyncode))
+			sizeof(u.nacl_irt_dyncode)) == sizeof(u.nacl_irt_dyncode))
     {
       __nacl_irt_dyncode_create = u.nacl_irt_dyncode.dyncode_create;
       __nacl_irt_dyncode_modify = u.nacl_irt_dyncode.dyncode_modify;
@@ -608,15 +611,26 @@ init_irt_table (void)
 
   if (__nacl_irt_query &&
       __nacl_irt_query (NACL_IRT_CLOCK_v0_1, &u.nacl_irt_clock,
-      sizeof(u.nacl_irt_clock)) == sizeof(u.nacl_irt_clock))
+			sizeof(u.nacl_irt_clock)) == sizeof(u.nacl_irt_clock))
     {
-      __nacl_irt_clock_getres = u.nacl_irt_clock.getres;
-      __nacl_irt_clock_gettime = u.nacl_irt_clock.gettime;
+      __nacl_irt_clock_getres = u.nacl_irt_clock.clock_getres;
+      __nacl_irt_clock_gettime = u.nacl_irt_clock.clock_gettime;
     }
   else
     {
       __nacl_irt_clock_getres = nacl_irt_clock_getres;
       __nacl_irt_clock_gettime = nacl_irt_clock_gettime;
+    }
+
+  if (__nacl_irt_query &&
+      __nacl_irt_query (NACL_IRT_DEV_GETPID_v0_1, &u.nacl_irt_dev_getpid,
+			sizeof(u.nacl_irt_dev_getpid)) == sizeof(u.nacl_irt_dev_getpid))
+    {
+      __nacl_irt_getpid = u.nacl_irt_dev_getpid.getpid;
+    }
+  else
+    {
+      __nacl_irt_getpid = not_implemented;
     }
 
   if (!__nacl_irt_query)

@@ -140,6 +140,7 @@ ld {
     __nacl_irt_setsockopt;
     __nacl_irt_socketpair;
     __nacl_irt_shutdown;
+    __nacl_irt_getpid;
     # Those are in the dynamic linker, but used by libc.so.
     __libc_enable_secure;
     _dl_argv;
