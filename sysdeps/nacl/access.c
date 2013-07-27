@@ -19,11 +19,10 @@ __access (const char* file, int type)
   int return_code = lind_access(type, file);
 
   if (return_code < 0) {
-    __set_errno ( -1 * return_code);
+    __set_errno (-return_code);
     return -1;
-  } else {
-    return return_code;
   }
+  return return_code;
 }
 
 weak_alias (__access, access)

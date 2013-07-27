@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <nacl_syscalls.h>
 
 #include <lind_syscalls.h>
@@ -1192,18 +1193,18 @@ int lind_listen (int sockfd, int backlog)
 
 int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf)
 {
-    return 0;
+    return -ENOSYS;
 }
 
-int lind_accept (int sockfd, socklen_t addrlen)
+int lind_accept (int sockfd, int flags, struct sockaddr *addr, socklen_t *addrlen)
 {
-    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen, 0}};
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, flags, 0}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_accept, 2, in_args, 0, NULL);
 }
 
 int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out)
 {
-    return 0;
+    return -ENOSYS;
 }
 
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval)

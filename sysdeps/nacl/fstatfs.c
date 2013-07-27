@@ -16,8 +16,7 @@ __fstatfs (int fd, struct statfs *buf)
     __set_errno (-lind_rc);
      return -1;
   }
-   __set_errno (ENOSYS);
-   return 0;
+   return lind_rc;
 }
 
 weak_alias (__fstatfs, fstatfs)

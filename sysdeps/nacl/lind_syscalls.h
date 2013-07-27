@@ -143,7 +143,7 @@ int lind_recv (int sockfd, size_t len, int flags, void *buf);
 int lind_connect (int sockfd, socklen_t addrlen, const struct sockaddr *src_addr);
 int lind_listen (int sockfd, int backlog);
 int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf);
-int lind_accept (int sockfd, socklen_t addrlen);
+int lind_accept (int sockfd, int flags, struct sockaddr *addr, socklen_t *addrlen);
 int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out);
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval);
 int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval);

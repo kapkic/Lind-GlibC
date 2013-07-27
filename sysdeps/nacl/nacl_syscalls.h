@@ -104,7 +104,7 @@
 
 #define NACL_MAX_SYSCALLS               110
 
-#define NACL_sys_lind_api         112
+#define NACL_sys_lind_api         113
 
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
