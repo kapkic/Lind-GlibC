@@ -518,7 +518,7 @@ static int nacl_irt_recv_lind (int sockfd, void *buf, size_t len, int flags, int
 static int nacl_irt_recvfrom_lind (int sockfd, void *buf, size_t len, int flags,
                             struct sockaddr *dest_addr, socklen_t* addrlen, int *count)
 {
-    socklen_t in_len = addrlen?*addrlen:0;
+    socklen_t in_len = addrlen?*addrlen:sizeof(struct sockaddr);
     socklen_t out_len;
     struct sockaddr outaddr;
     int rv = lind_recvfrom(sockfd, len, flags, in_len, &out_len, buf, &outaddr);
@@ -549,7 +549,7 @@ static int nacl_irt_shutdown_lind (int sockfd, int how)
 static int nacl_irt_getsockopt_lind (int sockfd, int level, int optname,
                void *optval, socklen_t *optlen)
 {
-    socklen_t inlen = optlen?*optlen:0;
+    socklen_t inlen = optlen?*optlen:sizeof(int);
     if(inlen>0 && !optval) {
         return EFAULT;
     }

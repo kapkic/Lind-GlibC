@@ -1245,7 +1245,7 @@ int lind_getifaddrs (int ifaddrs_buf_siz, void *ifaddrs)
 int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen_t * addrlen_out, void *buf, struct sockaddr *src_addr)
 {
     LindArg in_args[4] = {{AT_INT, sockfd, 0}, {AT_INT, len, 0}, {AT_INT, flags, 0}, {AT_INT, addrlen, 0}};
-    LindArg out_args[3] = {{AT_DATA, (uintptr_t)addrlen_out, sizeof(socklen_t)}, {AT_DATA, (uintptr_t)buf, sizeof(len)}, {AT_DATA, (uintptr_t)src_addr, sizeof(addrlen)}};
+    LindArg out_args[3] = {{AT_DATA, (uintptr_t)addrlen_out, sizeof(socklen_t)}, {AT_DATA, (uintptr_t)buf, len}, {AT_DATA, (uintptr_t)src_addr, addrlen}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_recvfrom, 4, in_args, 3, out_args);
 }
 
