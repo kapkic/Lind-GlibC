@@ -15,6 +15,7 @@ PHDRS
   seg_dynamic  PT_DYNAMIC FLAGS(6) ;
   seg_stack    PT_GNU_STACK FLAGS(6) ;
   seg_tls      PT_TLS FLAGS(4) ;
+  seg_note     PT_NOTE FLAGS(4) ;
 }
 SECTIONS
 {
@@ -53,7 +54,8 @@ SECTIONS
     PROVIDE_HIDDEN (__note_gnu_build_id_start = .);
     *(.note.gnu.build-id)
     PROVIDE_HIDDEN (__note_gnu_build_id_end = .);
-  } :seg_rodata
+  } :seg_rodata :seg_note
+  .dummy : {} :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }

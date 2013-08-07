@@ -48,10 +48,10 @@ def main(args):
     fh.seek(offset_ei_class)
     elfclass = fh.read(1)
     if elfclass == elfclass32:
-        check("H", offset_e_phnum32, 6)
+        check("H", offset_e_phnum32, 7)
         replace("H", offset_e_phnum32, 3)
     elif elfclass == elfclass64:
-        check("H", offset_e_phnum64, 6)
+        check("H", offset_e_phnum64, 7)
         replace("H", offset_e_phnum64, 3)
     else:
         raise AssertionError("Unknown ELF class in file %s." % filename)
