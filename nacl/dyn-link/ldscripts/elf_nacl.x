@@ -55,7 +55,9 @@ SECTIONS
     *(.note.gnu.build-id)
     PROVIDE_HIDDEN (__note_gnu_build_id_end = .);
   } :seg_rodata :seg_note
-  .dummy : {} :seg_rodata
+  /* :seg_rodata is on .dummy rather than on .hash to avoid breaking the linker
+     script munging that glibc's Makerules does using sed. */
+  .dummy          : {} :seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }
