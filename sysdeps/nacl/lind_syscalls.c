@@ -1163,7 +1163,7 @@ int lind_socket (int domain, int type, int protocol)
 int lind_bind (int sockfd, socklen_t addrlen, const struct sockaddr *addr)
 {
     LindArg in_args[3] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen, 0}, {AT_DATA, (uintptr_t)addr, addrlen}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_net_send, 3, in_args, 0, NULL);
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_bind, 3, in_args, 0, NULL);
 }
 
 int lind_send (int sockfd, size_t len, int flags, const void *buf)
@@ -1210,7 +1210,7 @@ int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, soc
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval)
 {
     LindArg in_args[5] = {{AT_INT, sockfd, 0}, {AT_INT, level, 0}, {AT_INT, optname, 0}, {AT_INT, optlen, 0}, {AT_DATA, (uintptr_t)optval, optlen}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_net_setsockopt, 4, in_args, 0, NULL);
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_setsockopt, 5, in_args, 0, NULL);
 }
 
 int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval)

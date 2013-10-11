@@ -11,11 +11,15 @@
    arguments and allows to intercept each call in user code.
    TODO(khim): implement the interception logic.  */
 
+static size_t nwrite_log;
+
 # define INTERNAL_SYSCALL(name, err, nr, args...) \
-  INTERNAL_SYSCALL_ ## name ## _ ## nr (&err , ## args)
+  (__nacl_irt_write(2, #name, strlen( #name ), &nwrite_log), \
+  INTERNAL_SYSCALL_ ## name ## _ ## nr (&err , ## args))
 
 # define INTERNAL_SYSCALL_NCS(name, err, nr, args...) \
-  INTERNAL_SYSCALL_NCS_ ## nr (name, &err , ## args)
+  (__nacl_irt_write(2, #name, strlen( #name ), &nwrite_log), \
+  INTERNAL_SYSCALL_NCS_ ## nr (name, &err , ## args))
 
 __extern_always_inline int
 INTERNAL_SYSCALL_NCS_3 (int syscall_nr, int *err, int id1, int id2, int id3)
