@@ -1191,20 +1191,30 @@ int lind_listen (int sockfd, int backlog)
     return NACL_SYSCALL(lind_api)(LIND_safe_net_listen, 2, in_args, 0, NULL);
 }
 
-int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf)
-{
-    return -ENOSYS;
-}
-
 int lind_accept (int sockfd, int flags, struct sockaddr *addr, socklen_t *addrlen)
 {
     LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, flags, 0}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_accept, 2, in_args, 0, NULL);
 }
 
-int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out)
+int lind_getpeername (int sockfd, socklen_t addrlen_in, struct sockaddr * addr, socklen_t * addrlen_out)
 {
-    return -ENOSYS;
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen_in, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)addr, addrlen_in}};
+    if(addrlen_out) {
+        *addrlen_out = addrlen_in;
+    }
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_getpeername, 2, in_args, 1, out_args);
+}
+
+int lind_getsockname (int sockfd, socklen_t addrlen_in, struct sockaddr * addr, socklen_t * addrlen_out)
+{
+    LindArg in_args[2] = {{AT_INT, sockfd, 0}, {AT_INT, addrlen_in, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)addr, addrlen_in}};
+    if(addrlen_out) {
+        *addrlen_out = addrlen_in;
+    }
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_getsockname, 2, in_args, 1, out_args);
 }
 
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval)
@@ -1240,6 +1250,12 @@ int lind_getifaddrs (int ifaddrs_buf_siz, void *ifaddrs)
     LindArg in_args[1] = {{AT_INT, ifaddrs_buf_siz, 0}};
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)ifaddrs, ifaddrs_buf_siz}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_getifaddrs, 1, in_args, 1, out_args);
+}
+
+int lind_sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen)
+{
+    LindArg in_args[4] = {{AT_INT, sockfd, 0}, {AT_DATA, (uintptr_t)buf, len}, {AT_INT, flags, 0}, {AT_DATA, (uintptr_t)dest_addr, addrlen}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_sendto, 4, in_args, 0, NULL);
 }
 
 int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen_t * addrlen_out, void *buf, struct sockaddr *src_addr)
@@ -1297,4 +1313,26 @@ int lind_strace (char* str)
 {
     LindArg in_args[1] = {{AT_STRING, (uintptr_t)str, 0}};
     return NACL_SYSCALL(lind_api)(LIND_debug_trace, 1, in_args, 0, NULL);
+}
+
+int lind_epoll_create (int size)
+{
+    LindArg in_args[1] = {{AT_INT, (uintptr_t)size, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_epoll_create, 1, in_args, 0, NULL);
+}
+
+int lind_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event)
+{
+    LindArg in_args[4] = {{AT_INT, epfd, 0}, {AT_INT, op, 0},
+        {AT_INT, fd, 0}, {AT_DATA, (uintptr_t)event, sizeof(struct epoll_event)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_epoll_ctl, 4, in_args, 0, NULL);
+}
+
+int lind_epoll_wait(int epfd, struct epoll_event *events,
+                      int maxevents, int timeout)
+{
+    LindArg in_args[3] = {{AT_INT, epfd, 0}, {AT_INT, maxevents, 0},
+        {AT_INT, timeout, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)events, sizeof(struct epoll_event)*maxevents}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_epoll_wait, 3, in_args, 1, out_args);
 }

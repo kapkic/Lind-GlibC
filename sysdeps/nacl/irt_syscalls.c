@@ -515,6 +515,20 @@ static int nacl_irt_recv_lind (int sockfd, void *buf, size_t len, int flags, int
     return 0;
 }
 
+static int nacl_irt_sendto_lind(int sockfd, const void *buf, size_t len, int flags,
+                          const struct sockaddr *dest_addr, socklen_t addrlen,
+                          int *count)
+{
+    int rv = lind_sendto(sockfd, buf, len, flags, dest_addr, addrlen);
+    if(rv<0) {
+        return -rv;
+    }
+    if(count) {
+        *count = rv;
+    }
+    return 0;
+}
+
 static int nacl_irt_recvfrom_lind (int sockfd, void *buf, size_t len, int flags,
                             struct sockaddr *dest_addr, socklen_t* addrlen, int *count)
 {
@@ -584,6 +598,26 @@ static int nacl_irt_socketpair_lind (int domain, int type, int protocol, int sv[
     return 0;
 }
 
+static int nacl_irt_getpeername_lind (int sockfd, struct sockaddr *addr,
+                               socklen_t *addrlen)
+{
+    int rv = lind_getpeername(sockfd, *addrlen, addr, addrlen);
+    if(rv<0) {
+        return -rv;
+    }
+    return 0;
+}
+
+static int nacl_irt_getsockname_lind (int sockfd, struct sockaddr *addr,
+                               socklen_t *addrlen)
+{
+    int rv = lind_getsockname(sockfd, *addrlen, addr, addrlen);
+    if(rv<0) {
+        return -rv;
+    }
+    return 0;
+}
+
 static int nacl_irt_poll_lind (struct pollfd *fds, nfds_t nfds,
                           int timeout, int *count)
 {
@@ -593,6 +627,33 @@ static int nacl_irt_poll_lind (struct pollfd *fds, nfds_t nfds,
     }
     return 0;
 }
+
+static int nacl_irt_epoll_create_lind (int size, int *fd)
+{
+    int rv = lind_epoll_create(size);
+    if(rv<0) {
+        return -rv;
+    }
+    *fd = rv;
+    return 0;
+}
+
+static int nacl_irt_epoll_ctl_lind (int epfd, int op, int fd, struct epoll_event *event)
+{
+    return -lind_epoll_ctl(epfd, op, fd, event);
+}
+
+static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
+                                 int maxevents, int timeout, int *count)
+{
+    int rv = lind_epoll_wait(epfd, events, maxevents, timeout);
+    if(rv<0) {
+        return -rv;
+    }
+    *count = rv;
+    return 0;
+}
+
 
 void
 init_irt_table (void)
@@ -827,11 +888,11 @@ init_irt_table (void)
   __nacl_irt_rmdir = nacl_irt_rmdir_lind;
   __nacl_irt_getcwd = not_implemented;
 
-  __nacl_irt_epoll_create = not_implemented;
+  __nacl_irt_epoll_create = nacl_irt_epoll_create_lind;
   __nacl_irt_epoll_create1 = not_implemented;
-  __nacl_irt_epoll_ctl = not_implemented;
+  __nacl_irt_epoll_ctl = nacl_irt_epoll_ctl_lind;
   __nacl_irt_epoll_pwait = not_implemented;
-  __nacl_irt_epoll_wait = not_implemented;
+  __nacl_irt_epoll_wait = nacl_irt_epoll_wait_lind;
   __nacl_irt_poll = nacl_irt_poll_lind;
   __nacl_irt_ppoll = not_implemented;
   __nacl_irt_socket = nacl_irt_socket_lind;
@@ -841,14 +902,14 @@ init_irt_table (void)
   __nacl_irt_connect = nacl_irt_connect_lind;
   __nacl_irt_send = nacl_irt_send_lind;
   __nacl_irt_sendmsg = not_implemented;
-  __nacl_irt_sendto = not_implemented;
+  __nacl_irt_sendto = nacl_irt_sendto_lind;
   __nacl_irt_recv = nacl_irt_recv_lind;
   __nacl_irt_recvmsg = not_implemented;
   __nacl_irt_recvfrom = nacl_irt_recvfrom_lind;
   __nacl_irt_select = nacl_irt_select_lind;
   __nacl_irt_pselect = not_implemented;
-  __nacl_irt_getpeername = not_implemented;
-  __nacl_irt_getsockname = not_implemented;
+  __nacl_irt_getpeername = nacl_irt_getpeername_lind;
+  __nacl_irt_getsockname = nacl_irt_getsockname_lind;
   __nacl_irt_getsockopt = nacl_irt_getsockopt_lind;
   __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;

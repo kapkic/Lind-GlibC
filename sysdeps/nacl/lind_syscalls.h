@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 #include <sys/poll.h>
+#include <sys/epoll.h>
 #include <unistd.h>
 
 #define LIND_debug_noop                 1
@@ -62,6 +63,9 @@
 #define LIND_safe_sys_getegid           53
 #define LIND_safe_fs_flock              54
 #define LIND_safe_fs_rename             55
+#define LIND_safe_net_epoll_create      56
+#define LIND_safe_net_epoll_ctl         57
+#define LIND_safe_net_epoll_wait        58
 
 #define LIND_comp_cia                   105
 #define LIND_comp_call                  106
@@ -142,9 +146,10 @@ int lind_send (int sockfd, size_t len, int flags, const void *buf);
 int lind_recv (int sockfd, size_t len, int flags, void *buf);
 int lind_connect (int sockfd, socklen_t addrlen, const struct sockaddr *src_addr);
 int lind_listen (int sockfd, int backlog);
-int lind_sendto (int sockfd, size_t len, int flags, socklen_t addrlen, const struct sockaddr_in *dest_addr, const void *buf);
+int lind_sendto(int sockfd, const void *buf, size_t len, int flags, const struct sockaddr *dest_addr, socklen_t addrlen);
 int lind_accept (int sockfd, int flags, struct sockaddr *addr, socklen_t *addrlen);
-int lind_getpeername (int sockfd, socklen_t addrlen_in, __SOCKADDR_ARG addr, socklen_t * addrlen_out);
+int lind_getsockname (int sockfd, socklen_t addrlen_in, struct sockaddr * addr, socklen_t * addrlen_out);
+int lind_getpeername (int sockfd, socklen_t addrlen_in, struct sockaddr * addr, socklen_t * addrlen_out);
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval);
 int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval);
 int lind_shutdown (int sockfd, int how);
@@ -159,6 +164,10 @@ int lind_getgid (gid_t * buf);
 int lind_getegid (gid_t * buf);
 int lind_flock (int fd, int operation);
 int lind_strace (char* str);
+int lind_epoll_create (int size);
+int lind_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event);
+int lind_epoll_wait(int epfd, struct epoll_event *events,
+                      int maxevents, int timeout);
 
 #endif /* _LIND_SYSCALLS_H_ */
 
