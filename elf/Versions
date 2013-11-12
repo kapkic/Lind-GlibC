@@ -140,6 +140,7 @@ ld {
     __nacl_irt_setsockopt;
     __nacl_irt_socketpair;
     __nacl_irt_shutdown;
+    __nacl_irt_getpid;
     lind_access;
     lind_unlink;
     lind_link;

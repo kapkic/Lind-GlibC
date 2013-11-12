@@ -14,6 +14,7 @@ PHDRS
   seg_dynamic  PT_DYNAMIC FLAGS(6) ;
   seg_stack    PT_GNU_STACK FLAGS(6) ;
   seg_tls      PT_TLS FLAGS(4) ;
+  seg_note     PT_NOTE FLAGS(4) ;
 }
 SECTIONS
 {
@@ -52,7 +53,10 @@ SECTIONS
     PROVIDE_HIDDEN (__note_gnu_build_id_start = .);
     *(.note.gnu.build-id)
     PROVIDE_HIDDEN (__note_gnu_build_id_end = .);
-  } :seg_rodata
+  } :seg_rodata :seg_note
+  /* :seg_rodata is on .dummy rather than on .hash to avoid breaking the linker
+     script munging that glibc's Makerules does using sed. */
+  .dummy          : {} : seg_rodata
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
   .dynsym         : { *(.dynsym) }

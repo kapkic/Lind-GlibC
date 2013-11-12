@@ -1,22 +1,20 @@
-#include <unistd.h>
 #include <errno.h>
-#include <nacl_syscalls.h>
-#include "lind_util.h"
-#include "lind_strace.h"
-#include "lind_syscalls.h"
+#include <unistd.h>
 
-pid_t __getpid ()
+int
+__getpid ()
 {
-  pid_t lind_pid = -1;
-
-  int rc = lind_getpid(&lind_pid);
-
-  if (rc != 0) {
-    __set_errno(rc);
+  int pid;
+  int error = __nacl_irt_getpid(&pid);
+  if (error != 0) {
+    errno = error;
     return -1;
   }
-  return lind_pid;
+  return pid;
 }
+
 libc_hidden_def (__getpid)
+stub_warning (getpid)
 weak_alias (__getpid, getpid)
-libc_hidden_def (getpid)
+libc_hidden_weak (getpid)
+
