@@ -57,7 +57,7 @@ int lind_mkdir (int mode, const char *path)
 int lind_rmdir (const char *path)
 {
     LindArg in_args[1] = {{AT_STRING, (uintptr_t)path, 0}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_fs_xstat, 1, in_args, 0, NULL);
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_rmdir, 1, in_args, 0, NULL);
 }
 
 int lind_xstat (int version, const char *path, struct stat *buf)
