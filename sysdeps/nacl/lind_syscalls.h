@@ -66,6 +66,8 @@
 #define LIND_safe_net_epoll_create      56
 #define LIND_safe_net_epoll_ctl         57
 #define LIND_safe_net_epoll_wait        58
+#define LIND_safe_net_sendmsg           59
+#define LIND_safe_net_recvmsg           60
 
 #define LIND_comp_cia                   105
 #define LIND_comp_call                  106
@@ -135,11 +137,13 @@ int lind_geteuid (uid_t * buf);
 int lind_getgid (gid_t * buf);
 int lind_getegid (gid_t * buf);
 int lind_flock (int fd, int operation);
-int lind_strace (char* str);
+int lind_strace (const char* str);
 int lind_epoll_create (int size);
 int lind_epoll_ctl (int epfd, int op, int fd, struct epoll_event *event);
 int lind_epoll_wait(int epfd, struct epoll_event *events,
                       int maxevents, int timeout);
+ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
+ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 
 #endif /* _LIND_SYSCALLS_H_ */
 

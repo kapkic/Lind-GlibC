@@ -661,6 +661,26 @@ static int nacl_irt_getpid_lind (int *pid)
     return -lind_getpid(pid);
 }
 
+static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,
+                                  int flags, int *count) {
+	int rv = lind_sendmsg(sockfd, msg, flags);
+	if(rv<0) {
+		return -rv;
+	}
+	*count = rv;
+	return 0;
+}
+
+static int nacl_irt_recvmsg_lind (int sockfd, struct msghdr *msg,
+                                  int flags, int *count) {
+	int rv = lind_recvmsg(sockfd, msg, flags);
+	if(rv<0) {
+		return -rv;
+	}
+	*count = rv;
+	return 0;
+}
+
 void
 init_irt_table (void)
 {
@@ -919,10 +939,10 @@ init_irt_table (void)
   __nacl_irt_listen = nacl_irt_listen_lind;
   __nacl_irt_connect = nacl_irt_connect_lind;
   __nacl_irt_send = nacl_irt_send_lind;
-  __nacl_irt_sendmsg = not_implemented;
+  __nacl_irt_sendmsg = nacl_irt_sendmsg_lind;
   __nacl_irt_sendto = nacl_irt_sendto_lind;
   __nacl_irt_recv = nacl_irt_recv_lind;
-  __nacl_irt_recvmsg = not_implemented;
+  __nacl_irt_recvmsg = nacl_irt_recvmsg_lind;
   __nacl_irt_recvfrom = nacl_irt_recvfrom_lind;
   __nacl_irt_select = nacl_irt_select_lind;
   __nacl_irt_pselect = not_implemented;

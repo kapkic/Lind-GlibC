@@ -273,6 +273,95 @@ int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen
     return NACL_SYSCALL(lind_api)(LIND_safe_net_recvfrom, 4, in_args, 3, out_args);
 }
 
+#define MAX_IOVLEN 512
+
+ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags) {
+	LindArg in_args[MAX_IOVLEN+5];
+	if(msg->msg_iovlen > MAX_IOVLEN) {
+		return -ENOSYS;
+	}
+	size_t nargs = msg->msg_iovlen+5;
+	in_args[0].arg_type = AT_INT;
+	in_args[0].ptr = sockfd;
+	in_args[0].len = 0;
+
+	in_args[1].arg_type = AT_INT;
+	in_args[1].ptr = flags;
+	in_args[1].len = 0;
+
+	in_args[2].arg_type = AT_DATA_OPTIONAL;
+	in_args[2].ptr = (uintptr_t)msg->msg_name;
+	in_args[2].len = msg->msg_namelen;
+
+	in_args[3].arg_type = AT_DATA_OPTIONAL;
+	in_args[3].ptr = (uintptr_t)msg->msg_control;
+	in_args[3].len = msg->msg_controllen;
+
+	in_args[4].arg_type = AT_INT;
+	in_args[4].ptr = msg->msg_flags;
+	in_args[4].len = 0;
+
+	for(size_t i=5; i<nargs; ++i) {
+		in_args[i].arg_type = AT_DATA;
+		in_args[i].ptr = (uintptr_t)msg->msg_iov[i-5].iov_base;
+		in_args[i].len = msg->msg_iov[i-5].iov_len;
+	}
+
+	return NACL_SYSCALL(lind_api)(LIND_safe_net_sendmsg, nargs, in_args, 0, NULL);
+}
+
+ssize_t lind_recvmsg(int sockfd, struct msghdr *msg, int flags) {
+	LindArg in_args[MAX_IOVLEN+5];
+	LindArg out_args[MAX_IOVLEN+2];
+	if(msg->msg_iovlen > MAX_IOVLEN) {
+		return -ENOSYS;
+	}
+
+	size_t nargs = msg->msg_iovlen+5;
+	in_args[0].arg_type = AT_INT;
+	in_args[0].ptr = sockfd;
+	in_args[0].len = 0;
+
+	in_args[1].arg_type = AT_INT;
+	in_args[1].ptr = flags;
+	in_args[1].len = 0;
+
+	in_args[2].arg_type = AT_DATA_OPTIONAL;
+	in_args[2].ptr = (uintptr_t)msg->msg_name;
+	in_args[2].len = msg->msg_namelen;
+
+	in_args[3].arg_type = AT_INT;
+	in_args[3].ptr = msg->msg_controllen;
+	in_args[3].len = 0;
+
+	in_args[4].arg_type = AT_INT;
+	in_args[4].ptr = msg->msg_flags;
+	in_args[4].len = 0;
+
+	// output control message
+	out_args[0].arg_type = AT_DATA;
+	out_args[0].ptr = (uintptr_t)msg->msg_control;
+	out_args[0].len = msg->msg_controllen;
+
+	// local address
+	out_args[1].arg_type = AT_DATA_OPTIONAL;
+	out_args[1].ptr = (uintptr_t)msg->msg_name;
+	out_args[1].len = msg->msg_namelen;
+
+	for(size_t i=5; i<nargs; ++i) {
+		// input IO vector lengths
+		in_args[i].arg_type = AT_INT;
+		in_args[i].ptr = msg->msg_iov[i-5].iov_len;
+		in_args[i].len = 0;
+		// output IO vectors
+		out_args[i-3].arg_type = AT_DATA;
+		out_args[i-3].ptr = (uintptr_t)msg->msg_iov[i-5].iov_base;
+		out_args[i-3].len = msg->msg_iov[i-5].iov_len;
+	}
+
+	return NACL_SYSCALL(lind_api)(LIND_safe_net_recvmsg, nargs, in_args, nargs-3, out_args);
+}
+
 int lind_poll (int nfds, int timeout, struct pollfd *fds_in, struct pollfd *fds_out)
 {
     LindArg in_args[3] = {{AT_INT, nfds, 0}, {AT_INT, timeout, 0}, {AT_DATA, (uintptr_t)fds_in, sizeof(struct pollfd)*nfds}};
@@ -317,10 +406,14 @@ int lind_flock (int fd, int operation)
     return NACL_SYSCALL(lind_api)(LIND_safe_fs_flock, 2, in_args, 0, NULL);
 }
 
-int lind_strace (char* str)
+int lind_strace (const char* str)
 {
+#if 1
     LindArg in_args[1] = {{AT_STRING, (uintptr_t)str, 0}};
     return NACL_SYSCALL(lind_api)(LIND_debug_trace, 1, in_args, 0, NULL);
+#else
+    return 0;
+#endif
 }
 
 int lind_epoll_create (int size)

@@ -6,6 +6,7 @@
 #include <irt_syscalls.h>
 #include <lowlevellock.h>
 #include <lind_syscalls.h>
+#include <string.h>
 
 /* Implementation of all syscalls for use in platform- and OS- independent code
    as inline functions.  Each function translates the syscall arguments into IRT
@@ -2184,8 +2185,16 @@ INTERNAL_SYSCALL_umount_1 (int *err, const char *target)
 __extern_always_inline int
 INTERNAL_SYSCALL_uname_1 (int *err, struct utsname *buf)
 {
-  lind_strace("uname unimplemented");
-  *err = (38 /* ENOSYS */);
+  //lind_strace("uname unimplemented");
+  //*err = (38 /* ENOSYS */);
+#define CPSTR(d, s) memcpy(d, s, sizeof(s))
+  CPSTR(buf->sysname, "Linux");
+  CPSTR(buf->nodename, "ubuntu");
+  CPSTR(buf->release, "3.8.0-35-generic");
+  CPSTR(buf->version, "#50-Ubuntu SMP Tue Dec 3 01:24:59 UTC 2013");
+  CPSTR(buf->machine, "x86_64");
+#undef CPSTR
+  *err = 0;
   return 0;
 }
 

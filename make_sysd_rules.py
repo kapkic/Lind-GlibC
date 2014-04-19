@@ -90,7 +90,7 @@ override_list = [
     "posix/wait.c",
     "posix/waitid.c",
     "posix/waitpid.c",
-    "signal/sigaction.c",
+#   "signal/sigaction.c",
     "stdio-common/tmpfile.c",
     "stdlib/add_n.c",
     "stdlib/addmul_1.c",

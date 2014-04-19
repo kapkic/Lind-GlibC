@@ -38,7 +38,7 @@ __fcntl (int fd, int cmd, ...) {
     if (cmd == F_GETFD || cmd == F_GETFL || cmd == F_GETOWN ) {
       /* these commands don't have an arg */
       result = lind_fcntl_get(fd, cmd);
-    } else if (cmd == F_SETFD || cmd == F_SETFL || cmd == F_SETOWN ) {
+    } else if (cmd == F_SETFD || cmd == F_SETFL || cmd == F_SETOWN || cmd == F_DUPFD || cmd == F_DUPFD_CLOEXEC) {
       /* These commands have a single long arg */
       va_list argp;
       va_start(argp, cmd);
