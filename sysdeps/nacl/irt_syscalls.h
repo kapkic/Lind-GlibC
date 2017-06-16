@@ -145,6 +145,11 @@ extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
 extern int (*__nacl_irt_getpid) (int *pid);
+// yiwen: added nacl_irt_pipe
+extern int (*__nacl_irt_pipe) (int *pipedes);
+// yiwen: added nacl_irt_fork
+extern int (*__nacl_irt_fork) (void);
+extern void (*__nacl_irt_execv) (void);
 
 #undef socklen_t
 

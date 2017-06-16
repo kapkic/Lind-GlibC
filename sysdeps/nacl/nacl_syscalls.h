@@ -106,6 +106,10 @@
 
 #define NACL_sys_lind_api         113
 
+// yiwen: added new NACL_sys_call here.
+#define NACL_sys_pipe         114
+#define NACL_sys_fork         115
+#define NACL_sys_execv        116
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) * 32))
@@ -201,5 +205,10 @@ typedef int (*TYPE_nacl_dyncode_modify) (void *dest, const void *src,
 typedef int (*TYPE_nacl_dyncode_delete) (void *dest, size_t size);
 
 typedef int (*TYPE_nacl_lind_api) (uint32_t callNum, uint32_t inNum, void* inArgs, uint32_t outNum, void* outArgs);
+
+//yiwen 
+typedef int (*TYPE_nacl_pipe) (int* pipedes);
+typedef int (*TYPE_nacl_fork) (void);
+typedef void (*TYPE_nacl_execv) (void);
 
 #endif

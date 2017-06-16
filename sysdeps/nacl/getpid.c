@@ -10,7 +10,8 @@ __getpid ()
     errno = error;
     return -1;
   }
-  return pid;
+
+  return pid; 
 }
 
 libc_hidden_def (__getpid)
