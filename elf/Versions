@@ -141,6 +141,11 @@ ld {
     __nacl_irt_socketpair;
     __nacl_irt_shutdown;
     __nacl_irt_getpid;
+    __nacl_irt_pipe;
+    __nacl_irt_fork;
+    __nacl_irt_execv;
+    __nacl_irt_execve;
+    __nacl_irt_waitpid;
     lind_access;
     lind_unlink;
     lind_link;

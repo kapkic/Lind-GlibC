@@ -11,7 +11,7 @@ clock_t __clock (void)
   if (result != 0) {
     errno = result;
     return -1;
-  }
+  } 
   return ticks;
 }
 weak_alias (__clock, clock)

@@ -10,7 +10,10 @@ __getpid ()
     errno = error;
     return -1;
   }
-  return pid;
+
+  // yiwen: debug
+  pid = 777;
+  return pid; 
 }
 
 libc_hidden_def (__getpid)

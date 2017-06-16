@@ -131,6 +131,15 @@ int lind_getpid (pid_t* buf)
     return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 1, out_args);
 }
 
+// yiwen: added lind_pipe(pipedes)
+// this is not used right now, since our pipe was implemented inside NaCl's runtime.
+// but we may choose to use it, when we want to use our Repy SafePOSIX implementation.
+int lind_pipe (int* pipedes)
+{
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)pipedes, sizeof(uintptr_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_sys_pipe, 0, NULL, 1, out_args);
+}
+
 int lind_dup (int oldfd)
 {
     LindArg in_args[1] = {{AT_INT, oldfd, 0}};

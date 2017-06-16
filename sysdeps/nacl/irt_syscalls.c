@@ -399,6 +399,12 @@ int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
 int (*__nacl_irt_getpid) (int *pid);
+// yiwen
+int (*__nacl_irt_pipe) (int *pipedes);
+int (*__nacl_irt_fork) (void);
+void (*__nacl_irt_execv) (void);
+int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
+int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -659,6 +665,43 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
 static int nacl_irt_getpid_lind (int *pid)
 {
     return -lind_getpid(pid);
+}
+
+// yiwen: nacl_irt_fork
+static int nacl_irt_fork (void)
+{
+    return NACL_SYSCALL (fork) ();
+}
+
+// yiwen: nacl_irt_execv
+static void nacl_irt_execv (void)
+{
+    return NACL_SYSCALL (execv) ();
+}
+
+// yiwen: nacl_irt_execve
+static int nacl_irt_execve (const char* path, const char* argv, const char* envp)
+{
+    return NACL_SYSCALL (execve) (path, argv, envp);
+}
+
+// yiwen: pipe_lind 
+static int nacl_irt_pipe_lind (int *pipedes)
+{
+
+    // currently, we implement the pipe inside NaCl's runtime (in C).
+    // so we are not going into the Repy code via lind_api, 
+    // instead, we just use NACL_SYSCALL to direct this nacl_irt_pipe_linds
+    int rv = NACL_SYSCALL (pipe) (pipedes);
+    if (rv < 0)
+       return -rv;
+    return 0;
+}
+
+// yiwen: nacl_irt_waitpid
+static int nacl_irt_waitpid (int pid, int *stat_loc, int options)
+{
+    return NACL_SYSCALL (waitpid) (pid, stat_loc, options);
 }
 
 static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,
@@ -952,6 +995,14 @@ init_irt_table (void)
   __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;
   __nacl_irt_shutdown = nacl_irt_shutdown_lind;
+
+  // yiwen: added nacl_irt_pipe_lind
+  __nacl_irt_pipe = nacl_irt_pipe_lind;
+  // yiwen: added nacl_irt_fork
+  __nacl_irt_fork = nacl_irt_fork;
+  __nacl_irt_execv = nacl_irt_execv;
+  __nacl_irt_execve = nacl_irt_execve;
+  __nacl_irt_waitpid = nacl_irt_waitpid;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
