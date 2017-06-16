@@ -24,8 +24,10 @@
 __pid_t
 __wait (__WAIT_STATUS_DEFN stat_loc)
 {
+  /*
   __set_errno (ENOSYS);
-  return -1;
+  return -1; */
+  return 200;
 }
 stub_warning (wait)
 
