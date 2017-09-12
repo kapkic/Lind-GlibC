@@ -403,6 +403,7 @@ int (*__nacl_irt_getpid) (int *pid);
 int (*__nacl_irt_pipe) (int *pipedes);
 int (*__nacl_irt_fork) (void);
 void (*__nacl_irt_execv) (void);
+int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -675,6 +676,12 @@ static int nacl_irt_fork (void)
 static void nacl_irt_execv (void)
 {
     return NACL_SYSCALL (execv) ();
+}
+
+// yiwen: nacl_irt_execve
+static int nacl_irt_execve (const char* path, const char* argv, const char* envp)
+{
+    return NACL_SYSCALL (execve) (path, argv, envp);
 }
 
 // yiwen: pipe_lind 
@@ -987,6 +994,7 @@ init_irt_table (void)
   // yiwen: added nacl_irt_fork
   __nacl_irt_fork = nacl_irt_fork;
   __nacl_irt_execv = nacl_irt_execv;
+  __nacl_irt_execve = nacl_irt_execve;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

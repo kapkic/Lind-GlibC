@@ -144,6 +144,7 @@ ld {
     __nacl_irt_pipe;
     __nacl_irt_fork;
     __nacl_irt_execv;
+    __nacl_irt_execve;
     lind_access;
     lind_unlink;
     lind_link;
