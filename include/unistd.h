@@ -86,6 +86,10 @@ extern long int __sysconf (int __name);
 libc_hidden_proto (__sysconf)
 extern __pid_t __getpid (void);
 libc_hidden_proto (__getpid)
+
+// yiwen
+extern __pid_t __waitpid (__pid_t __pid, int *__stat_loc, int __options);
+
 extern __pid_t __getppid (void);
 extern __pid_t __setsid (void);
 extern __uid_t __getuid (void);

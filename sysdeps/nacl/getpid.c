@@ -11,6 +11,8 @@ __getpid ()
     return -1;
   }
 
+  // yiwen: debug
+  pid = 777;
   return pid; 
 }
 

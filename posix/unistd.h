@@ -584,6 +584,9 @@ extern size_t confstr (int __name, char *__buf, size_t __len) __THROW;
 /* Get the process ID of the calling process.  */
 extern __pid_t getpid (void) __THROW;
 
+// yiwen: define waitpid here
+extern __pid_t waitpid (__pid_t __pid, int *__stat_loc, int __options);
+
 /* Get the process ID of the calling process's parent.  */
 extern __pid_t getppid (void) __THROW;
 
