@@ -151,6 +151,7 @@ extern int (*__nacl_irt_pipe) (int *pipedes);
 extern int (*__nacl_irt_fork) (void);
 extern void (*__nacl_irt_execv) (void);
 extern int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
+extern int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 
 #undef socklen_t
 

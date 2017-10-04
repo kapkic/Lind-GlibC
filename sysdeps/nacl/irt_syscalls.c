@@ -404,6 +404,7 @@ int (*__nacl_irt_pipe) (int *pipedes);
 int (*__nacl_irt_fork) (void);
 void (*__nacl_irt_execv) (void);
 int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
+int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -695,6 +696,12 @@ static int nacl_irt_pipe_lind (int *pipedes)
     if (rv < 0)
        return -rv;
     return 0;
+}
+
+// yiwen: nacl_irt_waitpid
+static int nacl_irt_waitpid (int pid, int *stat_loc, int options)
+{
+    return NACL_SYSCALL (waitpid) (pid, stat_loc, options);
 }
 
 static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,
@@ -995,6 +1002,7 @@ init_irt_table (void)
   __nacl_irt_fork = nacl_irt_fork;
   __nacl_irt_execv = nacl_irt_execv;
   __nacl_irt_execve = nacl_irt_execve;
+  __nacl_irt_waitpid = nacl_irt_waitpid;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

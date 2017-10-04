@@ -158,6 +158,7 @@ override_list = [
     "sysdeps/unix/sysv/linux/sync_file_range.c",
     "sysdeps/unix/time.c",
     "sysvipc/semtimedop.c",
+    "sysdeps/nacl/waitpid.c",
     ]
 
 def get_override_map():

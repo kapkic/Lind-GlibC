@@ -111,6 +111,7 @@
 #define NACL_sys_fork         115
 #define NACL_sys_execv        116
 #define NACL_sys_execve       117
+#define NACL_sys_waitpid      118
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) * 32))
@@ -212,5 +213,6 @@ typedef int (*TYPE_nacl_pipe) (int* pipedes);
 typedef int (*TYPE_nacl_fork) (void);
 typedef void (*TYPE_nacl_execv) (void);
 typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, const char* envp);
+typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
 
 #endif

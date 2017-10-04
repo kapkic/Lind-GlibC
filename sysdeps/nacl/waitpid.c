@@ -45,7 +45,9 @@ __libc_waitpid (pid_t pid, int *stat_loc, int options)
 
   __set_errno (ENOSYS);
   return (pid_t) -1; */
-  return (pid_t) 666;
+  pid_t retval = -1;
+  retval = __nacl_irt_waitpid(pid, stat_loc, options);
+  return retval;
 }
 weak_alias (__libc_waitpid, __waitpid)
 libc_hidden_weak (__waitpid)
