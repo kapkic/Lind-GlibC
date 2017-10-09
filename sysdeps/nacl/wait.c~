@@ -24,7 +24,7 @@
 __pid_t
 __wait (__WAIT_STATUS_DEFN stat_loc)
 {
-  pid_t pid = 0;
+  pid_t pid = 0; 
   int options = 0;
   pid_t retval = -1;
   retval = __nacl_irt_waitpid(pid, stat_loc, options);

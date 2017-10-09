@@ -29,7 +29,6 @@
 #include <dl-sysdep.h>
 #include <tls.h>
 
-
 /* For Linux we can use the system call table in the header file
 	/usr/include/asm/unistd.h
    of the kernel.  But these symbols do not follow the SYS_* syntax
@@ -535,6 +534,11 @@ asm (".L__X'%ebx = 1\n\t"
 	".previous"							      \
 	: "=c" (__res));						      \
      __res; })
+#ifdef __i686
+# undef __i686
+# define __i686 __i686
+#endif
+
 #endif
 #endif
 

@@ -232,7 +232,8 @@ ifdef objpfx
 .PHONY: stubs
 stubs: $(objpfx)stubs
 endif
-$(objpfx)stubs ../po/manual.pot $(objpfx)stamp%:
+stamps := $(foreach o,$(object-suffixes-for-libc),$(objpfx)stamp$o)
+$(objpfx)stubs ../po/manual.pot $(objpfx)stamp.o $(stamps):
 	$(make-target-directory)
 	touch $@
 
@@ -245,7 +246,7 @@ endef
 
 # The top-level glibc Makefile expects subdir_install to update the stubs file.
 subdir_install: stubs
-
+
 # Get rid of these variables if they came from the parent.
 routines =
 aux =

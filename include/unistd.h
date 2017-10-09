@@ -77,6 +77,7 @@ char *__canonicalize_directory_name_internal (__const char *__thisdir,
 
 extern int __dup (int __fd);
 extern int __dup2 (int __fd, int __fd2);
+extern int __dup3 (int __fd, int __fd2, int __flags);
 libc_hidden_proto (__dup2)
 extern int __execve (__const char *__path, char *__const __argv[],
 		     char *__const __envp[]);

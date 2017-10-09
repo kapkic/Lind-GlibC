@@ -87,9 +87,9 @@ override_list = [
     "posix/pread.c",
     "posix/pwrite.c",
     "posix/vfork.c",
-    "posix/wait.c",
+#   "posix/wait.c",
     "posix/waitid.c",
-    "posix/waitpid.c",
+#   "posix/waitpid.c",
 #   "signal/sigaction.c",
     "stdio-common/tmpfile.c",
     "stdlib/add_n.c",
@@ -144,6 +144,8 @@ override_list = [
     "sysdeps/ieee754/ldbl-96/s_rintl.c",
     "sysdeps/nacl/umount.c",
     "sysdeps/nacl/getpid.c",
+    "sysdeps/nacl/dup3.c",
+    "sysdeps/nacl/fork.c",
     "sysdeps/nacl/start.c",
     "sysdeps/posix/libc_fatal.c",
     "sysdeps/posix/posix_fallocate.c",
@@ -159,6 +161,8 @@ override_list = [
     "sysdeps/unix/time.c",
     "sysvipc/semtimedop.c",
     "sysdeps/nacl/waitpid.c",
+    "sysdeps/nacl/wait.c",
+    "sysdeps/nacl/fcntl.c",
     ]
 
 def get_override_map():

@@ -22,6 +22,11 @@
 #include <pthread-errnos.h>
 #include <lowlevellock.h>
 
+#if defined(PIC) && defined(__i686)
+# undef __i686
+# define __i686 __i686
+#endif
+
 	.text
 
 	.globl	__new_sem_trywait

@@ -23,6 +23,10 @@
 #include <structsem.h>
 #include <lowlevellock.h>
 
+#if defined(PIC) && defined(__i686)
+# undef __i686
+# define __i686 __i686
+#endif
 
 #if VALUE != 0
 # error "code needs to be rewritten for VALUE != 0"

@@ -252,9 +252,8 @@ INTERNAL_SYSCALL_dup2_2 (int *err, int oldfd, int newfd)
 __extern_always_inline int
 INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
 {
-  lind_strace("dup3 unimplemented");
-  *err = (38 /* ENOSYS */);
-  return 0;
+  *err = __nacl_irt_dup3 (oldfd, newfd, flags);
+  return newfd;
 }
 
 __extern_always_inline int

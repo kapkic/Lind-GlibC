@@ -94,6 +94,13 @@ static int nacl_irt_dup2 (int fd, int newfd) {
   return 0;
 }
 
+static int nacl_irt_dup3 (int fd, int newfd, int flags) {
+  int rv = NACL_SYSCALL (dup3) (fd, newfd, flags);
+  if (rv < 0)
+    return -rv;
+  return 0;
+}
+
 static int nacl_irt_fstat (int fd, struct nacl_abi_stat *st) {
   return -NACL_SYSCALL (fstat) (fd, st);
 }
@@ -306,6 +313,7 @@ int (*__nacl_irt_write) (int fd, const void *buf, size_t count, size_t *nwrote);
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
 int (*__nacl_irt_dup) (int fd, int *newfd);
 int (*__nacl_irt_dup2) (int fd, int newfd);
+int (*__nacl_irt_dup3) (int fd, int newfd, int flags);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
@@ -685,12 +693,12 @@ static int nacl_irt_execve (const char* path, const char* argv, const char* envp
     return NACL_SYSCALL (execve) (path, argv, envp);
 }
 
-// yiwen: pipe_lind 
+// yiwen: pipe_lind
 static int nacl_irt_pipe_lind (int *pipedes)
 {
 
     // currently, we implement the pipe inside NaCl's runtime (in C).
-    // so we are not going into the Repy code via lind_api, 
+    // so we are not going into the Repy code via lind_api,
     // instead, we just use NACL_SYSCALL to direct this nacl_irt_pipe_linds
     int rv = NACL_SYSCALL (pipe) (pipedes);
     if (rv < 0)
@@ -773,6 +781,7 @@ init_irt_table (void)
       __nacl_irt_close = u.nacl_irt_fdio.close;
       __nacl_irt_dup = u.nacl_irt_fdio.dup;
       __nacl_irt_dup2 = u.nacl_irt_fdio.dup2;
+      __nacl_irt_dup3 = u.nacl_irt_fdio.dup3;
       __nacl_irt_read = u.nacl_irt_fdio.read;
       __nacl_irt_write = u.nacl_irt_fdio.write;
       __nacl_irt_seek = u.nacl_irt_fdio.seek;
@@ -784,6 +793,7 @@ init_irt_table (void)
       __nacl_irt_close = nacl_irt_close;
       __nacl_irt_dup = nacl_irt_dup;
       __nacl_irt_dup2 = nacl_irt_dup2;
+      __nacl_irt_dup3 = nacl_irt_dup3;
       __nacl_irt_read = nacl_irt_read;
       __nacl_irt_write = nacl_irt_write;
       __nacl_irt_seek = nacl_irt_seek;

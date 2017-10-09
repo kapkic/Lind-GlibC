@@ -23,6 +23,10 @@
 #include <structsem.h>
 #include <lowlevellock.h>
 
+#if defined(PIC) && defined(__i686)
+# undef __i686	.text
+# define __i686 __i686
+#endif	.globl	__new_sem_post
 
 	.text
 

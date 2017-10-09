@@ -78,6 +78,7 @@ ld {
     __nacl_irt_cond_signal;
     __nacl_irt_cond_timed_wait_abs;
     __nacl_irt_cond_wait;
+    __nacl_irt_dup3;
     __nacl_irt_dup2;
     __nacl_irt_dup;
     __nacl_irt_dyncode_create;

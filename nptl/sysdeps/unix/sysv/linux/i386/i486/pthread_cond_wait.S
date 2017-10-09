@@ -24,6 +24,10 @@
 #include <tcb-offsets.h>
 #include <kernel-features.h>
 
+#if defined(PIC) && defined(__i686)
+# undef __i686
+# define __i686 __i686
+#endif
 
 	.text
 

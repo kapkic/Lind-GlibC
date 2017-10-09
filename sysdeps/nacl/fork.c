@@ -12,11 +12,10 @@ __libc_fork ()
 {
    int pid;
    pid = __nacl_irt_fork();
-   return pid; 
+   return pid;
 }
 
 weak_alias (__libc_fork, __fork)
 libc_hidden_def (__fork)
 weak_alias (__libc_fork, fork)
 stub_warning (fork)
-

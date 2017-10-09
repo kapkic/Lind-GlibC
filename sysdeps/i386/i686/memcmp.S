@@ -22,6 +22,11 @@
 #include "bp-sym.h"
 #include "bp-asm.h"
 
+#ifdef __i686
+# undef __i686
+# define __i686 __i686
+#endif
+
 #define PARMS		LINKAGE+4	/* Preserve EBX.  */
 #define BLK1		PARMS
 #define BLK2		BLK1+PTR_SIZE

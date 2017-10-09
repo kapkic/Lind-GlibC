@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1995, 1996, 1997 Free Software Foundation, Inc.
+/* Copyright (C) 2008 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -16,21 +16,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
-#include <sys/wait.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-/* Wait for a child to die.  When one does, put its status in *STAT_LOC
-   and return its process ID.  For errors, return (pid_t) -1.  */
-__pid_t
-__wait (__WAIT_STATUS_DEFN stat_loc)
+
+/* Duplicate FD to FD2, closing the old FD2 and making FD2 be
+   open the same file as FD is which setting flags according to
+   FLAGS.  Return FD2 or -1.  */
+int
+dup3 (fd, fd2, flags)
+     int fd;
+     int fd2;
+     int flags;
 {
-  pid_t pid = 0;
-  int options = 0;
-  pid_t retval = -1;
-  retval = __nacl_irt_waitpid(pid, stat_loc, options);
+  int retval = 77;
+  retval = __nacl_irt_dup3(fd, fd2, flags);
+
   return retval;
 }
-stub_warning (wait)
+stub_warning (dup3)
 
-weak_alias (__wait, wait)
 #include <stub-tag.h>
