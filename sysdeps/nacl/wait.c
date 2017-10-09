@@ -27,7 +27,7 @@ __wait (__WAIT_STATUS_DEFN stat_loc)
   /*
   __set_errno (ENOSYS);
   return -1; */
-  return 100;
+  return 300;
 }
 stub_warning (wait)
 
