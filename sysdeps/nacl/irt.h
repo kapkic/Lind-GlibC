@@ -74,6 +74,7 @@ struct nacl_irt_fdio_v0_1 {
   int (*close)(int fd);
   int (*dup)(int fd, int *newfd);
   int (*dup2)(int fd, int newfd);
+  int (*dup3)(int fd, int newfd, int flags);
   int (*read)(int fd, void *buf, size_t count, size_t *nread);
   int (*write)(int fd, const void *buf, size_t count, size_t *nwrote);
   int (*seek)(int fd, off_t offset, int whence, off_t *new_offset);
@@ -86,6 +87,7 @@ struct nacl_irt_fdio {
   int (*close)(int fd);
   int (*dup)(int fd, int *newfd);
   int (*dup2)(int fd, int newfd);
+  int (*dup3)(int fd, int newfd, int flags);
   int (*read)(int fd, void *buf, size_t count, size_t *nread);
   int (*write)(int fd, const void *buf, size_t count, size_t *nwrote);
   int (*seek)(int fd, off_t offset, int whence, off_t *new_offset);

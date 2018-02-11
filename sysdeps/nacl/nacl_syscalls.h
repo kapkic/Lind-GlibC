@@ -112,6 +112,7 @@
 #define NACL_sys_execv        116
 #define NACL_sys_execve       117
 #define NACL_sys_waitpid      118
+#define NACL_sys_dup3         119
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) * 32))
@@ -128,6 +129,7 @@ struct timespec;
 typedef int (*TYPE_nacl_nameservice)(int *desc_in_out);
 typedef int (*TYPE_nacl_dup)(int oldfd);
 typedef int (*TYPE_nacl_dup2)(int oldfd, int newfd);
+typedef int (*TYPE_nacl_dup3)(int oldfd, int newfd, int flags);
 typedef int (*TYPE_nacl_read) (int desc, void *buf, size_t count);
 typedef int (*TYPE_nacl_close) (int desc);
 typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
