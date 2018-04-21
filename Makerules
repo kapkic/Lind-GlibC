@@ -225,7 +225,7 @@ $(common-objpfx)sysd-rules: $(common-objpfx)config.make $(..)Makerules \
 			    $(sysd-rules-force)
 	-@rm -f $@T
 	(echo 'sysd-rules-sysdirs := $(config-sysdirs)' &&	      \
-	 python make_sysd_rules.py $(config-sysdirs) &&		      \
+	 python2 make_sysd_rules.py $(config-sysdirs) &&		      \
 	 echo 'sysd-rules-done = t') > $@T
 	mv -f $@T $@
 

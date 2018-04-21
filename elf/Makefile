@@ -340,7 +340,7 @@ $(objpfx)ld.so: $(objpfx)librtld.os $(ld-map)
 # TODO(mseaborn): Remove the need to have two versions of ld.so.
 $(objpfx)runnable-ld.so: $(objpfx)ld.so nacl_fixup_ldso.py
 	cp $(objpfx)ld.so $@.tmp
-	python nacl_fixup_ldso.py $@.tmp
+	python2 nacl_fixup_ldso.py $@.tmp
 	mv -f $@.tmp $@
 
 # interp.c exists just to get this string into the libraries.
