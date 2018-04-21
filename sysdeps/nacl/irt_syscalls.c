@@ -413,6 +413,7 @@ int (*__nacl_irt_fork) (void);
 void (*__nacl_irt_execv) (void);
 int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
 int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
+int (*__nacl_irt_wait) (int *stat_loc);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -673,6 +674,12 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
 static int nacl_irt_getpid_lind (int *pid)
 {
     return -lind_getpid(pid);
+}
+
+/* jp */
+static int nacl_irt_wait (int *stat_loc)
+{
+    return NACL_SYSCALL (wait) (stat_loc);
 }
 
 // yiwen: nacl_irt_fork
@@ -1005,6 +1012,9 @@ init_irt_table (void)
   __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;
   __nacl_irt_shutdown = nacl_irt_shutdown_lind;
+
+  /* jp */
+  __nacl_irt_wait = nacl_irt_wait;
 
   // yiwen: added nacl_irt_pipe_lind
   __nacl_irt_pipe = nacl_irt_pipe_lind;

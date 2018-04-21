@@ -147,6 +147,7 @@ ld {
     __nacl_irt_execv;
     __nacl_irt_execve;
     __nacl_irt_waitpid;
+    __nacl_irt_wait;
     lind_access;
     lind_unlink;
     lind_link;

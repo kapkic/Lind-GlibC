@@ -30,7 +30,6 @@ __wait (__WAIT_STATUS_DEFN stat_loc)
   retval = __nacl_irt_waitpid(pid, stat_loc, options);
   return retval;
 }
-stub_warning (wait)
 
+libc_hidden_def (__wait)
 weak_alias (__wait, wait)
-#include <stub-tag.h>

@@ -52,6 +52,8 @@ libc_hidden_proto (__libc_write)
 extern int __pipe (int __pipedes[2]);
 libc_hidden_proto (__pipe)
 extern int __pipe2 (int __pipedes[2], int __flags);
+libc_hidden_proto (__pipe2)
+extern int __pipe2 (int __pipedes[2], int __flags);
 extern unsigned int __sleep (unsigned int __seconds);
 extern int __chown (__const char *__file,
 		    __uid_t __owner, __gid_t __group);
@@ -76,9 +78,11 @@ char *__canonicalize_directory_name_internal (__const char *__thisdir,
 					      size_t __size) attribute_hidden;
 
 extern int __dup (int __fd);
+libc_hidden_proto (__dup)
 extern int __dup2 (int __fd, int __fd2);
-extern int __dup3 (int __fd, int __fd2, int __flags);
 libc_hidden_proto (__dup2)
+extern int __dup3 (int __fd, int __fd2, int __flags);
+libc_hidden_proto (__dup3)
 extern int __execve (__const char *__path, char *__const __argv[],
 		     char *__const __envp[]);
 extern long int __pathconf (__const char *__path, int __name);
@@ -88,8 +92,15 @@ libc_hidden_proto (__sysconf)
 extern __pid_t __getpid (void);
 libc_hidden_proto (__getpid)
 
+/* jp */
+extern __pid_t __wait (int *__stat_loc);
+libc_hidden_proto (__wait)
+extern __pid_t __fork (void);
+libc_hidden_proto (__fork)
+
 // yiwen
 extern __pid_t __waitpid (__pid_t __pid, int *__stat_loc, int __options);
+libc_hidden_proto (__waitpid)
 
 extern __pid_t __getppid (void);
 extern __pid_t __setsid (void);
@@ -134,8 +145,6 @@ extern ssize_t __read (int __fd, void *__buf, size_t __nbytes);
 libc_hidden_proto (__read)
 extern ssize_t __write (int __fd, __const void *__buf, size_t __n);
 libc_hidden_proto (__write)
-extern __pid_t __fork (void);
-libc_hidden_proto (__fork)
 extern int __getpagesize (void) __attribute__ ((__const__));
 libc_hidden_proto (__getpagesize)
 extern int __ftruncate (int __fd, __off_t __length);
@@ -165,9 +174,6 @@ extern void __libc_check_standard_fds (void);
 
 /* Special exit function which only terminates the current thread.  */
 extern void __exit_thread (int val) __attribute__ ((noreturn));
-
-/* Internal name for fork function.  */
-extern __pid_t __libc_fork (void);
 
 /* Suspend the process until a signal arrives.
    This always returns -1 and sets `errno' to EINTR.  */

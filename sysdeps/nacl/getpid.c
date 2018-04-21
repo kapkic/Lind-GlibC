@@ -13,11 +13,9 @@ __getpid ()
 
   // yiwen: debug
   pid = 777;
-  return pid; 
+  return pid;
 }
 
 libc_hidden_def (__getpid)
-stub_warning (getpid)
 weak_alias (__getpid, getpid)
 libc_hidden_weak (getpid)
-

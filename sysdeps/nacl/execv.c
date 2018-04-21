@@ -6,7 +6,7 @@
 int
 __libc_execv (const char *path, char *const argv[])
 {
-  int retval; 
+  int retval;
   retval = 500;
   __nacl_irt_execv();
   return retval;

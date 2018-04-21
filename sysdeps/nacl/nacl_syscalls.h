@@ -102,8 +102,6 @@
 #define NACL_sys_dyncode_modify         105
 #define NACL_sys_dyncode_delete         106
 
-#define NACL_MAX_SYSCALLS               110
-
 #define NACL_sys_lind_api         113
 
 // yiwen: added new NACL_sys_call here.
@@ -113,9 +111,12 @@
 #define NACL_sys_execve       117
 #define NACL_sys_waitpid      118
 #define NACL_sys_dup3         119
+#define NACL_sys_wait         120
+
+#define NACL_MAX_SYSCALLS     121
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
-  (0x10000 + ((syscall_number) * 32))
+  (0x10000 + ((syscall_number) << 5))
 
 #define NACL_SYSCALL(syscall) \
   ((TYPE_nacl_ ## syscall) NACL_SYSCALL_ADDR(NACL_sys_ ## syscall))
@@ -216,5 +217,7 @@ typedef int (*TYPE_nacl_fork) (void);
 typedef void (*TYPE_nacl_execv) (void);
 typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, const char* envp);
 typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
+
+typedef int (*TYPE_nacl_wait) (int *stat_loc);
 
 #endif
