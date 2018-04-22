@@ -18,18 +18,19 @@
 
 #include <sys/wait.h>
 #include <errno.h>
+#include <sysdep.h>
 
 /* Wait for a child to die.  When one does, put its status in *STAT_LOC
    and return its process ID.  For errors, return (pid_t) -1.  */
-__pid_t
-__wait (__WAIT_STATUS_DEFN stat_loc)
+pid_t __wait(int *stat_loc)
 {
-  pid_t pid = 0;
-  int options = 0;
-  pid_t retval = -1;
-  retval = __nacl_irt_waitpid(pid, stat_loc, options);
-  return retval;
+	pid_t ret = __nacl_irt_waitpid(WAIT_ANY, stat_loc, 0);
+	if (!ret)
+		return 0;
+	errno = ret;
+	return (pid_t)-1;
 }
-
 libc_hidden_def (__wait)
 weak_alias (__wait, wait)
+strong_alias (__wait, __libc_wait)
+libc_hidden_def (__libc_wait)

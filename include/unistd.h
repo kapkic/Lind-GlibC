@@ -49,10 +49,6 @@ extern ssize_t __libc_read (int __fd, void *__buf, size_t __n);
 libc_hidden_proto (__libc_read)
 extern ssize_t __libc_write (int __fd, __const void *__buf, size_t __n);
 libc_hidden_proto (__libc_write)
-extern int __pipe (int __pipedes[2]);
-libc_hidden_proto (__pipe)
-extern int __pipe2 (int __pipedes[2], int __flags);
-libc_hidden_proto (__pipe2)
 extern unsigned int __sleep (unsigned int __seconds);
 extern int __chown (__const char *__file,
 		    __uid_t __owner, __gid_t __group);
@@ -92,14 +88,23 @@ extern __pid_t __getpid (void);
 libc_hidden_proto (__getpid)
 
 /* jp */
+extern __pid_t __libc_waitpid (__pid_t __pid, int *__stat_loc, int __options);
+libc_hidden_proto (__libc_waitpid)
+extern __pid_t __libc_wait (int *__stat_loc);
+libc_hidden_proto (__libc_wait)
+extern __pid_t __libc_fork (void);
+libc_hidden_proto (__libc_fork)
+
+extern __pid_t __waitpid (__pid_t __pid, int *__stat_loc, int __options);
+libc_hidden_proto (__waitpid)
 extern __pid_t __wait (int *__stat_loc);
 libc_hidden_proto (__wait)
 extern __pid_t __fork (void);
 libc_hidden_proto (__fork)
-
-// yiwen
-extern __pid_t __waitpid (__pid_t __pid, int *__stat_loc, int __options);
-libc_hidden_proto (__waitpid)
+extern int __pipe (int __pipedes[2]);
+libc_hidden_proto (__pipe)
+extern int __pipe2 (int __pipedes[2], int __flags);
+libc_hidden_proto (__pipe2)
 
 extern __pid_t __getppid (void);
 extern __pid_t __setsid (void);

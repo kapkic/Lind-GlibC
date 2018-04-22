@@ -144,8 +144,6 @@ override_list = [
     "sysdeps/ieee754/ldbl-96/s_rintl.c",
     "sysdeps/nacl/umount.c",
     "sysdeps/nacl/getpid.c",
-    #  "sysdeps/nacl/dup3.c",
-    #  "sysdeps/nacl/fork.c",
     "sysdeps/nacl/start.c",
     "sysdeps/posix/libc_fatal.c",
     "sysdeps/posix/posix_fallocate.c",
@@ -160,9 +158,16 @@ override_list = [
     "sysdeps/unix/sysv/linux/sync_file_range.c",
     "sysdeps/unix/time.c",
     "sysvipc/semtimedop.c",
-    #  "sysdeps/nacl/waitpid.c",
-    #  "sysdeps/nacl/wait.c",
+    #  not currently working
+    "sysdeps/nacl/dup.c",
+    #  "sysdeps/nacl/dup2.c",
+    "sysdeps/nacl/dup3.c",
     "sysdeps/nacl/fcntl.c",
+    "sysdeps/nacl/fork.c",
+    "sysdeps/nacl/pipe.c",
+    "sysdeps/nacl/pipe2.c",
+    "sysdeps/nacl/wait.c",
+    "sysdeps/nacl/waitpid.c",
     ]
 
 def get_override_map():

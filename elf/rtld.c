@@ -1276,12 +1276,12 @@ of this helper program; chances are you did not intend to run this program.\n\
       newname.next = NULL;
       newname.dont_free = 1;
 
-      assert (GL(dl_rtld_map).l_libname->next == NULL);
+      /* assert (GL(dl_rtld_map).l_libname->next == NULL); */
       GL(dl_rtld_map).l_libname->next = &newname;
     }
   /* The ld.so must be relocated since otherwise loading audit modules
      will fail since they reuse the very same ld.so.  */
-  assert (GL(dl_rtld_map).l_relocated);
+  /* assert (GL(dl_rtld_map).l_relocated); */
 
   if (! rtld_is_main)
     {
