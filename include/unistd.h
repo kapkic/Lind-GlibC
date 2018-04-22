@@ -53,7 +53,6 @@ extern int __pipe (int __pipedes[2]);
 libc_hidden_proto (__pipe)
 extern int __pipe2 (int __pipedes[2], int __flags);
 libc_hidden_proto (__pipe2)
-extern int __pipe2 (int __pipedes[2], int __flags);
 extern unsigned int __sleep (unsigned int __seconds);
 extern int __chown (__const char *__file,
 		    __uid_t __owner, __gid_t __group);

@@ -1,5 +1,8 @@
 #include <errno.h>
 #include <unistd.h>
+#include <sysdep.h>
+
+#include <irt_syscalls.h>
 
 unsigned long int *__fork_generation_pointer;
 
@@ -11,8 +14,11 @@ __fork ()
 {
    int pid;
    pid = __nacl_irt_fork();
+   if (!pid && __fork_generation_pointer)
+      *__fork_generation_pointer += 4;
    return pid;
 }
-
 libc_hidden_def (__fork)
 weak_alias (__fork, fork)
+strong_alias (__fork, __libc_fork)
+libc_hidden_def (__libc_fork)
