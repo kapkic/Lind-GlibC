@@ -30,7 +30,7 @@ include Makeconfig
 # This is the default target; it makes everything except the tests.
 .PHONY: all
 all: lib others
-
+
 ifneq ($(AUTOCONF),no)
 
 ifeq ($(with-cvs),yes)
@@ -68,7 +68,7 @@ endif # $(AUTOCONF) = no
 		   subdir_install					\
 		   subdir_objs subdir_stubs subdir_testclean		\
 		   $(addprefix install-, no-libc.a bin lib data headers others)
-
+
 headers := limits.h values.h features.h gnu-versions.h bits/libc-lock.h \
 	   bits/xopen_lim.h gnu/libc-version.h
 
@@ -151,7 +151,7 @@ $(common-objpfx)testrun.sh: $(common-objpfx)config.make \
 postclean-generated += testrun.sh
 
 others: $(common-objpfx)testrun.sh
-
+
 # Makerules creates a file `stubs' in each subdirectory, which
 # contains `#define __stub_FUNCTION' for each function defined in that
 # directory which is a stub.
@@ -186,12 +186,12 @@ $(installed-stubs): include/stubs-prologue.h subdir_install
 	then echo 'stubs.h unchanged'; \
 	else $(INSTALL_DATA) $(objpfx)stubs.h $@; fi
 	rm -f $(objpfx)stubs.h
-
+
 # This makes the Info or DVI file of the documentation from the Texinfo source.
 .PHONY: info dvi pdf html
 info dvi pdf html:
 	$(MAKE) $(PARALLELMFLAGS) -C manual $@
-
+
 # This makes all the subdirectory targets.
 
 # For each target, make it depend on DIR/target for each subdirectory DIR.
@@ -213,7 +213,7 @@ subdir=$(@D)$(if $($(@D)-srcdir),\
 endef
 
 .PHONY: $(+subdir_targets) $(all-subdirs-targets)
-
+
 # Targets to clean things up to various degrees.
 
 .PHONY: clean realclean distclean distclean-1 parent-clean parent-mostlyclean \
@@ -336,7 +336,7 @@ ifdef objdir
 	-rm -f $(objpfx)Makefile
 endif
 	-rm -f $(sysdep-$(distclean-1))
-
+
 # Make the TAGS file for Emacs users.
 
 .PHONY: TAGS
@@ -345,7 +345,7 @@ TAGS:
 	  $(foreach S,[chsSyl] cxx sh bash pl,\
 		    $(subst .,\.,/.$S\(.in\)*$$/p;))' \
 	| $(ETAGS) -o $@ -
-
+
 # Make the distribution tarfile.
 .PHONY: dist tag-for-dist
 

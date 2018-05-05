@@ -19,11 +19,11 @@
  */
 pid_t __waitpid(pid_t pid, int *stat_loc, int options)
 {
-	pid_t ret = __nacl_irt_waitpid(pid, stat_loc, options);
-	if (!ret)
-		return pid < 0 ? 0 : pid;
-	errno = ret;
-	return (pid_t)-1;
+    pid_t ret = __nacl_irt_waitpid(pid, stat_loc, options);
+    if (ret >= 0)
+        return ret;
+    errno = -ret;
+    return -1;
 }
 libc_hidden_def (__waitpid)
 weak_alias (__waitpid, waitpid)

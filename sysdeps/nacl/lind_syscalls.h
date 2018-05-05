@@ -131,7 +131,7 @@ int lind_getpeername (int sockfd, socklen_t addrlen_in, struct sockaddr * addr, 
 int lind_setsockopt (int sockfd, int level, int optname, socklen_t optlen, const void *optval);
 int lind_getsockopt (int sockfd, int level, int optname, socklen_t optlen, void *optval);
 int lind_shutdown (int sockfd, int how);
-int lind_select (int nfds, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, struct timeval *timeout, struct select_results *result);
+int lind_select (int nfds, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, const struct timeval *timeout, struct select_results *result);
 int lind_getifaddrs (int ifaddrs_buf_siz, void *ifaddrs);
 int lind_recvfrom (int sockfd, size_t len, int flags, socklen_t addrlen, socklen_t * addrlen_out, void *buf, struct sockaddr *src_addr);
 int lind_poll (int nfds, int timeout, struct pollfd *fds_in, struct pollfd *fds_out);

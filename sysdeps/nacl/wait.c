@@ -24,11 +24,11 @@
    and return its process ID.  For errors, return (pid_t) -1.  */
 pid_t __wait(int *stat_loc)
 {
-	pid_t ret = __nacl_irt_waitpid(WAIT_ANY, stat_loc, 0);
-	if (!ret)
-		return 0;
-	errno = ret;
-	return (pid_t)-1;
+    pid_t ret = __nacl_irt_wait(stat_loc);
+    if (ret >= 0)
+        return ret;
+    errno = -ret;
+    return -1;
 }
 libc_hidden_def (__wait)
 weak_alias (__wait, wait)

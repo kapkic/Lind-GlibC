@@ -2359,12 +2359,13 @@ INTERNAL_SYSCALL_writev_3 (int *err, int fd, const
 
 #include_next <sysdep.h>
 
-#if !defined(__ASSEMBLER__) && \
-     defined(THREAD_SELF) && defined(CLOCK_IDFIELD_SIZE)
+#if !defined(__ASSEMBLER__) && defined(THREAD_SELF) && defined(CLOCK_IDFIELD_SIZE)
 #include <tls.h>
 
-/* We don't support redefinition of this function. We always use 30 bits of the
-   address of pthread structure as TID.  */
+/*
+ * We don't support redefinition of this function. We always use 30 bits
+ * of the address of pthread structure as TID.
+ */
 __extern_always_inline pid_t
 INTERNAL_SYSCALL_gettid_0 (int *err)
 {
@@ -2395,8 +2396,9 @@ INTERNAL_SYSCALL_set_tid_address_1 (int *err, volatile int *tidptr)
 #undef INTERNAL_SYSCALL_ERROR_P
 # define INTERNAL_SYSCALL_ERROR_P(val, err) (err)
 
-/* Define a macro which expands inline into the wrapper code for a IRT
-   call.  */
+/*
+ * Define a macro which expands inline into the wrapper code for an IRT call.
+ */
 # undef INLINE_SYSCALL
 # define INLINE_SYSCALL(name, nr, args...) \
   ({									      \
@@ -2412,8 +2414,10 @@ INTERNAL_SYSCALL_set_tid_address_1 (int *err, volatile int *tidptr)
 #undef INTERNAL_VSYSCALL
 # define INTERNAL_VSYSCALL INTERNAL_SYSCALL
 
-/* Nacl uses AT_SYSINFO for IRT. Thus sysinfo can never be usable
-   and it's safe to disable this machinery.  */
+/*
+ * Nacl uses AT_SYSINFO for IRT. Thus sysinfo can never be usable
+ * and it's safe to disable this machinery.
+ */
 #undef NEED_DL_SYSINFO
 
 #ifndef __x86_64__

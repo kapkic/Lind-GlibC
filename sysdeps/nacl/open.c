@@ -6,7 +6,6 @@
 
 int __open (const char *filename, int flags, ...)
 {
-  int newfd;
   int mode = 0;
 
   if(flags & O_CREAT) {

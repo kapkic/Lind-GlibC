@@ -1261,7 +1261,7 @@ of this helper program; chances are you did not intend to run this program.\n\
       GL(dl_rtld_map).l_libname =  &_dl_rtld_libname;
     }
   else
-    assert (GL(dl_rtld_map).l_libname); /* How else did we get here?  */
+  // assert (GL(dl_rtld_map).l_libname); /* How else did we get here?  */
 
   /* If the current libname is different from the SONAME, add the
      latter as well.  */

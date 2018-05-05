@@ -11,10 +11,13 @@ unsigned long int *__fork_generation_pointer;
  */
 int __libc_fork(void)
 {
-   int pid = __nacl_irt_fork();
-   if (!pid && __fork_generation_pointer)
+   int ret = __nacl_irt_fork();
+   if (!ret && __fork_generation_pointer)
       *__fork_generation_pointer += 4;
-   return pid;
+   if (ret >= 0)
+       return ret;
+   errno = -ret;
+   return -1;
 }
 libc_hidden_def (__libc_fork)
 weak_alias (__libc_fork, __fork)

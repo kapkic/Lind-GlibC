@@ -4,7 +4,7 @@
 
 /******************************************************************************/
 /* WARNING: this file is copied by the build system.  The original is in      */
-/*  the liblind directory, all others are copies.                             */ 
+/*  the liblind directory, all others are copies.                             */
 /******************************************************************************/
 
 
