@@ -1,10 +1,11 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 /*
  * returns the pid of the calling process
  */
-int
+pid_t
 __getpid (void)
 {
   return __nacl_irt_getpid();
@@ -12,5 +13,4 @@ __getpid (void)
 
 libc_hidden_def (__getpid)
 weak_alias (__getpid, getpid)
-strong_alias (__getpid, __libc_getpid)
 libc_hidden_weak (getpid)

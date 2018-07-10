@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <fcntl.h>
-#include <unistd.h>
 #include <sysdep.h>
+#include <unistd.h>
 
 /*
  * Duplicate oldfd and return newfd which refers to the same open
@@ -9,11 +9,12 @@
  */
 int __dup(int oldfd)
 {
-    int newfd = -1;
-    int ret = __nacl_irt_dup(oldfd, &newfd);
-    if (newfd < 0)
-        errno = ret;
-    return newfd;
+    int ret = __nacl_irt_dup(oldfd);
+    if (ret < 0) {
+        errno = -ret;
+        return -1;
+    }
+    return ret;
 }
 libc_hidden_def (__dup)
 weak_alias (__dup, dup)

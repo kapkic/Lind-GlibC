@@ -158,9 +158,8 @@ override_list = [
     "sysdeps/unix/sysv/linux/sync_file_range.c",
     "sysdeps/unix/time.c",
     "sysvipc/semtimedop.c",
-    #  not currently working
     "sysdeps/nacl/dup.c",
-    #  "sysdeps/nacl/dup2.c",
+    "sysdeps/nacl/dup2.c",
     "sysdeps/nacl/dup3.c",
     "sysdeps/nacl/fcntl.c",
     "sysdeps/nacl/fork.c",

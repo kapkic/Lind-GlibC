@@ -4,20 +4,22 @@
 #include <errno.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
+#undef stat
 #define stat nacl_abi_stat
 #include <irt.h>
 #undef stat
 #include <irt_syscalls.h>
 #ifdef IS_IN_rtld
-#include <ldsodefs.h>
+# include <ldsodefs.h>
 #endif
 #include "trusted-dirs.h"
 
 static void nacl_irt_exit (int status) {
   NACL_SYSCALL (exit) (status);
   /* Crash. */
-  for (;;)
+  for (;;) {
       (*(void (*)(void)) 0) ();
+  }
 }
 
 static int nacl_irt_gettod (struct timeval *tv) {
@@ -80,26 +82,16 @@ static int nacl_irt_seek (int fd, nacl_abi_off_t offset, int whence,
   return 0;
 }
 
-static int nacl_irt_dup (int fd, int *newfd) {
-  int rv = NACL_SYSCALL (dup) (fd);
-  if (rv < 0)
-    return -rv;
-  *newfd = rv;
-  return 0;
+static int nacl_irt_dup (int oldfd) {
+  return NACL_SYSCALL (dup) (oldfd);
 }
 
-static int nacl_irt_dup2 (int fd, int newfd) {
-  int rv = NACL_SYSCALL (dup2) (fd, newfd);
-  if (rv < 0)
-    return -rv;
-  return 0;
+static int nacl_irt_dup2 (int oldfd, int newfd) {
+  return NACL_SYSCALL (dup2) (oldfd, newfd);
 }
 
-static int nacl_irt_dup3 (int fd, int newfd, int flags) {
-  int rv = NACL_SYSCALL (dup3) (fd, newfd, flags);
-  if (rv < 0)
-    return -rv;
-  return 0;
+static int nacl_irt_dup3 (int oldfd, int newfd, int flags) {
+  return NACL_SYSCALL (dup3) (oldfd, newfd, flags);
 }
 
 static int nacl_irt_fstat (int fd, struct nacl_abi_stat *st) {
@@ -310,8 +302,6 @@ int (*__nacl_irt_close) (int fd);
 int (*__nacl_irt_read) (int fd, void *buf, size_t count, size_t *nread);
 int (*__nacl_irt_write) (int fd, const void *buf, size_t count, size_t *nwrote);
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
-int (*__nacl_irt_dup2) (int fd, int newfd);
-int (*__nacl_irt_dup3) (int fd, int newfd, int flags);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
@@ -411,7 +401,9 @@ int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
 
 /* jp */
 int (*__nacl_irt_fork) (void);
-int (*__nacl_irt_dup) (int fd, int *newfd);
+int (*__nacl_irt_dup) (int oldfd);
+int (*__nacl_irt_dup2) (int oldfd, int newfd);
+int (*__nacl_irt_dup3) (int oldfd, int newfd, int flags);
 pid_t (*__nacl_irt_getpid) (void);
 int (*__nacl_irt_wait) (int *stat_loc);
 int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
@@ -895,6 +887,14 @@ init_irt_table (void)
   else
     {
       __nacl_irt_tls_init = nacl_irt_tls_init;
+      __nacl_irt_tls_get = nacl_irt_tls_get;
+    }
+
+  if (__nacl_irt_query &&
+      __nacl_irt_query (NACL_IRT_RESOURCE_OPEN_v0_1, &u.nacl_irt_resource_open,
+          sizeof(u.nacl_irt_resource_open)) == sizeof(u.nacl_irt_resource_open))
+    {
+      ___nacl_irt_open_resource = u.nacl_irt_resource_open.open_resource;
       __nacl_irt_tls_get = nacl_irt_tls_get;
     }
 

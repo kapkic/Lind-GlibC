@@ -1,12 +1,12 @@
 #ifndef _IRT_SYSCALLS_H
 #define _IRT_SYSCALLS_H
 
+#include <fcntl.h>
+#include <poll.h>
+#include <stddef.h>
 #include <sys/types.h>
 #include <sys/epoll.h>
 #include <sys/select.h>
-#include <poll.h>
-#include <stddef.h>
-#include <fcntl.h>
 #include <time.h>
 
 #include <nacl_stat.h>
@@ -98,9 +98,9 @@ extern int (*__nacl_irt_write) (int fd, const void *buf, size_t count,
                                 size_t *nwrote);
 extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
                                nacl_abi_off_t *new_offset);
-extern int (*__nacl_irt_dup) (int fd, int *newfd);
-extern int (*__nacl_irt_dup2) (int fd, int newfd);
-extern int (*__nacl_irt_dup3) (int fd, int newfd, int flags);
+extern int (*__nacl_irt_dup) (int oldfd);
+extern int (*__nacl_irt_dup2) (int oldfd, int newfd);
+extern int (*__nacl_irt_dup3) (int oldfd, int newfd, int flags);
 extern int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 extern int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 extern int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,

@@ -235,28 +235,6 @@ INTERNAL_SYSCALL_delete_module_4 (int *err, const char *name_user,
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_dup_1 (int *err, int oldfd)
-{
-  int newfd;
-  *err = __nacl_irt_dup (oldfd, &newfd);
-  return newfd;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_dup2_2 (int *err, int oldfd, int newfd)
-{
-  *err = __nacl_irt_dup2 (oldfd, newfd);
-  return newfd;
-}
-
-__extern_always_inline int
-INTERNAL_SYSCALL_dup3_3 (int *err, int oldfd, int newfd, int flags)
-{
-  *err = __nacl_irt_dup3 (oldfd, newfd, flags);
-  return newfd;
-}
-
-__extern_always_inline int
 INTERNAL_SYSCALL_epoll_create_1 (int *err, int size)
 {
   int fd;
@@ -698,14 +676,6 @@ __extern_always_inline pid_t
 INTERNAL_SYSCALL_getpgrp_0 (int *err)
 {
   lind_strace("getpgrp unimplemented");
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
-__extern_always_inline pid_t
-INTERNAL_SYSCALL_getpid_0 (int *err)
-{
-  lind_strace("getpid unimplemented");
   *err = (38 /* ENOSYS */);
   return 0;
 }
