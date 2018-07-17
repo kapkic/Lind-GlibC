@@ -16,7 +16,7 @@ int __libc_fork(void)
       *__fork_generation_pointer += 4;
    if (ret >= 0)
        return ret;
-   errno = -ret;
+   __set_errno (-ret);
    return -1;
 }
 libc_hidden_def (__libc_fork)

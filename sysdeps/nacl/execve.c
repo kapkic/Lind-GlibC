@@ -20,59 +20,58 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <string.h>
+#include <sysdep.h>
 
-/* Replace the current process, executing PATH with arguments ARGV and
-   environment ENVP.  ARGV and ENVP are terminated by NULL pointers.  */
+/*
+ * Replace the current process, executing `path` with arguments `argv` and
+ * environment `envp`.  `argv` and `envp` are terminated by NULL pointers.
+ */
 int
-__execve (path, argv, envp)
-     const char *path;
-     char *const argv[];
-     char *const envp[];
+__execve (char const *path, char *const argv[], char *const envp[])
 {
-  int retval = 0;
+  int i;
+  int ret;
   char argv_send[100] = "";
-  char envp_send[100] = ""; 
-  const char *argv_ptr;
-  const char *envp_ptr;
+  char envp_send[100] = "";
+  char const *argv_ptr;
+  char const *envp_ptr;
 
-  if (path == NULL || argv == NULL || envp == NULL)
+  if (!path || !argv || !envp)
     {
       __set_errno (EINVAL);
       return -1;
     }
 
-  int i;
-  for (i = 0; ; i++) {
-    if (argv[i] == NULL) {
+  i = 0;
+  for (;;) {
+    if (!argv[i]) {
       strcat(argv_send, "\0");
-      break; 
+      break;
     }
-    else {
-      strcat(argv_send, argv[i]);
-      strcat(argv_send, " ");
-    }
+    strcat(argv_send, argv[i]);
+    strcat(argv_send, " ");
+    i++;
   }
 
-  for (i = 0; ; i++) {
-    if (envp[i] == NULL) {
+  i = 0;
+  for (;;) {
+    if (!envp[i]) {
       strcat(envp_send, "\0");
-      break; 
+      break;
     }
-    else {
-      strcat(envp_send, envp[i]);
-      strcat(envp_send, " ");
-    }
+    strcat(envp_send, envp[i]);
+    strcat(envp_send, " ");
+    i++;
   }
 
   argv_ptr = argv_send;
   envp_ptr = envp_send;
 
-  retval = __nacl_irt_execve(path, argv_ptr, envp_ptr);
+  ret = __nacl_irt_execve(path, argv_ptr, envp_ptr);
 
-  __set_errno (ENOSYS);
-  return retval;
+  /* execve should not return.  */
+  __set_errno (ret);
+  return -1;
 }
-stub_warning (execve)
 
 weak_alias (__execve, execve)
-#include <stub-tag.h>

@@ -22,7 +22,7 @@ pid_t __waitpid(pid_t pid, int *stat_loc, int options)
     pid_t ret = __nacl_irt_waitpid(pid, stat_loc, options);
     if (ret >= 0)
         return ret;
-    errno = -ret;
+    __set_errno (-ret);
     return -1;
 }
 libc_hidden_def (__waitpid)

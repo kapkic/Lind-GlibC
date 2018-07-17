@@ -75,8 +75,8 @@ extern int (*__nacl_irt_select) (int nfds, fd_set *readfds,
                                  fd_set *writefds, fd_set *exceptfds,
                                  const struct timeval *timeout, int *count);
 extern int (*__nacl_irt_pselect) (int nfds, fd_set *readfds,
-            fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
-			void* sigmask, int *count);
+                                  fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
+                                  void* sigmask, int *count);
 extern int (*__nacl_irt_getpeername) (int sockfd, struct sockaddr *addr,
                                       socklen_t *addrlen);
 extern int (*__nacl_irt_getsockname) (int sockfd, struct sockaddr *addr,
@@ -86,7 +86,7 @@ extern int (*__nacl_irt_getsockopt) (int sockfd, int level, int optname,
 extern int (*__nacl_irt_setsockopt) (int sockfd, int level, int optname,
                       const void *optval, socklen_t optlen);
 extern int (*__nacl_irt_socketpair) (int domain, int type, int protocol,
-                                     int sv[2]);
+                                     int sv[static 2]);
 extern int (*__nacl_irt_shutdown) (int sockfd, int how);
 
 
@@ -98,9 +98,6 @@ extern int (*__nacl_irt_write) (int fd, const void *buf, size_t count,
                                 size_t *nwrote);
 extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
                                nacl_abi_off_t *new_offset);
-extern int (*__nacl_irt_dup) (int oldfd);
-extern int (*__nacl_irt_dup2) (int oldfd, int newfd);
-extern int (*__nacl_irt_dup3) (int oldfd, int newfd, int flags);
 extern int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 extern int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
 extern int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
@@ -145,17 +142,15 @@ extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
-
-/* jp */
 extern pid_t (*__nacl_irt_getpid) (void);
+extern int (*__nacl_irt_fork) (void);
+extern int (*__nacl_irt_dup) (int oldfd);
+extern int (*__nacl_irt_dup2) (int oldfd, int newfd);
+extern int (*__nacl_irt_dup3) (int oldfd, int newfd, int flags);
 extern int (*__nacl_irt_wait) (int *stat_loc);
 extern int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
-
-// yiwen: added nacl_irt_pipe
-extern int (*__nacl_irt_pipe) (int *pipedes);
-// yiwen: added nacl_irt_fork
-extern int (*__nacl_irt_fork) (void);
-extern void (*__nacl_irt_execv) (void);
+extern int (*__nacl_irt_pipe) (int pipedes[static 2]);
+extern int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
 extern int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
 
 #undef socklen_t

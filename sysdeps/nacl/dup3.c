@@ -12,7 +12,7 @@ int __dup3(int oldfd, int newfd, int flags)
 {
         int ret = __nacl_irt_dup3(oldfd, newfd, flags);
         if (ret < 0) {
-                errno = -ret;
+                __set_errno (-ret);
                 return -1;
         }
         return ret;

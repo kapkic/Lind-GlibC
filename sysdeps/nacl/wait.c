@@ -27,7 +27,7 @@ pid_t __wait(int *stat_loc)
     pid_t ret = __nacl_irt_wait(stat_loc);
     if (ret >= 0)
         return ret;
-    errno = -ret;
+    __set_errno (-ret);
     return -1;
 }
 libc_hidden_def (__wait)

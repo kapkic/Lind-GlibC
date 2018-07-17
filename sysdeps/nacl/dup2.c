@@ -12,7 +12,7 @@ int __dup2(int oldfd, int newfd)
 {
         int ret = __nacl_irt_dup2(oldfd, newfd);
         if (ret < 0) {
-                errno = -ret;
+                __set_errno (-ret);
                 return -1;
         }
         return ret;

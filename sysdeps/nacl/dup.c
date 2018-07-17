@@ -11,7 +11,7 @@ int __dup(int oldfd)
 {
     int ret = __nacl_irt_dup(oldfd);
     if (ret < 0) {
-        errno = -ret;
+        __set_errno (-ret);
         return -1;
     }
     return ret;
