@@ -951,7 +951,7 @@ init_irt_table (void)
   __nacl_irt_read = nacl_irt_read;
   __nacl_irt_wait = nacl_irt_wait;
   __nacl_irt_waitpid = nacl_irt_waitpid;
-  __nacl_irt_pipe = nacl_irt_pipe;
+  __nacl_irt_pipe = lind_pipe;
   __nacl_irt_execve = nacl_irt_execve;
 }
 

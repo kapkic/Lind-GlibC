@@ -143,6 +143,7 @@ ld {
     __nacl_irt_shutdown;
     __nacl_irt_getpid;
     __nacl_irt_pipe;
+    __nacl_irt_pipe2;
     __nacl_irt_fork;
     __nacl_irt_execv;
     __nacl_irt_execve;
@@ -167,6 +168,7 @@ ld {
     lind_getpid;
     lind_dup;
     lind_dup2;
+    lind_pipe;
     lind_getdents;
     lind_fcntl_get;
     lind_fcntl_set;

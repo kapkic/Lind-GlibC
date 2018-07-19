@@ -163,7 +163,7 @@ override_list = [
     "sysdeps/nacl/dup.c",
     "sysdeps/nacl/dup2.c",
     "sysdeps/nacl/dup3.c",
-    "sysdeps/nacl/pipe.c",
+    #  "sysdeps/nacl/pipe.c",
     "sysdeps/nacl/pipe2.c",
     "sysdeps/nacl/wait.c",
     "sysdeps/nacl/waitpid.c",
