@@ -727,8 +727,6 @@ init_irt_table (void)
                         sizeof(u.nacl_irt_fdio)) == sizeof(u.nacl_irt_fdio))
     {
       __nacl_irt_close = u.nacl_irt_fdio.close;
-      __nacl_irt_read = u.nacl_irt_fdio.read;
-      __nacl_irt_write = u.nacl_irt_fdio.write;
       __nacl_irt_seek = u.nacl_irt_fdio.seek;
       __nacl_irt_fstat = u.nacl_irt_fdio.fstat;
       __nacl_irt_getdents = u.nacl_irt_fdio.getdents;
@@ -736,7 +734,6 @@ init_irt_table (void)
   else
     {
       __nacl_irt_close = nacl_irt_close;
-      __nacl_irt_write = nacl_irt_write;
       __nacl_irt_seek = nacl_irt_seek;
       __nacl_irt_fstat = nacl_irt_fstat;
       __nacl_irt_getdents = nacl_irt_getdents;
@@ -948,11 +945,12 @@ init_irt_table (void)
   __nacl_irt_dup = nacl_irt_dup;
   __nacl_irt_dup2 = nacl_irt_dup2;
   __nacl_irt_dup3 = nacl_irt_dup3;
-  __nacl_irt_read = nacl_irt_read;
   __nacl_irt_wait = nacl_irt_wait;
   __nacl_irt_waitpid = nacl_irt_waitpid;
-  __nacl_irt_pipe = lind_pipe;
   __nacl_irt_execve = nacl_irt_execve;
+  __nacl_irt_write = nacl_irt_write;
+  __nacl_irt_read = nacl_irt_read;
+  __nacl_irt_pipe = nacl_irt_pipe;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
