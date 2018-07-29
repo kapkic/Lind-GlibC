@@ -20,7 +20,6 @@ geteuid		-	geteuid		Ei:	__geteuid	geteuid
 getpgid		-	getpgid		i:i	__getpgid	getpgid
 getpgrp		-	getpgrp		Ei:	getpgrp
 getpmsg		-	getpmsg		i:ipppp	getpmsg
-getppid		-	getppid		Ei:	__getppid	getppid
 getresuid	-	getresuid	i:ppp	getresuid
 getresgid	-	getresgid	i:ppp	getresgid
 getsid		-	getsid		i:i	getsid

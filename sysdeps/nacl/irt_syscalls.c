@@ -395,6 +395,7 @@ int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
 pid_t (*__nacl_irt_getpid) (void);
+pid_t (*__nacl_irt_getppid) (void);
 int (*__nacl_irt_fork) (void);
 int (*__nacl_irt_dup) (int oldfd);
 int (*__nacl_irt_dup2) (int oldfd, int newfd);
@@ -404,6 +405,7 @@ int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 int (*__nacl_irt_pipe) (int pipedes[static 2]);
 int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
 int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
+int (*__nacl_irt_execv) (const char* path, const char* argv);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -638,6 +640,14 @@ static pid_t nacl_irt_getpid (void)
     return NACL_SYSCALL (getpid) ();
 }
 
+/*
+ * getppid() should never fail -jp
+ */
+static pid_t nacl_irt_getppid (void)
+{
+    return NACL_SYSCALL (getppid) ();
+}
+
 static int nacl_irt_wait (int *stat_loc)
 {
     return NACL_SYSCALL (wait) (stat_loc);
@@ -656,6 +666,11 @@ static int nacl_irt_fork (void)
 static int nacl_irt_execve (const char* path, const char* argv, const char* envp)
 {
     return NACL_SYSCALL (execve) (path, argv, envp);
+}
+
+static int nacl_irt_execv (const char* path, const char* argv)
+{
+    return NACL_SYSCALL (execv) (path, argv);
 }
 
 static int nacl_irt_pipe (int *pipedes)
@@ -941,6 +956,7 @@ init_irt_table (void)
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;
   __nacl_irt_shutdown = nacl_irt_shutdown_lind;
   __nacl_irt_getpid = nacl_irt_getpid;
+  __nacl_irt_getppid = nacl_irt_getppid;
   __nacl_irt_fork = nacl_irt_fork;
   __nacl_irt_dup = nacl_irt_dup;
   __nacl_irt_dup2 = nacl_irt_dup2;
@@ -948,6 +964,7 @@ init_irt_table (void)
   __nacl_irt_wait = nacl_irt_wait;
   __nacl_irt_waitpid = nacl_irt_waitpid;
   __nacl_irt_execve = nacl_irt_execve;
+  __nacl_irt_execv = nacl_irt_execv;
   __nacl_irt_write = nacl_irt_write;
   __nacl_irt_read = nacl_irt_read;
   __nacl_irt_pipe = nacl_irt_pipe;

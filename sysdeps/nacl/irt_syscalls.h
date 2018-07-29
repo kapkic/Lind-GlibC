@@ -1,4 +1,4 @@
-#ifndef _IRT_SYSCALLS_H
+#if !defined(_IRT_SYSCALLS_H)
 #define _IRT_SYSCALLS_H
 
 #include <fcntl.h>
@@ -143,6 +143,7 @@ extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
 extern pid_t (*__nacl_irt_getpid) (void);
+extern pid_t (*__nacl_irt_getppid) (void);
 extern int (*__nacl_irt_fork) (void);
 extern int (*__nacl_irt_dup) (int oldfd);
 extern int (*__nacl_irt_dup2) (int oldfd, int newfd);
@@ -152,34 +153,36 @@ extern int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 extern int (*__nacl_irt_pipe) (int pipedes[static 2]);
 extern int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
 extern int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
+extern int (*__nacl_irt_execv) (const char* path, const char* argv);
 
 #undef socklen_t
 
-#ifdef _LIBC
+#if defined(_LIBC)
 void init_irt_table (void) attribute_hidden;
 #endif
-#endif
 
-#if defined(_LIBC) || defined (__need_emulated_syscalls)
-#ifndef _IRT_EMULATED_SYSCALLS_H
+#endif /* !defined(_IRT_SYSCALLS_H) */
+
+#if !defined(_IRT_EMULATED_SYSCALLS_H) && (defined(_LIBC) || defined(__need_emulated_syscalls))
 #define _IRT_EMULATED_SYSCALLS_H 1
 
-#ifndef _LINUX_TYPES_H
-#define ustat __kernel_ustat
-#include <linux/sysctl.h>
-#undef ustat
-#ifdef _LIBC
-#include <misc/sys/ustat.h>
-#else
-#include <sys/ustat.h>
-#endif
+#if !defined(_LINUX_TYPES_H)
+# define ustat __kernel_ustat
+# include <linux/sysctl.h>
+# undef ustat
+# if defined(_LIBC)
+#  include <misc/sys/ustat.h>
+# else
+#  include <sys/ustat.h>
+# endif
 #endif
 
 #include <linux/getcpu.h>
 #include <linux/posix_types.h>
-#if !defined (_LIBC) || defined(IS_IN_librt)
-#include <mqueue.h>
+#if !defined(_LIBC) || defined(IS_IN_librt)
+# include <mqueue.h>
 #endif
+
 #include <pthread.h>
 #include <sched.h>
 #include <signal.h>
@@ -199,12 +202,14 @@ void init_irt_table (void) attribute_hidden;
 #include <sys/timex.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
-#ifdef __i386__
-#include <sys/vm86.h>
+
+#if defined(__i386__)
+# include <sys/vm86.h>
 #endif
+
 #include <unistd.h>
 
-#ifdef _LIBC
+#if defined(_LIBC)
 struct robust_list_head;
 #else
 struct robust_list_head
@@ -215,5 +220,4 @@ struct robust_list_head
 };
 #endif
 
-#endif
-#endif
+#endif /* !defined(_IRT_EMULATED_SYSCALLS_H) && (defined(_LIBC) || defined(__need_emulated_syscalls)) */

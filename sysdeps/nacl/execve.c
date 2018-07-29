@@ -70,7 +70,7 @@ __execve (char const *path, char *const argv[], char *const envp[])
   ret = __nacl_irt_execve(path, argv_ptr, envp_ptr);
 
   /* execve should not return.  */
-  __set_errno (ret);
+  __set_errno (-ret);
   return -1;
 }
 

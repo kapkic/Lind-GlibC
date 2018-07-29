@@ -689,14 +689,6 @@ INTERNAL_SYSCALL_getpmsg_5 (int *err, int fildes, const struct strbuf *ctlptr,
   return 0;
 }
 
-__extern_always_inline pid_t
-INTERNAL_SYSCALL_getppid_0 (int *err)
-{
-  lind_strace("getppid unimplemented");
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
-
 /* The return value of getpriority syscall is biased by this value
    to avoid returning negative values.  */
 __extern_always_inline int

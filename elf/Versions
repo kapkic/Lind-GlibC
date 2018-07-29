@@ -142,6 +142,7 @@ ld {
     __nacl_irt_socketpair;
     __nacl_irt_shutdown;
     __nacl_irt_getpid;
+    __nacl_irt_getppid;
     __nacl_irt_pipe;
     __nacl_irt_pipe2;
     __nacl_irt_fork;

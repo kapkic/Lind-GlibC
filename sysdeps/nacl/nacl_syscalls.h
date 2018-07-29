@@ -31,6 +31,10 @@
 #define NACL_sys_null                    1
 #define NACL_sys_nameservice             2
 
+/*
+ * TODO: why is there a gap here? -jp
+ */
+
 #define NACL_sys_dup                     8
 #define NACL_sys_dup2                    9
 #define NACL_sys_open                   10
@@ -42,21 +46,18 @@
 #define NACL_sys_stat                   16
 #define NACL_sys_fstat                  17
 #define NACL_sys_chmod                  18
+
 /* no fchmod emulation on windows */
 
 #define NACL_sys_sysbrk                 20
 #define NACL_sys_mmap                   21
 #define NACL_sys_munmap                 22
-
 #define NACL_sys_getdents               23
-
 #define NACL_sys_mprotect               24
-
 #define NACL_sys_exit                   30
 #define NACL_sys_getpid                 31
 #define NACL_sys_sched_yield            32
 #define NACL_sys_sysconf                33
-
 #define NACL_sys_gettimeofday           40
 #define NACL_sys_clock                  41
 #define NACL_sys_nanosleep              42
@@ -72,7 +73,6 @@
 #define NACL_sys_imc_recvmsg            64
 #define NACL_sys_imc_mem_obj_create     65
 #define NACL_sys_imc_socketpair         66
-
 #define NACL_sys_mutex_create           70
 #define NACL_sys_mutex_lock             71
 #define NACL_sys_mutex_trylock          72
@@ -82,7 +82,6 @@
 #define NACL_sys_cond_signal            76
 #define NACL_sys_cond_broadcast         77
 #define NACL_sys_cond_timed_wait_abs    79
-
 #define NACL_sys_thread_create          80
 #define NACL_sys_thread_exit            81
 #define NACL_sys_tls_init               82
@@ -90,30 +89,35 @@
 #define NACL_sys_tls_get                84
 #define NACL_sys_second_tls_set         85
 #define NACL_sys_second_tls_get         86
-
 #define NACL_sys_srpc_get_fd            90
-
 #define NACL_sys_sem_create             100
 #define NACL_sys_sem_wait               101
 #define NACL_sys_sem_post               102
 #define NACL_sys_sem_get_value          103
-
 #define NACL_sys_dyncode_create         104
 #define NACL_sys_dyncode_modify         105
 #define NACL_sys_dyncode_delete         106
 
-#define NACL_sys_lind_api         113
+/*
+ * TODO: why is there a gap here? -jp
+ */
 
-// yiwen: added new NACL_sys_call here.
-#define NACL_sys_pipe         114
-#define NACL_sys_fork         115
-#define NACL_sys_execv        116
-#define NACL_sys_execve       117
-#define NACL_sys_waitpid      118
-#define NACL_sys_dup3         119
-#define NACL_sys_wait         120
+#define NACL_sys_lind_api               113
 
-#define NACL_MAX_SYSCALLS     121
+#define NACL_sys_pipe                   114
+#define NACL_sys_fork                   115
+#define NACL_sys_execv                  116
+#define NACL_sys_execve                 117
+#define NACL_sys_waitpid                118
+#define NACL_sys_dup3                   119
+#define NACL_sys_wait                   120
+#define NACL_sys_getppid                121
+
+/*
+ * TODO: is this macro really needed? -jp
+ */
+
+#define NACL_MAX_SYSCALLS               256
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
   (0x10000 + ((syscall_number) << 5))
@@ -187,6 +191,7 @@ typedef int (*TYPE_nacl_sched_yield) (void);
 typedef int (*TYPE_nacl_sysconf) (int name, int *res);
 typedef void *(*TYPE_nacl_sysbrk) (void *p);
 typedef pid_t (*TYPE_nacl_getpid) (void);
+typedef pid_t (*TYPE_nacl_getppid) (void);
 typedef clock_t (*TYPE_nacl_clock) (void);
 typedef int (*TYPE_nacl_nanosleep) (const struct timespec *req,
                                     struct timespec *rem);
@@ -214,8 +219,8 @@ typedef int (*TYPE_nacl_lind_api) (uint32_t callNum, uint32_t inNum, void* inArg
 //yiwen
 typedef int (*TYPE_nacl_pipe) (int* pipedes);
 typedef int (*TYPE_nacl_fork) (void);
-typedef void (*TYPE_nacl_execv) (void);
 typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, const char* envp);
+typedef int (*TYPE_nacl_execv) (const char* path, const char* argv);
 typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
 
 typedef int (*TYPE_nacl_wait) (int *stat_loc);
