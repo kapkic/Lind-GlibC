@@ -404,8 +404,8 @@ int (*__nacl_irt_wait) (int *stat_loc);
 int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 int (*__nacl_irt_pipe) (int pipedes[static 2]);
 int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
-int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
-int (*__nacl_irt_execv) (const char* path, const char* argv);
+int (*__nacl_irt_execve) (char const *path, char *const *argv, char *const *envp);
+int (*__nacl_irt_execv) (char const *path, char *const *argv);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -663,19 +663,19 @@ static int nacl_irt_fork (void)
     return NACL_SYSCALL (fork) ();
 }
 
-static int nacl_irt_execve (const char* path, const char* argv, const char* envp)
+static int nacl_irt_pipe (int *pipedes)
+{
+    return NACL_SYSCALL (pipe) (pipedes);
+}
+
+static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
 {
     return NACL_SYSCALL (execve) (path, argv, envp);
 }
 
-static int nacl_irt_execv (const char* path, const char* argv)
+static int nacl_irt_execv (char const *path, char *const *argv)
 {
     return NACL_SYSCALL (execv) (path, argv);
-}
-
-static int nacl_irt_pipe (int *pipedes)
-{
-    return NACL_SYSCALL (pipe) (pipedes);
 }
 
 static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,

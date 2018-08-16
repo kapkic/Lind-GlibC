@@ -152,8 +152,8 @@ extern int (*__nacl_irt_wait) (int *stat_loc);
 extern int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
 extern int (*__nacl_irt_pipe) (int pipedes[static 2]);
 extern int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
-extern int (*__nacl_irt_execve) (const char* path, const char* argv, const char* envp);
-extern int (*__nacl_irt_execv) (const char* path, const char* argv);
+extern int (*__nacl_irt_execve) (char const *path, char *const *argv, char *const *envp);
+extern int (*__nacl_irt_execv) (char const *path, char *const *argv);
 
 #undef socklen_t
 

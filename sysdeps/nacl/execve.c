@@ -27,47 +27,14 @@
  * environment `envp`.  `argv` and `envp` are terminated by NULL pointers.
  */
 int
-__execve (char const *path, char *const argv[], char *const envp[])
+__execve (char const *path, char *const *argv, char *const *envp)
 {
-  int i;
   int ret;
-  char argv_send[100] = "";
-  char envp_send[100] = "";
-  char const *argv_ptr;
-  char const *envp_ptr;
-
-  if (!path || !argv || !envp)
-    {
-      __set_errno (EINVAL);
-      return -1;
-    }
-
-  i = 0;
-  for (;;) {
-    if (!argv[i]) {
-      strcat(argv_send, "\0");
-      break;
-    }
-    strcat(argv_send, argv[i]);
-    strcat(argv_send, " ");
-    i++;
+  if (!path || !argv || !envp) {
+    __set_errno (EINVAL);
+    return -1;
   }
-
-  i = 0;
-  for (;;) {
-    if (!envp[i]) {
-      strcat(envp_send, "\0");
-      break;
-    }
-    strcat(envp_send, envp[i]);
-    strcat(envp_send, " ");
-    i++;
-  }
-
-  argv_ptr = argv_send;
-  envp_ptr = envp_send;
-
-  ret = __nacl_irt_execve(path, argv_ptr, envp_ptr);
+  ret = __nacl_irt_execve(path, argv, envp);
 
   /* execve should not return.  */
   __set_errno (-ret);
