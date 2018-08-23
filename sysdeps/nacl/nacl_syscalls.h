@@ -104,14 +104,18 @@
 
 #define NACL_sys_lind_api               113
 
-#define NACL_sys_pipe                   114
-#define NACL_sys_fork                   115
-#define NACL_sys_execv                  116
-#define NACL_sys_execve                 117
-#define NACL_sys_waitpid                118
-#define NACL_sys_dup3                   119
-#define NACL_sys_wait                   120
-#define NACL_sys_getppid                121
+#define NACL_sys_fork                   114
+#define NACL_sys_execv                  115
+#define NACL_sys_execve                 116
+#define NACL_sys_dup3                   117
+#define NACL_sys_pipe                   118
+#define NACL_sys_pipe2                  119
+#define NACL_sys_getppid                120
+#define NACL_sys_waitpid                121
+#define NACL_sys_wait                   122
+#define NACL_sys_wait4                  123
+#define NACL_sys_sigprocmask            124
+
 
 /*
  * TODO: is this macro really needed? -jp
@@ -216,13 +220,14 @@ typedef int (*TYPE_nacl_dyncode_delete) (void *dest, size_t size);
 
 typedef int (*TYPE_nacl_lind_api) (uint32_t callNum, uint32_t inNum, void* inArgs, uint32_t outNum, void* outArgs);
 
-//yiwen
-typedef int (*TYPE_nacl_pipe) (int* pipedes);
 typedef int (*TYPE_nacl_fork) (void);
 typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, const char* envp);
 typedef int (*TYPE_nacl_execv) (const char* path, const char* argv);
+typedef int (*TYPE_nacl_pipe) (int *pipedes);
+typedef int (*TYPE_nacl_pipe2) (int *pipedes, int flags);
 typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
-
 typedef int (*TYPE_nacl_wait) (int *stat_loc);
+typedef int (*TYPE_nacl_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
+typedef int (*TYPE_nacl_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
 
 #endif

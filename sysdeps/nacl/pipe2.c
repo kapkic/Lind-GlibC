@@ -12,14 +12,26 @@
 int
 __pipe2 (int pipedes[static 2], int flags)
 {
+  int ret;
+
   if (!pipedes) {
     __set_errno (EINVAL);
     return -1;
   }
-  __set_errno (ENOSYS);
-  return -1;
+
+  /* pipe2() with `flags == 0` is equivalent to pipe() */
+  if (!flags) {
+    ret = __nacl_irt_pipe(pipedes);
+  } else {
+    ret = __nacl_irt_pipe2(pipedes, flags);
+  }
+
+  if (ret) {
+    __set_errno (-ret);
+    return -1;
+  }
+
+  return 0;
 }
 libc_hidden_def (__pipe2)
 weak_alias (__pipe2, pipe2)
-stub_warning (pipe2)
-#include <stub-tag.h>

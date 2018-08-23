@@ -16,20 +16,28 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
    02111-1307 USA.  */
 
+#include <sys/types.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include <sysdep.h>
 
+struct rusage;
+
 /* Wait for a child to die.  When one does, put its status in *STAT_LOC
    and return its process ID.  For errors, return (pid_t) -1.  */
-pid_t __wait(int *stat_loc)
+pid_t __libc_wait4(pid_t pid, int *wstatus, int options, struct rusage *rusage)
 {
-    pid_t ret = __nacl_irt_wait(stat_loc);
+    /*
+     * TODO: implement wait4() properly -jp
+     */
+    pid_t ret = __nacl_irt_wait4(pid, wstatus, options, rusage);
     if (ret < 0) {
       __set_errno (-ret);
       return -1;
     }
     return ret;
 }
-libc_hidden_def (__wait)
-weak_alias (__wait, wait)
+weak_alias (__libc_wait4, __wait4)
+weak_alias (__libc_wait4, wait4)

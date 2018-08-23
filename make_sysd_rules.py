@@ -166,8 +166,10 @@ override_list = [
     "sysdeps/nacl/dup3.c",
     "sysdeps/nacl/pipe.c",
     "sysdeps/nacl/pipe2.c",
-    "sysdeps/nacl/wait.c",
     "sysdeps/nacl/waitpid.c",
+    "sysdeps/nacl/wait.c",
+    "sysdeps/nacl/wait4.c",
+    "sysdeps/nacl/sigprocmask.c",
     ]
 
 def get_override_map():

@@ -400,12 +400,14 @@ int (*__nacl_irt_fork) (void);
 int (*__nacl_irt_dup) (int oldfd);
 int (*__nacl_irt_dup2) (int oldfd, int newfd);
 int (*__nacl_irt_dup3) (int oldfd, int newfd, int flags);
-int (*__nacl_irt_wait) (int *stat_loc);
 int (*__nacl_irt_waitpid) (int pid, int *stat_loc, int options);
+int (*__nacl_irt_wait) (int *stat_loc);
+pid_t (*__nacl_irt_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
 int (*__nacl_irt_pipe) (int pipedes[static 2]);
 int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
 int (*__nacl_irt_execve) (char const *path, char *const *argv, char *const *envp);
 int (*__nacl_irt_execv) (char const *path, char *const *argv);
+int (*__nacl_irt_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
 
 #include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
@@ -648,14 +650,19 @@ static pid_t nacl_irt_getppid (void)
     return NACL_SYSCALL (getppid) ();
 }
 
+static int nacl_irt_waitpid (int pid, int *stat_loc, int options)
+{
+    return NACL_SYSCALL (waitpid) (pid, stat_loc, options);
+}
+
 static int nacl_irt_wait (int *stat_loc)
 {
     return NACL_SYSCALL (wait) (stat_loc);
 }
 
-static int nacl_irt_waitpid (int pid, int *stat_loc, int options)
+static pid_t nacl_irt_wait4 (pid_t pid, int *wstatus, int options, struct rusage *rusage)
 {
-    return NACL_SYSCALL (waitpid) (pid, stat_loc, options);
+   return NACL_SYSCALL (waitpid) (pid, wstatus, options);
 }
 
 static int nacl_irt_fork (void)
@@ -668,6 +675,11 @@ static int nacl_irt_pipe (int *pipedes)
     return NACL_SYSCALL (pipe) (pipedes);
 }
 
+static int nacl_irt_pipe2 (int *pipedes,  int flags)
+{
+    return NACL_SYSCALL (pipe2) (pipedes, flags);
+}
+
 static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
 {
     return NACL_SYSCALL (execve) (path, argv, envp);
@@ -676,6 +688,11 @@ static int nacl_irt_execve (char const *path, char *const *argv, char *const *en
 static int nacl_irt_execv (char const *path, char *const *argv)
 {
     return NACL_SYSCALL (execv) (path, argv);
+}
+
+static int nacl_irt_sigprocmask (int how, const sigset_t *set, sigset_t *oset)
+{
+    return NACL_SYSCALL (sigprocmask) (how, set, oset);
 }
 
 static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,
@@ -961,13 +978,16 @@ init_irt_table (void)
   __nacl_irt_dup = nacl_irt_dup;
   __nacl_irt_dup2 = nacl_irt_dup2;
   __nacl_irt_dup3 = nacl_irt_dup3;
-  __nacl_irt_wait = nacl_irt_wait;
-  __nacl_irt_waitpid = nacl_irt_waitpid;
-  __nacl_irt_execve = nacl_irt_execve;
-  __nacl_irt_execv = nacl_irt_execv;
-  __nacl_irt_write = nacl_irt_write;
-  __nacl_irt_read = nacl_irt_read;
   __nacl_irt_pipe = nacl_irt_pipe;
+  __nacl_irt_pipe2 = nacl_irt_pipe2;
+  __nacl_irt_read = nacl_irt_read;
+  __nacl_irt_write = nacl_irt_write;
+  __nacl_irt_waitpid = nacl_irt_waitpid;
+  __nacl_irt_wait = nacl_irt_wait;
+  __nacl_irt_wait4 = nacl_irt_wait4;
+  __nacl_irt_execv = nacl_irt_execv;
+  __nacl_irt_execve = nacl_irt_execve;
+  __nacl_irt_sigprocmask = nacl_irt_sigprocmask;
 }
 
 size_t nacl_interface_query(const char *interface_ident,
