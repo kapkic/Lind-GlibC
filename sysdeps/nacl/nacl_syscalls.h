@@ -106,20 +106,15 @@
 #define NACL_sys_lind_api               113
 
 #define NACL_sys_pipe                   114
-#define NACL_sys_fork                   115
-#define NACL_sys_execv                  116
-#define NACL_sys_execve                 117
-#define NACL_sys_waitpid                118
-#define NACL_sys_wait                   119
-#define NACL_sys_getppid                120
-#define NACL_sys_pipe2                  121
-#define NACL_sys_waitpid                122
-#define NACL_sys_wait4                  123
-#define NACL_sys_sigprocmask            124
-
-/*
- * TODO: is this macro really needed? -jp
- */
+#define NACL_sys_pipe2                  115
+#define NACL_sys_fork                   116
+#define NACL_sys_execv                  117
+#define NACL_sys_execve                 118
+#define NACL_sys_getppid                119
+#define NACL_sys_waitpid                120
+#define NACL_sys_wait                   121
+#define NACL_sys_wait4                  122
+#define NACL_sys_sigprocmask            123
 
 #define NACL_MAX_SYSCALLS               256
 
