@@ -115,6 +115,7 @@
 #define NACL_sys_wait                   121
 #define NACL_sys_wait4                  122
 #define NACL_sys_sigprocmask            123
+#define NACL_sys_lstat                  124
 
 #define NACL_MAX_SYSCALLS               256
 
@@ -141,6 +142,7 @@ typedef int (*TYPE_nacl_write) (int desc, void const *buf, size_t count);
 typedef int (*TYPE_nacl_open) (char const *pathname, int flags, mode_t mode);
 typedef int (*TYPE_nacl_lseek) (int desc, nacl_abi_off_t *offset, int whence);
 typedef int (*TYPE_nacl_stat) (const char *file, struct nacl_abi_stat *st);
+typedef int (*TYPE_nacl_lstat) (const char *file, struct nacl_abi_stat *st);
 
 typedef int (*TYPE_nacl_imc_recvmsg) (int desc,
                                       struct NaClImcMsgHdr *nmhp,
