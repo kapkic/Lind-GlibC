@@ -787,7 +787,6 @@ init_irt_table (void)
     {
       __nacl_irt_open = nacl_irt_open;
       __nacl_irt_stat = nacl_irt_stat;
-      __nacl_irt_lstat = nacl_irt_lstat;
     }
 
   if (__nacl_irt_query &&
@@ -994,6 +993,7 @@ init_irt_table (void)
   __nacl_irt_execv = nacl_irt_execv;
   __nacl_irt_execve = nacl_irt_execve;
   __nacl_irt_sigprocmask = nacl_irt_sigprocmask;
+  __nacl_irt_lstat = nacl_irt_lstat;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

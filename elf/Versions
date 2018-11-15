@@ -108,6 +108,7 @@ ld {
     __nacl_irt_sched_yield;
     __nacl_irt_seek;
     __nacl_irt_stat;
+    __nacl_irt_lstat;
     __nacl_irt_sysbrk;
     __nacl_irt_sysconf;
     __nacl_irt_thread_create;
