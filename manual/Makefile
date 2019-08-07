@@ -46,12 +46,6 @@ all: info
 info: libc.info
 endif
 
-# ignore errors
-TEXINFO_FLAGS := --force --no-validate --no-warn
-MAKEINFO_FLAGS += $(TEXINFO_FLAGS)
-TEXI2DVI_FLAGS += $(TEXINFO_FLAGS)
-TEXI2PDF_FLAGS += $(TEXINFO_FLAGS)
-
 # scripts we use
 ifndef move-if-change
 move-if-change = ./move-if-change
@@ -87,7 +81,7 @@ libc.dvi libc.pdf: texinfo.tex
 
 html: libc/index.html
 libc/index.html: chapters.texi top-menu.texi dir-add.texi libm-err.texi
-	$(MAKEINFO) $(MAKEINFO_FLAGS) --html libc.texinfo
+	$(MAKEINFO) --html libc.texinfo
 
 # Generate the summary from the Texinfo source files for each chapter.
 summary.texi: stamp-summary ;
@@ -125,13 +119,13 @@ stamp-libm-err: libm-err-tab.pl $(wildcard $(foreach dir,$(sysdirs),\
 	mv -f $@.new $@
 
 %.info: %.texinfo
-	LANGUAGE=C LC_ALL=C $(MAKEINFO) $(MAKEINFO_FLAGS) $<
+	LANGUAGE=C LC_ALL=C $(MAKEINFO) $<
 
 %.dvi: %.texinfo
-	$(TEXI2DVI) $(TEXI2DVI_FLAGS) $<
+	$(TEXI2DVI) $<
 
 %.pdf: %.texinfo
-	$(TEXI2PDF) $(TEXI2PDF_FLAGS) $<
+	$(TEXI2PDF) $<
 
 # Distribution.
 minimal-dist = summary.awk texis.awk tsort.awk libc-texinfo.sh libc.texinfo \
@@ -216,7 +210,7 @@ ETAGS = etags -T
 endif
 TAGS: $(minimal-dist)
 	$(ETAGS) -o $@ $^
-
+
 # The parent makefile sometimes invokes us with targets `subdir_REAL-TARGET'.
 subdir_%: % ;
 # For targets we don't define, do nothing.
@@ -238,8 +232,10 @@ ifdef objpfx
 .PHONY: stubs
 stubs: $(objpfx)stubs
 endif
-stamps := $(foreach o,$(object-suffixes-for-libc),$(objpfx)stamp$o)
-$(objpfx)stubs ../po/manual.pot $(objpfx)stamp.o $(stamps):
+$(objpfx)stubs ../po/manual.pot:
+	$(make-target-directory)
+	touch $@
+$(objpfx)stamp%:
 	$(make-target-directory)
 	touch $@
 
@@ -252,7 +248,7 @@ endef
 
 # The top-level glibc Makefile expects subdir_install to update the stubs file.
 subdir_install: stubs
-
+
 # Get rid of these variables if they came from the parent.
 routines =
 aux =

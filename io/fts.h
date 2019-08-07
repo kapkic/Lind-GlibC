@@ -37,7 +37,7 @@
 
 /* The fts interface is incompatible with the LFS interface which
    transparently uses the 64-bit file access functions.  */
-#ifdef __USE_FILE_OFFSET64
+#if defined __USE_FILE_OFFSET64 && !defined (__native_client__)
 # error "<fts.h> cannot be used with -D_FILE_OFFSET_BITS==64"
 #endif
 

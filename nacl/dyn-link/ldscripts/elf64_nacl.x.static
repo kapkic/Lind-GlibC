@@ -5,8 +5,8 @@
    TODO(mseaborn): Make this work with "-static" on its own.
    See http://code.google.com/p/nativeclient/issues/detail?id=1198
 */
-OUTPUT_FORMAT("elf64-nacl", "elf64-nacl",
-	      "elf64-nacl")
+OUTPUT_FORMAT("elf64-x86-64-nacl", "elf64-x86-64-nacl",
+	      "elf64-x86-64-nacl")
 OUTPUT_ARCH(i386:x86-64)
 ENTRY(_start)
 SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib");

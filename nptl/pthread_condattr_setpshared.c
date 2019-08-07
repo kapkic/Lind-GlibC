@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <pthreadP.h>
 
+
 int
 pthread_condattr_setpshared (attr, pshared)
      pthread_condattr_t *attr;

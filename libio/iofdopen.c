@@ -59,7 +59,9 @@ _IO_new_fdopen (fd, mode)
 #endif
     struct _IO_wide_data wd;
   } *new_f;
+#if !defined(__native_client__)
   int fd_flags;
+#endif  /* !defined(__native_client__) */
   int i;
   int use_mmap = 0;
 
@@ -99,6 +101,11 @@ _IO_new_fdopen (fd, mode)
 	}
       break;
     }
+/*
+ * Don't attempt to verify fd mode under Native Client,
+ * as fcntl is not implemented.
+ */
+#if !defined(__native_client__)
 #ifdef F_GETFL
   fd_flags = _IO_fcntl (fd, F_GETFL);
 #ifndef O_ACCMODE
@@ -138,6 +145,7 @@ _IO_new_fdopen (fd, mode)
 	return NULL;
     }
 #endif
+#endif  /* !defined(__native_client__) */
 
   new_f = (struct locked_FILE *) malloc (sizeof (struct locked_FILE));
   if (new_f == NULL)

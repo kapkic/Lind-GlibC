@@ -1,6 +1,6 @@
 /* Script for ld --shared: link shared library */
-OUTPUT_FORMAT("elf64-nacl", "elf64-nacl",
-	      "elf64-nacl")
+OUTPUT_FORMAT("elf64-x86-64-nacl", "elf64-x86-64-nacl",
+	      "elf64-x86-64-nacl")
 OUTPUT_ARCH(i386:x86-64)
 ENTRY(_start)
 SEARCH_DIR("=/usr/local/lib"); SEARCH_DIR("=/lib"); SEARCH_DIR("=/usr/lib");

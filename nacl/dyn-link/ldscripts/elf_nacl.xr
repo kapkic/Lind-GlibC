@@ -1,6 +1,6 @@
 /* Script for ld -r: link without relocation */
-OUTPUT_FORMAT("elf32-nacl", "elf32-nacl",
-	      "elf32-nacl")
+OUTPUT_FORMAT("elf32-i386-nacl", "elf32-i386-nacl",
+	      "elf32-i386-nacl")
 OUTPUT_ARCH(i386)
  /* For some reason, the Solaris linker makes bad executables
   if gld -r is used and the intermediate file has sections starting

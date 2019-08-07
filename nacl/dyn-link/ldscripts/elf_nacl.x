@@ -1,6 +1,6 @@
 /* Default linker script, for normal executables */
-OUTPUT_FORMAT("elf32-nacl", "elf32-nacl",
-	      "elf32-nacl")
+OUTPUT_FORMAT("elf32-i386-nacl", "elf32-i386-nacl",
+	      "elf32-i386-nacl")
 OUTPUT_ARCH(i386)
 ENTRY(_start)
 SEARCH_DIR("=/usr/local/lib32"); SEARCH_DIR("=/lib32"); SEARCH_DIR("=/usr/lib32");

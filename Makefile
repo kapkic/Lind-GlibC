@@ -68,7 +68,7 @@ endif # $(AUTOCONF) = no
 		   subdir_install					\
 		   subdir_objs subdir_stubs subdir_testclean		\
 		   $(addprefix install-, no-libc.a bin lib data headers others)
-
+
 headers := limits.h values.h features.h gnu-versions.h bits/libc-lock.h \
 	   bits/xopen_lim.h gnu/libc-version.h
 
@@ -151,7 +151,7 @@ $(common-objpfx)testrun.sh: $(common-objpfx)config.make \
 postclean-generated += testrun.sh
 
 others: $(common-objpfx)testrun.sh
-
+
 # Makerules creates a file `stubs' in each subdirectory, which
 # contains `#define __stub_FUNCTION' for each function defined in that
 # directory which is a stub.
