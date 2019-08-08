@@ -677,7 +677,7 @@ static int nacl_irt_fork (void)
 
 static int nacl_irt_pipe (int *pipedes)
 {
-    return NACL_SYSCALL (pipe) (pipedes);
+    return -lind_pipe(pipedes);
 }
 
 static int nacl_irt_pipe2 (int *pipedes,  int flags)

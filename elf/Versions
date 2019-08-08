@@ -199,6 +199,7 @@ ld {
     lind_getegid;
     lind_flock;
     lind_strace;
+    lind_pipe;
     # Those are in the dynamic linker, but used by libc.so.
     __libc_enable_secure;
     _dl_argv;
