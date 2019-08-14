@@ -682,7 +682,7 @@ static int nacl_irt_pipe (int *pipedes)
 
 static int nacl_irt_pipe2 (int *pipedes,  int flags)
 {
-    return NACL_SYSCALL (pipe2) (pipedes, flags);
+    return -lind_pipe2(pipedes, flags);
 }
 
 static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
