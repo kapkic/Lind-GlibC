@@ -148,7 +148,7 @@ int lind_pipe2 (int *pipedes, int flags)
 {
     LindArg in_args[1] = {{AT_INT, flags, 0}};
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)pipedes, sizeof(uintptr_t)}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_sys_pipe, 0, NULL, 1, out_args);
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_pipe2, 0, NULL, 1, out_args);
 }
 
 int lind_dup (int oldfd)
