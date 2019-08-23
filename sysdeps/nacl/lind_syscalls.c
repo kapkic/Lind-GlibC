@@ -457,3 +457,8 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)events, sizeof(struct epoll_event)*maxevents}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_epoll_wait, 3, in_args, 1, out_args);
 }
+int lind_fork(int newcageid)
+{
+    LindArg in_args[1] = {{AT_INT, newcageid, 0}}
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fork, 1, in_args, 0, NULL);
+}
