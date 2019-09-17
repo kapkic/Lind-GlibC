@@ -72,6 +72,7 @@
 
 #define LIND_safe_sys_pipe              66
 #define LIND_safe_sys_pipe2             67
+#define LIND_safe_fs_fork              68
 
 #define LIND_comp_cia                   105
 #define LIND_comp_call                  106
@@ -152,6 +153,8 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
                       int maxevents, int timeout);
 ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
 ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
+//lind fork is only  the part of the fork call that handles file table duplication in python. Most of fork is implemented in C in NaCl.
+int lind_fork(int newcageid);
 
 
 #endif /* _LIND_SYSCALLS_H_ */
