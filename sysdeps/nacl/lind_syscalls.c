@@ -141,7 +141,7 @@ int lind_getpid (pid_t *buf)
 int lind_pipe (int *pipedes)
 {
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)pipedes, sizeof(uintptr_t)}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_sys_pipe, 0, NULL, 1, out_args);
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_pipe, 0, NULL, 1, out_args);
 }
 
 int lind_pipe2 (int *pipedes, int flags)
