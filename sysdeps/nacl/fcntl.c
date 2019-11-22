@@ -19,7 +19,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
-#include <unistd.h>
+
+#include "lind_syscalls.h"
+#include "lind_util.h"
 
 /* Perform file control operations on FD.
  right now we have mapped the async and the sync version of this
@@ -35,14 +37,14 @@ __fcntl (int fd, int cmd, ...) {
     /* for getops, send as they are, for set, grab the extra long argument */
     if (cmd == F_GETFD || cmd == F_GETFL || cmd == F_GETOWN ) {
       /* these commands don't have an arg */
-      return -1;
+      result = lind_fcntl_get(fd, cmd);
     } else if (cmd == F_SETFD || cmd == F_SETFL || cmd == F_SETOWN || cmd == F_DUPFD || cmd == F_DUPFD_CLOEXEC) {
       /* These commands have a single long arg */
       va_list argp;
       va_start(argp, cmd);
       
       long set_op = va_arg(argp, long);
-      result = __nacl_irt_dup2(fd, set_op);
+      result = lind_fcntl_set(fd, cmd, set_op);
 
     } else {
       /*  right now repy does not support any other commands */
@@ -55,6 +57,8 @@ __fcntl (int fd, int cmd, ...) {
     return -1;
     }
     return result;
+
+
 }
 libc_hidden_def (__fcntl)
 weak_alias (__fcntl, fcntl)
