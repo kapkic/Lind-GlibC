@@ -27,7 +27,7 @@ int count_args(char *const *args)
 {
   int counter = 0;
   while (1) {
-    if (args[counter] = NULL) return counter;
+    if (args[counter] == NULL) return counter;
     counter++;
   }
 }
@@ -48,7 +48,7 @@ __execve (char const *path, char *const *argv, char *const *envp)
   int argv_counter = count_args(argv);
   int envp_counter = count_args(envp);
   printf("%d argv args and %d envp args\n", argv_counter, envp_counter);
-  
+
   ret = __nacl_irt_execve(path, argv, envp);
 
   /* execve should not return.  */
