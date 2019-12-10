@@ -22,6 +22,16 @@
 #include <string.h>
 #include <sysdep.h>
 
+
+int count_args(char *const *args)
+{
+  int counter = 0;
+  while (1) {
+    if (args[counter] = NULL) return counter;
+    counter++;
+  }
+}
+
 /*
  * Replace the current process, executing `path` with arguments `argv` and
  * environment `envp`.  `argv` and `envp` are terminated by NULL pointers.
@@ -34,6 +44,11 @@ __execve (char const *path, char *const *argv, char *const *envp)
     __set_errno (EINVAL);
     return -1;
   }
+
+  int argv_counter = count_args(argv);
+  int envp_counter = count_args(envp);
+  printf("%d argv args and %d envp args\n", argv_counter, envp_counter);
+  
   ret = __nacl_irt_execve(path, argv, envp);
 
   /* execve should not return.  */
