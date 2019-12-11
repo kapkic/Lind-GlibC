@@ -39,6 +39,8 @@ int count_args(char *const *args)
 int
 __execve (char const *path, char *const *argv, char *const *envp)
 {
+
+  printf("In glibc execve\n");
   int ret;
   if (!path || !argv || !envp) {
     __set_errno (EINVAL);
