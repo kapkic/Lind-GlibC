@@ -270,8 +270,8 @@ INTERNAL_SYSCALL_epoll_pwait_6 (int *err, int epfd, struct epoll_event *events,
 }
 
 __extern_always_inline int
-INTERNAL_SYSCALL_execve_3 (int *err, const char *filename, char *const argv[],
-			   char *const envp[])
+INTERNAL_SYSCALL_execve_3 (int *err, const char *filename, char *const argv[], int argc
+			   char *const envp[], int envc)
 {
   lind_strace("execve unimplemented");
   *err = (38 /* ENOSYS */);

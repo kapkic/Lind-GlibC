@@ -410,7 +410,7 @@ int (*__nacl_irt_wait) (int *stat_loc);
 pid_t (*__nacl_irt_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
 int (*__nacl_irt_pipe) (int pipedes[static 2]);
 int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
-int (*__nacl_irt_execve) (char const *path, char *const *argv, char *const *envp);
+int (*__nacl_irt_execve) (char const *path, char *const *argv, int argc, char *const *envp, int envc);
 int (*__nacl_irt_execv) (char const *path, char *const *argv);
 int (*__nacl_irt_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
 
@@ -685,9 +685,9 @@ static int nacl_irt_pipe2 (int *pipedes,  int flags)
     return -lind_pipe2(pipedes, flags);
 }
 
-static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
+static int nacl_irt_execve (char const *path, char *const *argv, int argc, char *const *envp, int envc)
 {
-    return NACL_SYSCALL (execve) (path, argv, envp);
+    return NACL_SYSCALL (execve) (path, argv, argc, envp, envc);
 }
 
 static int nacl_irt_execv (char const *path, char *const *argv)

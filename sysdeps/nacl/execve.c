@@ -49,14 +49,14 @@ __execve (char const *path, char *const *argv, char *const *envp)
     return -1;
   }
 
-  int argv_counter = count_args(argv);
-  int envp_counter = count_args(envp);
+  int argc = count_args(argv);
+  int envc = count_args(envp);
 
   char countermsg[256];
-  sprintf(countermsg, "%d argv args and %d envp args\n", argv_counter, envp_counter);
+  sprintf(countermsg, "%d argv args and %d envp args\n", argc, envc);
   write(STDOUT_FILENO, countermsg, strlen(countermsg));
 
-  ret = __nacl_irt_execve(path, argv, envp);
+  ret = __nacl_irt_execve(path, argv, argc, envp, envc);
 
   /* execve should not return.  */
   __set_errno (-ret);

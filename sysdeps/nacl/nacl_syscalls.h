@@ -218,7 +218,7 @@ typedef int (*TYPE_nacl_dyncode_delete) (void *dest, size_t size);
 typedef int (*TYPE_nacl_lind_api) (uint32_t callNum, uint32_t inNum, void* inArgs, uint32_t outNum, void* outArgs);
 
 typedef int (*TYPE_nacl_fork) (void);
-typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, const char* envp);
+typedef int (*TYPE_nacl_execve) (const char* path, const char* argv, int argc, const char* envp, int envc);
 typedef int (*TYPE_nacl_execv) (const char* path, const char* argv);
 typedef int (*TYPE_nacl_pipe) (int *pipedes);
 typedef int (*TYPE_nacl_pipe2) (int *pipedes, int flags);
