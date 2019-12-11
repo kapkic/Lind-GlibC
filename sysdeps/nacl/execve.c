@@ -51,7 +51,10 @@ __execve (char const *path, char *const *argv, char *const *envp)
 
   int argv_counter = count_args(argv);
   int envp_counter = count_args(envp);
-  printf("%d argv args and %d envp args\n", argv_counter, envp_counter);
+
+  char countermsg[256];
+  sprintf(countermsg, "%d argv args and %d envp args\n", argv_counter, envp_counter);
+  write(STDOUT_FILENO, countermsg, sizeof(countermsg)-1);
 
   ret = __nacl_irt_execve(path, argv, envp);
 
