@@ -40,7 +40,9 @@ int
 __execve (char const *path, char *const *argv, char *const *envp)
 {
 
-  printf("In glibc execve\n");
+  const char msg[] = "in execve glibc";
+  write(STDOUT_FILENO, msg, sizeof(msg)-1);
+
   int ret;
   if (!path || !argv || !envp) {
     __set_errno (EINVAL);
