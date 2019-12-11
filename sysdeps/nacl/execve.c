@@ -40,7 +40,7 @@ int
 __execve (char const *path, char *const *argv, char *const *envp)
 {
 
-  const char msg[] = "in execve glibc";
+  const char msg[] = "in execve glibc\n";
   write(STDOUT_FILENO, msg, sizeof(msg)-1);
 
   int ret;
@@ -54,7 +54,7 @@ __execve (char const *path, char *const *argv, char *const *envp)
 
   char countermsg[256];
   sprintf(countermsg, "%d argv args and %d envp args\n", argv_counter, envp_counter);
-  write(STDOUT_FILENO, countermsg, sizeof(countermsg)-1);
+  write(STDOUT_FILENO, countermsg, strlen(countermsg));
 
   ret = __nacl_irt_execve(path, argv, envp);
 
