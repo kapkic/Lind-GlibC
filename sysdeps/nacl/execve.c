@@ -28,6 +28,9 @@ int count_args(char *const *args)
   int counter = 0;
   while (1) {
     if (args[counter] == NULL) return counter;
+    char pointermsg[256];
+    sprintf(pointermsg, "ptr # %d pointer: %p\n", counter, args[counter]);
+    write(STDOUT_FILENO, pointermsg, strlen(pointermsg));
     counter++;
   }
 }
@@ -49,16 +52,20 @@ __execve (char const *path, char *const *argv, char *const *envp)
     return -1;
   }
 
-  int argc = count_args(argv);
-  int envc = count_args(envp);
 
   char pointermsg[256];
   sprintf(pointermsg, "argv pointer: %p envp pointer: %p\n", argv, envp);
   write(STDOUT_FILENO, pointermsg, strlen(pointermsg));
 
+  int argc = count_args(argv);
+  int envc = count_args(envp);
+
+
   char countermsg[256];
   sprintf(countermsg, "%d argv args and %d envp args\n", argc, envc);
   write(STDOUT_FILENO, countermsg, strlen(countermsg));
+
+
 
   ret = __nacl_irt_execve(path, argv, argc, envp, envc);
 
