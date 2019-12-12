@@ -52,6 +52,10 @@ __execve (char const *path, char *const *argv, char *const *envp)
   int argc = count_args(argv);
   int envc = count_args(envp);
 
+  char pointermsg[256];
+  sprintf(pointermsg, "argv pointer: %p envp pointer: %p\n", argv, envp);
+  write(STDOUT_FILENO, pointermsg, strlen(pointermsg));
+
   char countermsg[256];
   sprintf(countermsg, "%d argv args and %d envp args\n", argc, envc);
   write(STDOUT_FILENO, countermsg, strlen(countermsg));
