@@ -125,10 +125,14 @@ int lind_noop (void)
     return NACL_SYSCALL(lind_api)(LIND_debug_noop, 0, NULL, 0, NULL);
 }
 
-int lind_getpid (pid_t *buf)
+int lind_getpid ()
 {
-    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(pid_t)}};
-    return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 1, out_args);
+    return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 0, NULL);
+}
+
+int lind_getppid ()
+{
+    return NACL_SYSCALL(lind_api)(LIND_sys_getppid, 0, NULL, 0, NULL);
 }
 
 /*

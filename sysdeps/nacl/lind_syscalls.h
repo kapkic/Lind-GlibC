@@ -39,6 +39,7 @@
 #define LIND_safe_fs_statfs             26
 #define LIND_safe_fs_fcntl              28
 
+#define LIND_sys_getppid                30
 #define LIND_sys_getpid                 31
 
 #define LIND_safe_net_socket            32
@@ -115,7 +116,8 @@ int lind_fxstat (int fd, int version, struct stat *buf);
 int lind_fstatfs (int fd, struct statfs *buf);
 int lind_statfs (const char *path, struct statfs *buf);
 int lind_noop (void);
-int lind_getpid (pid_t * buf);
+int lind_getpid (void);
+int lind_getppid (void);
 // yiwen: added pipe
 // jonathan: changed pipe to repy
 int lind_pipe (int* pipedes);
