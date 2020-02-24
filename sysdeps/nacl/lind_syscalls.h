@@ -69,7 +69,10 @@
 #define LIND_safe_net_sendmsg           59
 #define LIND_safe_net_recvmsg           60
 // yiwen: added lind_pipe
-#define LIND_sys_pipe                   61
+
+#define LIND_safe_fs_pipe              66
+#define LIND_safe_sys_pipe2             67
+#define LIND_safe_fs_fork              68
 
 #define LIND_comp_cia                   105
 #define LIND_comp_call                  106
@@ -111,8 +114,8 @@ int lind_fstatfs (int fd, struct statfs *buf);
 int lind_statfs (const char *path, struct statfs *buf);
 int lind_noop (void);
 int lind_getpid (pid_t * buf);
-// yiwen: added pipe
 int lind_pipe (int* pipedes);
+int lind_pipe2 (int* pipedes, int flags);
 int lind_dup (int oldfd);
 int lind_dup2 (int oldfd, int newfd);
 int lind_getdents (int fd, size_t nbytes, char *buf);
@@ -148,6 +151,8 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
                       int maxevents, int timeout);
 ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
 ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
+int lind_fork(int newcageid);
+
 
 #endif /* _LIND_SYSCALLS_H_ */
 

@@ -131,16 +131,18 @@ int lind_getpid (pid_t *buf)
     return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 1, out_args);
 }
 
-/*
- * yiwen: added lind_pipe(pipedes)
- *
- * this is not used right now, since our pipe was implemented inside NaCl's runtime.
- * but we may choose to use it, when we want to use our Repy SafePOSIX implementation.
- */
 int lind_pipe (int *pipedes)
 {
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)pipedes, sizeof(uintptr_t)}};
-    return NACL_SYSCALL(lind_api)(LIND_sys_pipe, 0, NULL, 1, out_args);
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_pipe, 0, NULL, 1, out_args);
+}
+
+/* pipe2 currently unimplemented */
+int lind_pipe2 (int *pipedes, int flags)
+{
+    LindArg in_args[1] = {{AT_INT, flags, 0}};
+    LindArg out_args[1] = {{AT_DATA, (uintptr_t)pipedes, sizeof(uintptr_t)}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_pipe2, 1, in_args, 1, out_args);
 }
 
 int lind_dup (int oldfd)
@@ -448,4 +450,15 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
         {AT_INT, timeout, 0}};
     LindArg out_args[1] = {{AT_DATA, (uintptr_t)events, sizeof(struct epoll_event)*maxevents}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_epoll_wait, 3, in_args, 1, out_args);
+}
+
+/*
+ * lind_fork is only  the part of the fork call that handles
+ *  file table duplication in python. Most of fork is implemented in C in NaCl.
+ */
+
+int lind_fork(int newcageid)
+{
+    LindArg in_args[1] = {{AT_INT, newcageid, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_fork, 1, in_args, 0, NULL);
 }

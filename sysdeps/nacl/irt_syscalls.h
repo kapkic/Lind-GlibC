@@ -102,6 +102,7 @@ extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
                                nacl_abi_off_t *new_offset);
 extern int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 extern int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
+extern int (*__nacl_irt_lstat) (const char *pathname, struct nacl_abi_stat *);
 extern int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
                                    size_t *nread);
 

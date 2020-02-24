@@ -102,6 +102,10 @@ static int nacl_irt_stat (const char *pathname, struct nacl_abi_stat *st) {
   return -NACL_SYSCALL (stat) (pathname, st);
 }
 
+static int nacl_irt_lstat (const char *pathname, struct nacl_abi_stat *st) {
+  return -NACL_SYSCALL (lstat) (pathname, st);
+}
+
 static int nacl_irt_getdents (int fd, struct dirent *buf, size_t count,
                               size_t *nread) {
   int rv = NACL_SYSCALL (getdents) (fd, buf, count);
@@ -304,6 +308,7 @@ int (*__nacl_irt_write) (int fd, const void *buf, size_t count, size_t *nwrote);
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
+int (*__nacl_irt_lstat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
                             size_t *nread);
 int (*__nacl_irt_socket) (int domain, int type, int protocol, int *sd);
@@ -677,7 +682,7 @@ static int nacl_irt_pipe (int *pipedes)
 
 static int nacl_irt_pipe2 (int *pipedes,  int flags)
 {
-    return NACL_SYSCALL (pipe2) (pipedes, flags);
+    return -lind_pipe2(pipedes, flags);
 }
 
 static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
@@ -988,6 +993,7 @@ init_irt_table (void)
   __nacl_irt_execv = nacl_irt_execv;
   __nacl_irt_execve = nacl_irt_execve;
   __nacl_irt_sigprocmask = nacl_irt_sigprocmask;
+  __nacl_irt_lstat = nacl_irt_lstat;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

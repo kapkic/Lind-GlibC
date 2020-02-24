@@ -11,6 +11,7 @@ init_module	EXTRA	init_module	i:pip	init_module
 umount		EXTRA	umount		i:s	__umount	umount
 umount2		EXTRA	umount2		i:si	__umount2	umount2
 vhangup		EXTRA	vhangup		i:	vhangup
+lstat	        EXTRA   lstat           i:sp	__lstat	        lstat
 
 # proper socket implementations:
 accept		-	accept		Ci:iBN	__libc_accept	__accept accept
