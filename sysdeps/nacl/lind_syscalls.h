@@ -116,8 +116,6 @@ int lind_fstatfs (int fd, struct statfs *buf);
 int lind_statfs (const char *path, struct statfs *buf);
 int lind_noop (void);
 int lind_getpid (pid_t * buf);
-// yiwen: added pipe
-// jonathan: changed pipe to repy
 int lind_pipe (int* pipedes);
 int lind_pipe2 (int* pipedes, int flags);
 int lind_dup (int oldfd);
@@ -155,7 +153,6 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
                       int maxevents, int timeout);
 ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
 ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
-//lind fork is only  the part of the fork call that handles file table duplication in python. Most of fork is implemented in C in NaCl.
 int lind_fork(int newcageid);
 
 #endif /* _LIND_SYSCALLS_H_ */
