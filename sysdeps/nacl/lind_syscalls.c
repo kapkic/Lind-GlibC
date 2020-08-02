@@ -1,3 +1,4 @@
+#include <stdio.h> 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -461,4 +462,10 @@ int lind_fork(int newcageid)
 {
     LindArg in_args[1] = {{AT_INT, newcageid, 0}};
     return NACL_SYSCALL(lind_api)(LIND_safe_fs_fork, 1, in_args, 0, NULL);
+}
+
+void lind_exit(int status)
+{
+    LindArg in_args[1] = {{AT_INT, status, 0}};
+    NACL_SYSCALL(lind_api)(LIND_sys_exit, 1, in_args, 0, NULL);
 }
