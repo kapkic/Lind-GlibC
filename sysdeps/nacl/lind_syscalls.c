@@ -473,3 +473,10 @@ void lind_exit(int status)
     LindArg in_args[1] = {{AT_INT, status, 0}};
     NACL_SYSCALL(lind_api)(LIND_sys_exit, 1, in_args, 0, NULL);
 }
+
+void net_gethostname(char *name, size_t len)
+{
+    LindArg in_args[1] = {{AT_INT, len, 0}};
+    LindArg out_args[1] = {{AT_STRING,(uintptr_t) name, len}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_gethostname, 1, in_args, 1, out_args);
+}
