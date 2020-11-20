@@ -71,6 +71,7 @@
 #define LIND_safe_net_sendmsg           59
 #define LIND_safe_net_recvmsg           60
 // yiwen: added lind_pipe
+#define LIND_safe_net_gethostname       61
 
 #define LIND_safe_fs_pipe              66
 #define LIND_safe_sys_pipe2             67
