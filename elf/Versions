@@ -136,6 +136,7 @@ ld {
     __nacl_irt_pselect;
     __nacl_irt_sendmsg;
     __nacl_irt_recvmsg;
+    __nacl_irt_gethostname;
     __nacl_irt_getpeername;
     __nacl_irt_getsockname;
     __nacl_irt_getsockopt;
@@ -184,6 +185,7 @@ ld {
     lind_listen;
     lind_sendto;
     lind_accept;
+    lind_gethostname;
     lind_getpeername;
     lind_setsockopt;
     lind_getsockopt;
