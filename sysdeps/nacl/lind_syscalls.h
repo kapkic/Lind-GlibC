@@ -71,7 +71,6 @@
 #define LIND_safe_net_sendmsg           59
 #define LIND_safe_net_recvmsg           60
 // yiwen: added lind_pipe
-#define LIND_safe_net_gethostname       61
 
 #define LIND_safe_fs_pipe              66
 #define LIND_safe_sys_pipe2             67
@@ -82,6 +81,7 @@
 #define LIND_comp_accept                107
 #define LIND_comp_recv                  108
 
+#define LIND_safe_net_gethostname       125
 
 struct select_results {
     struct timeval used_t;
