@@ -641,7 +641,7 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
     return 0;
 }
 
-static int (*__nacl_irt_gethostname) (char *name, size_t len)
+static int nacl_irt_gethostname (char *name, size_t len)
 {
     return NACL_SYSCALL (gethostname) (name, len);
 }
