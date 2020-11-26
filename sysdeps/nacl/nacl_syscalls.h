@@ -117,6 +117,8 @@
 #define NACL_sys_sigprocmask            123
 #define NACL_sys_lstat                  124
 
+#define NACL_sys_gethostname            125
+
 #define NACL_MAX_SYSCALLS               256
 
 #define NACL_SYSCALL_ADDR(syscall_number) \
@@ -226,5 +228,7 @@ typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
 typedef int (*TYPE_nacl_wait) (int *stat_loc);
 typedef int (*TYPE_nacl_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
 typedef int (*TYPE_nacl_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
+
+typedef int (*TYPE_nacl_gethostname)(char *name, size_t len);
 
 #endif
