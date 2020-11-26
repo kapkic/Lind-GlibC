@@ -22,10 +22,6 @@ static void nacl_irt_exit (int status) {
   }
 }
 
-static int nacl_irt_gethostname (char *name, int len) {
-  return -NACL_SYSCALL (gethostname) (name, len);
-}
-
 static int nacl_irt_gettod (struct timeval *tv) {
   return -NACL_SYSCALL (gettimeofday) (tv, NULL);
 }
@@ -647,7 +643,7 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
 
 static pid_t int (*__nacl_irt_gethostname) (char *name, size_t len)
 {
-    return NACL_SYSCALL (gethostname) ();
+    return NACL_SYSCALL (gethostname) (name, len);
 }
 
 /*
