@@ -4,6 +4,9 @@
 #include <errno.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
+
+#include <stdio.h>
+
 #undef stat
 #define stat nacl_abi_stat
 #include <irt.h>
