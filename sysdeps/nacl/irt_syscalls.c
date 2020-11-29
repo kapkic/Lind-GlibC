@@ -4,9 +4,6 @@
 #include <errno.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
-
-#include <stdio.h>
-
 #undef stat
 #define stat nacl_abi_stat
 #include <irt.h>
@@ -646,7 +643,6 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
 
 static int nacl_irt_gethostname (char *name, size_t len)
 { 
-    printf("Reached nacl_irt_gethostname in Lind-GlibC\n");
     return lind_gethostname(name, len);
 }
 
