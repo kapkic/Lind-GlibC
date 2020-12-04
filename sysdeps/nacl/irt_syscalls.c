@@ -65,8 +65,24 @@ static int nacl_irt_read (int fd, void *buf, size_t count, size_t *nread) {
   return 0;
 }
 
+static int nacl_irt_pread (int fd, void *buf, size_t count, size_t *nread, off_t offset) {
+  int rv = NACL_SYSCALL (pread) (fd, buf, count, offset);
+  if (rv < 0)
+    return -rv;
+  *nread = rv;
+  return 0;
+}
+
 static int nacl_irt_write (int fd, const void *buf, size_t count, size_t *nwrote) {
   int rv = NACL_SYSCALL (write) (fd, buf, count);
+  if (rv < 0)
+    return -rv;
+  *nwrote = rv;
+  return 0;
+}
+
+static int nacl_irt_pwrite (int fd, const void *buf, size_t count, size_t *nwrote, off_t offset) {
+  int rv = NACL_SYSCALL (pwrite) (fd, buf, count, offset);
   if (rv < 0)
     return -rv;
   *nwrote = rv;
