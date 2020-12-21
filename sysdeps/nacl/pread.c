@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stddef.h>
+#include <sys/types.h>
 
 #include <irt_syscalls.h>
 
