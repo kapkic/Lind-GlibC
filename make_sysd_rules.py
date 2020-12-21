@@ -84,8 +84,8 @@ override_list = [
     "posix/alarm.c",
  #  "posix/getpid.c",
     "posix/glob.c",
-    "posix/pread.c",
-    "posix/pwrite.c",
+ #  "posix/pread.c",
+ #  "posix/pwrite.c",
     "posix/vfork.c",
  #  "posix/wait.c",
     "posix/waitid.c",
@@ -171,7 +171,9 @@ override_list = [
     "sysdeps/nacl/wait4.c",
     "sysdeps/nacl/sigprocmask.c",
     "sysdeps/nacl/lstat.c",
-    "sysdeps/nacl/gethostname.c"
+    "sysdeps/nacl/gethostname.c",
+    "sysdeps/nacl/pread.c",
+    "sysdeps/nacl/pwrite.c"
     ]
 
 def get_override_map():
