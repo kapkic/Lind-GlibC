@@ -15,8 +15,5 @@ ssize_t __pwrite(int desc, void const *buf, size_t count, off_t offset)
   }
   return nwrite;
 }
-libc_hidden_def (__pwrite)
+
 weak_alias (__pwrite, pwrite)
-strong_alias (__pwrite, __libc_pwrite)
-libc_hidden_def (__libc_pwrite)
-strong_alias (__pwrite, __pwrite_nocancel)
