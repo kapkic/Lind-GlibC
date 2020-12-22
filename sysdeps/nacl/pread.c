@@ -17,3 +17,4 @@ ssize_t __pread (int fd, void *buf, size_t size, off_t offset)
 }
 
 weak_alias (__pread, pread)
+weak_alias (__pread, __libc_pread)
