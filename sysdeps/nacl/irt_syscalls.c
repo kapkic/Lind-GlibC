@@ -322,7 +322,7 @@ int (*__nacl_irt_close) (int fd);
 int (*__nacl_irt_read) (int fd, void *buf, size_t count, size_t *nread);
 int (*__nacl_irt_pread) (int fd, void *buf, size_t count, size_t *nread, off_t offset);
 int (*__nacl_irt_write) (int fd, const void *buf, size_t count, size_t *nwrote);
-int (*__nacl_irt_pwrite) (int fd, const void *buf, size_t count, size_t *nwrote, off_t offset));
+int (*__nacl_irt_pwrite) (int fd, const void *buf, size_t count, size_t *nwrote, off_t offset);
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
