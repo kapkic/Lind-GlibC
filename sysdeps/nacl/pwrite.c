@@ -17,3 +17,4 @@ ssize_t __pwrite(int desc, void const *buf, size_t count, off_t offset)
 }
 
 weak_alias (__pwrite, pwrite)
+weak_alias (__pwrite, __libc_pwrite)
