@@ -231,6 +231,6 @@ typedef int (*TYPE_nacl_wait4) (pid_t pid, int *wstatus, int options, struct rus
 typedef int (*TYPE_nacl_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
 
 typedef int (*TYPE_nacl_pread) (int desc, void *buf, size_t count, off_t offset);
-typedef int (*TYPE_nacl_pwrite) (int desc, void const *buf, size_t count, off_t offset);
+typedef int (*TYPE_nacl_pwrite) (int desc, const void *buf, size_t count, off_t offset);
 
 #endif
