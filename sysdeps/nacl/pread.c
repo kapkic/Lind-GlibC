@@ -1,7 +1,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stddef.h>
-#include <sys/types.h>
 
 #include <irt_syscalls.h>
 
@@ -9,7 +8,7 @@
 ssize_t __pread (int fd, void *buf, size_t size, off_t offset)
 {
   size_t nread;
-  int result = __nacl_irt_pread (fd, buf, size, &nread, off_t offset);
+  int result = __nacl_irt_pread (fd, buf, size, &nread, offset);
   if (result != 0) {
     errno = result;
     return -1;
