@@ -171,7 +171,8 @@ override_list = [
     "sysdeps/nacl/wait4.c",
     "sysdeps/nacl/sigprocmask.c",
     "sysdeps/nacl/lstat.c",
-    "sysdeps/nacl/gethostname.c"
+    "sysdeps/nacl/gethostname.c",
+    "sysdeps/nacl/getcwd.c"
     ]
 
 def get_override_map():
