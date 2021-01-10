@@ -65,8 +65,24 @@ static int nacl_irt_read (int fd, void *buf, size_t count, size_t *nread) {
   return 0;
 }
 
+static int nacl_irt_pread (int fd, void *buf, size_t count, size_t *nread, off_t offset) {
+  int rv = NACL_SYSCALL (pread) (fd, buf, count, offset);
+  if (rv < 0)
+    return -rv;
+  *nread = rv;
+  return 0;
+}
+
 static int nacl_irt_write (int fd, const void *buf, size_t count, size_t *nwrote) {
   int rv = NACL_SYSCALL (write) (fd, buf, count);
+  if (rv < 0)
+    return -rv;
+  *nwrote = rv;
+  return 0;
+}
+
+static int nacl_irt_pwrite (int fd, const void *buf, size_t count, size_t *nwrote, off_t offset) {
+  int rv = NACL_SYSCALL (pwrite) (fd, buf, count, offset);
   if (rv < 0)
     return -rv;
   *nwrote = rv;
@@ -304,7 +320,9 @@ int (*__nacl_irt_open) (const char *pathname, int oflag, mode_t cmode,
                         int *newfd);
 int (*__nacl_irt_close) (int fd);
 int (*__nacl_irt_read) (int fd, void *buf, size_t count, size_t *nread);
+int (*__nacl_irt_pread) (int fd, void *buf, size_t count, size_t *nread, off_t offset);
 int (*__nacl_irt_write) (int fd, const void *buf, size_t count, size_t *nwrote);
+int (*__nacl_irt_pwrite) (int fd, const void *buf, size_t count, size_t *nwrote, off_t offset);
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
@@ -994,7 +1012,9 @@ init_irt_table (void)
   __nacl_irt_pipe = nacl_irt_pipe;
   __nacl_irt_pipe2 = nacl_irt_pipe2;
   __nacl_irt_read = nacl_irt_read;
+  __nacl_irt_pread = nacl_irt_pread;
   __nacl_irt_write = nacl_irt_write;
+  __nacl_irt_pwrite = nacl_irt_pwrite;
   __nacl_irt_waitpid = nacl_irt_waitpid;
   __nacl_irt_wait = nacl_irt_wait;
   __nacl_irt_wait4 = nacl_irt_wait4;
