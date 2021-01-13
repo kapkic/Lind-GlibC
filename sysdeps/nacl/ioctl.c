@@ -17,7 +17,7 @@ __ioctl (int fd, unsigned long int request, ...) {
 
     int result = -1;
     if (request == FIONBIO) {
-      /* This command has a single long arg */
+      /* This command has a single void pointer as an arg, pointing to an integer*/
       va_list ap;
       va_start (ap, request);
       void *arg_pointer = va_arg (ap, void *);
