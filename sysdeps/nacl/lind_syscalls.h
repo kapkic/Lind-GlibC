@@ -83,6 +83,8 @@
 
 #define LIND_safe_net_gethostname       125
 
+#define LIND_safe_net_ioctl             128
+
 struct select_results {
     struct timeval used_t;
     fd_set r;
@@ -158,6 +160,8 @@ ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
 void lind_exit(int status);
 int lind_gethostname(char *name, size_t len);
+
+int lind_ioctl(int fd, unsigned long int request, void *arg);
 
 #endif /* _LIND_SYSCALLS_H_ */
 
