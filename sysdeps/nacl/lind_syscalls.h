@@ -161,7 +161,7 @@ int lind_fork(int newcageid);
 void lind_exit(int status);
 int lind_gethostname(char *name, size_t len);
 
-int lind_ioctl(int fd, unsigned long int request, void *arg);
+int lind_ioctl(int fd, unsigned long int request, int arg);
 
 #endif /* _LIND_SYSCALLS_H_ */
 
