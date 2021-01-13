@@ -172,6 +172,7 @@ override_list = [
     "sysdeps/nacl/sigprocmask.c",
     "sysdeps/nacl/lstat.c",
     "sysdeps/nacl/gethostname.c",
+    "sysdeps/nacl/ioctl.c",
     "sysdeps/nacl/pread.c",
     "sysdeps/nacl/pwrite.c"
     ]
