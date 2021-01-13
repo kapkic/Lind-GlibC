@@ -20,7 +20,8 @@ __ioctl (int fd, unsigned long int request, ...) {
       /* This command has a single long arg */
       va_list ap;
       va_start (ap, request);
-      void *arg = va_arg (ap, void *);
+      void *arg_pointer = va_arg (ap, void *);
+      int arg = *(int *)arg_pointer;
       
       result = lind_ioctl(fd, request, arg);
 
