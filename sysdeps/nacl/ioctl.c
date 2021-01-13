@@ -26,10 +26,12 @@ __ioctl (int fd, unsigned long int request, ...) {
 
     } else {
       /*  right now repy does not support any other commands */
-      result = -ENOSYS;
+      __set_errno (ENOSYS);
+      return -1;
     }
     
     return result;
+    
 }
 
 libc_hidden_def (__ioctl)
