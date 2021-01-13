@@ -83,8 +83,6 @@
 
 #define LIND_safe_net_gethostname       125
 
-#define LIND_safe_net_ioctl             128
-
 struct select_results {
     struct timeval used_t;
     fd_set r;
