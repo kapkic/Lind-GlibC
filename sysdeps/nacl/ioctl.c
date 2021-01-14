@@ -7,8 +7,6 @@
 
 int
 __ioctl (int fd, unsigned long int request, ...) {
-    
-    int result;
   
     if (fd < 0) {
       __set_errno (EBADF);
