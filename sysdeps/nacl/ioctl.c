@@ -33,7 +33,4 @@ __ioctl (int fd, unsigned long int request, ...) {
     
 }
 
-libc_hidden_def (__ioctl)
 weak_alias (__ioctl, ioctl)
-strong_alias (__ioctl, __libc_ioctl)
-strong_alias (__ioctl, __ioctl_nocancel)
