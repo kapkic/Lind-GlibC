@@ -36,7 +36,7 @@ extern int (*__nacl_irt_sysconf) (int name, int *value);
 extern int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
 extern int (*__nacl_irt_rmdir) (const char* pathname);
 extern int (*__nacl_irt_chdir) (const char* pathname);
-extern char* (*__nacl_irt_getcwd) (char* buf, size_t size);
+extern void (*__nacl_irt_getcwd) (char* buf, size_t size);
 
 extern int (*__nacl_irt_epoll_create) (int size, int *fd);
 extern int (*__nacl_irt_epoll_create1) (int flags, int *fd);

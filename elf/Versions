@@ -203,6 +203,7 @@ ld {
     lind_strace;
     lind_pipe;
     lind_getcwd;
+    lind_exit;
     # Those are in the dynamic linker, but used by libc.so.
     __libc_enable_secure;
     _dl_argv;
