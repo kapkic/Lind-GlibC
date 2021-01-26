@@ -291,7 +291,7 @@ size_t (*__nacl_irt_query) (const char *interface_ident,
 int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
 int (*__nacl_irt_rmdir) (const char* pathname);
 int (*__nacl_irt_chdir) (const char* pathname);
-int (*__nacl_irt_getcwd) (char* buf, size_t size);
+char* (*__nacl_irt_getcwd) (char* buf, size_t size);
 
 void (*__nacl_irt_exit) (int status);
 int (*__nacl_irt_gettod) (struct timeval *tv);
@@ -434,7 +434,7 @@ static int nacl_irt_chdir_lind (const char *pathname)
     return -lind_chdir(pathname);
 }
 
-static int nacl_irt_getcwd (char* buf, size_t size)
+static char* nacl_irt_getcwd (char* buf, size_t size)
 { 
     NACL_SYSCALL (getcwd) (buf, size);
     return buf
