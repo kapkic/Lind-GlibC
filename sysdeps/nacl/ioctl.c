@@ -7,7 +7,9 @@
 
 int
 __ioctl (int fd, unsigned long int request, ...) {
-  
+     
+    printf("IOCTL Request No: %d\n", request);
+    
     if (fd < 0) {
       __set_errno (EBADF);
       return -1;
