@@ -29,7 +29,6 @@
 #define LIND_safe_fs_write              13
 #define LIND_safe_fs_lseek              14
 #define LIND_fs_ioctl                   15
-#define LIND_safe_fs_getcwd             16
 #define LIND_safe_fs_fxstat             17
 #define LIND_safe_fs_fstatfs            19
 #define LIND_safe_fs_mmap               21
@@ -38,6 +37,7 @@
 #define LIND_safe_fs_dup                24
 #define LIND_safe_fs_dup2               25
 #define LIND_safe_fs_statfs             26
+#define LIND_safe_sys_getcwd            27
 #define LIND_safe_fs_fcntl              28
 #define LIND_sys_getppid                29
 #define LIND_sys_exit                   30
@@ -73,9 +73,9 @@
 #define LIND_safe_net_recvmsg           60
 // yiwen: added lind_pipe
 
-#define LIND_safe_fs_pipe              66
+#define LIND_safe_fs_pipe               66
 #define LIND_safe_sys_pipe2             67
-#define LIND_safe_fs_fork              68
+#define LIND_safe_fs_fork               68
 
 #define LIND_comp_cia                   105
 #define LIND_comp_call                  106

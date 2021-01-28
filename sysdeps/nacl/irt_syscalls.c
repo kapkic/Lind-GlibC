@@ -437,7 +437,7 @@ static int nacl_irt_chdir_lind (const char *pathname)
 static char* nacl_irt_getcwd (char* buf, size_t size)
 { 
     NACL_SYSCALL (getcwd) (buf, size);
-    return buf
+    return buf;
 }
 
 static int nacl_irt_select_lind (int nfds, fd_set *readfds,
