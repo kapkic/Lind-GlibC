@@ -485,5 +485,5 @@ void lind_getcwd(char* buf, size_t size)
 {
     LindArg in_args[1] = {{AT_INT, size, 0}};
     LindArg out_args[1] = {{AT_STRING, (uintptr_t)buf, size}};
-    NACL_SYSCALL(lind_api)(LIND_safe_fs_getcwd, 1, in_args, 1, out_args);
+    NACL_SYSCALL(lind_api)(LIND_safe_sys_getcwd, 1, in_args, 1, out_args);
 }
