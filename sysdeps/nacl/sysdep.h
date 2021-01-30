@@ -816,7 +816,7 @@ INTERNAL_SYSCALL_ioctl_3 (int *err, int d, int request,
 			    void *parg;	
 			  } arg)	
 {	
-  lind_strace("ioctl unimplemented");	
+  //lind_strace("ioctl unimplemented");	
   *err = (38 /* ENOSYS */);	
   return 0;	
 }	
