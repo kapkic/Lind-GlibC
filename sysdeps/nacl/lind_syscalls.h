@@ -158,7 +158,5 @@ ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
 void lind_exit(int status);
 int lind_gethostname(char *name, size_t len);
-void lind_getcwd(char* buf, size_t size);
 
 #endif /* _LIND_SYSCALLS_H_ */
-
