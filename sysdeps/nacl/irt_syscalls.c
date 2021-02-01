@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <errno.h>
+#include <linux/kernel.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
 #undef stat
