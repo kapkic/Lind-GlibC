@@ -480,10 +480,3 @@ int lind_gethostname(char *name, size_t len)
     LindArg out_args[1] = {{AT_STRING,(uintptr_t) name, len}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_gethostname, 1, in_args, 1, out_args);
 }
-
-void lind_getcwd(char* buf, size_t size)
-{
-    LindArg in_args[1] = {{AT_INT, size, 0}};
-    LindArg out_args[1] = {{AT_STRING, (uintptr_t)buf, size}};
-    NACL_SYSCALL(lind_api)(LIND_safe_sys_getcwd, 1, in_args, 1, out_args);
-}

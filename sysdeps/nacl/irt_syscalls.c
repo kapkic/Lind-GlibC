@@ -2,7 +2,6 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <errno.h>
-#include <linux/kernel.h>
 #include <nacl_stat.h>
 #include <nacl_syscalls.h>
 #undef stat
@@ -437,7 +436,6 @@ static int nacl_irt_chdir_lind (const char *pathname)
 
 static char* nacl_irt_getcwd (char* buf, size_t size)
 { 
-    printk("irt_syscalls.c");
     NACL_SYSCALL (getcwd) (buf, size);
     return buf;
 }
