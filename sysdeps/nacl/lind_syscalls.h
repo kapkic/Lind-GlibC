@@ -37,7 +37,7 @@
 #define LIND_safe_fs_dup                24
 #define LIND_safe_fs_dup2               25
 #define LIND_safe_fs_statfs             26
-#define LIND_safe_fs_getcwd             27
+#define LIND_safe_sys_getcwd            27
 #define LIND_safe_fs_fcntl              28
 #define LIND_sys_getppid                29
 #define LIND_sys_exit                   30
