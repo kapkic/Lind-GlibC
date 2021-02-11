@@ -659,12 +659,6 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
     return 0;
 }
 
-static char* nacl_irt_getcwd (char* buf, size_t size)
-{ 
-    lind_getcwd(buf, size);
-    return buf;
-}
-
 static int nacl_irt_gethostname (char *name, size_t len)
 { 
     return lind_gethostname(name, len);
