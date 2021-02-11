@@ -136,7 +136,6 @@ ld {
     __nacl_irt_pselect;
     __nacl_irt_sendmsg;
     __nacl_irt_recvmsg;
-    __nacl_irt_getcwd;
     __nacl_irt_gethostname;
     __nacl_irt_getpeername;
     __nacl_irt_getsockname;
