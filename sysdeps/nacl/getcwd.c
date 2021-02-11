@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <lind_syscalls.h>
+#include <errno.h>
 
 char* __getcwd(char* buf, size_t size) {
     if(buf == NULL){ //buf is NULL.
