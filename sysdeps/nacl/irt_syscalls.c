@@ -417,8 +417,6 @@ int (*__nacl_irt_open_resource) (const char* file, int *fd);
 int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
 
-char* (*__nacl_irt_getcwd) (char* buf, size_t size);
-
 int (*__nacl_irt_gethostname) (char *name, size_t len);
 
 pid_t (*__nacl_irt_getpid) (void);
@@ -1010,7 +1008,6 @@ init_irt_table (void)
   __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;
   __nacl_irt_shutdown = nacl_irt_shutdown_lind;
-  __nacl_irt_getcwd = nacl_irt_getcwd;
   __nacl_irt_gethostname = nacl_irt_gethostname;
   __nacl_irt_getpid = nacl_irt_getpid;
   __nacl_irt_getppid = nacl_irt_getppid;
