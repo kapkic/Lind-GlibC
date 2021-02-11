@@ -37,6 +37,7 @@
 #define LIND_safe_fs_dup                24
 #define LIND_safe_fs_dup2               25
 #define LIND_safe_fs_statfs             26
+#define LIND_safe_fs_getcwd             27
 #define LIND_safe_fs_fcntl              28
 #define LIND_sys_getppid                29
 #define LIND_sys_exit                   30
@@ -158,6 +159,6 @@ ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
 void lind_exit(int status);
 int lind_gethostname(char *name, size_t len);
-
+int lind_getcwd(char* buf, size_t size);
 #endif /* _LIND_SYSCALLS_H_ */
 
