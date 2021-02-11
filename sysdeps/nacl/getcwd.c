@@ -2,6 +2,10 @@
 #include <lind_syscalls.h>
 
 char* __getcwd(char* buf, size_t size) {
+    if(buf == NULL){ //buf is NULL.
+        __set_errno (EINVAL);
+        return NULL;
+    }
     int error = lind_getcwd(buf, size);
     if(error==0){
         return buf;
