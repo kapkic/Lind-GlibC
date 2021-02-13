@@ -174,7 +174,8 @@ override_list = [
     "sysdeps/nacl/gethostname.c",
     "sysdeps/nacl/ioctl.c",
     "sysdeps/nacl/pread.c",
-    "sysdeps/nacl/pwrite.c"
+    "sysdeps/nacl/pwrite.c",
+    "sysdeps/nacl/getcwd.c"
     ]
 
 def get_override_map():

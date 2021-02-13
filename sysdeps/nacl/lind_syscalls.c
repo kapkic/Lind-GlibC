@@ -474,6 +474,12 @@ void lind_exit(int status)
     NACL_SYSCALL(lind_api)(LIND_sys_exit, 1, in_args, 0, NULL);
 }
 
+int lind_getcwd(char* buf, size_t size){
+    LindArg in_args[1] = {{AT_INT, size, 0}};
+    LindArg out_args[1] = {{AT_STRING,(uintptr_t) buf, size}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_sys_getcwd, 1, in_args, 1, out_args); //returns error number (0 on success)
+}
+
 int lind_gethostname(char *name, size_t len)
 {
     LindArg in_args[1] = {{AT_INT, len, 0}};

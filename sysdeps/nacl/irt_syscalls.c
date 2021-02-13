@@ -307,7 +307,7 @@ size_t (*__nacl_irt_query) (const char *interface_ident,
 int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
 int (*__nacl_irt_rmdir) (const char* pathname);
 int (*__nacl_irt_chdir) (const char* pathname);
-int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
+//int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
 
 void (*__nacl_irt_exit) (int status);
 int (*__nacl_irt_gettod) (struct timeval *tv);
@@ -974,7 +974,7 @@ init_irt_table (void)
   __nacl_irt_mkdir = nacl_irt_mkdir_lind;
   __nacl_irt_chdir = nacl_irt_chdir_lind;
   __nacl_irt_rmdir = nacl_irt_rmdir_lind;
-  __nacl_irt_getcwd = not_implemented;
+  //__nacl_irt_getcwd = not_implemented;
 
   __nacl_irt_epoll_create = nacl_irt_epoll_create_lind;
   __nacl_irt_epoll_create1 = not_implemented;
