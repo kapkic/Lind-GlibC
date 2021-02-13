@@ -486,3 +486,9 @@ int lind_gethostname(char *name, size_t len)
     LindArg out_args[1] = {{AT_STRING,(uintptr_t) name, len}};
     return NACL_SYSCALL(lind_api)(LIND_safe_net_gethostname, 1, in_args, 1, out_args);
 }
+
+int lind_ioctl (int fd, unsigned long int request, int arg)
+{
+    LindArg in_args[3] = {{AT_INT, fd, 0}, {AT_INT, request, 0}, {AT_INT, arg, 0}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_fs_ioctl, 3, in_args, 0, NULL);
+}

@@ -805,21 +805,21 @@ INTERNAL_SYSCALL_inotify_rm_watch_2 (int *err, int fd, uint32_t wd)
   return 0;
 }
 
-__extern_always_inline int
-INTERNAL_SYSCALL_ioctl_3 (int *err, int d, int request,
-			  union __attribute__ ((__transparent_union__))
-			  {
-			    unsigned long ularg;
-			    long larg;
-			    unsigned int uiarg;
-			    int iarg;
-			    void *parg;
-			  } arg)
-{
-  lind_strace("ioctl unimplemented");
-  *err = (38 /* ENOSYS */);
-  return 0;
-}
+__extern_always_inline int	
+INTERNAL_SYSCALL_ioctl_3 (int *err, int d, int request,	
+			  union __attribute__ ((__transparent_union__))	
+			  {	
+			    unsigned long ularg;	
+			    long larg;	
+			    unsigned int uiarg;	
+			    int iarg;	
+			    void *parg;	
+			  } arg)	
+{	
+  lind_strace("ioctl unimplemented");	
+  *err = (38 /* ENOSYS */);	
+  return 0;	
+}	
 
 __extern_always_inline int
 INTERNAL_SYSCALL_ioperm_3 (int *err, unsigned long from, unsigned long num,

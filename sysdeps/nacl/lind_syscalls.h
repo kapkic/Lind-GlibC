@@ -28,7 +28,7 @@
 #define LIND_safe_fs_read               12
 #define LIND_safe_fs_write              13
 #define LIND_safe_fs_lseek              14
-#define LIND_fs_ioctl                   15
+#define LIND_safe_fs_ioctl              15
 #define LIND_safe_fs_fxstat             17
 #define LIND_safe_fs_fstatfs            19
 #define LIND_safe_fs_mmap               21
@@ -159,6 +159,10 @@ ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
 void lind_exit(int status);
 int lind_gethostname(char *name, size_t len);
+
 int lind_getcwd(char* buf, size_t size);
+
+int lind_ioctl(int fd, unsigned long int request, int arg);
+
 #endif /* _LIND_SYSCALLS_H_ */
 
