@@ -35,6 +35,7 @@ int __fxstat (int vers, int fd, struct stat *buf)
     return -1;
   }
   struct nacl_abi_stat nacl_buf;
+  write(1, "fstat.c\n", 9);
   int result = __nacl_irt_fstat (fd, &nacl_buf);
   if (result != 0) {
     errno = result;

@@ -95,6 +95,7 @@ static int nacl_irt_dup3 (int oldfd, int newfd, int flags) {
 }
 
 static int nacl_irt_fstat (int fd, struct nacl_abi_stat *st) {
+  write(1, "irt_syscalls.c\n", 16);
   return -NACL_SYSCALL (fstat) (fd, st);
 }
 
