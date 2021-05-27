@@ -41,7 +41,6 @@
 #define LIND_sys_getppid                29
 #define LIND_sys_exit                   30
 #define LIND_sys_getpid                 31
-#define LIND_safe_net_socket            32
 #define LIND_safe_net_bind              33
 #define LIND_safe_net_send              34
 #define LIND_safe_net_sendto            35
@@ -123,7 +122,6 @@ int lind_dup2 (int oldfd, int newfd);
 int lind_getdents (int fd, size_t nbytes, char *buf);
 int lind_fcntl_get (int fd, int cmd);
 int lind_fcntl_set (int fd, int cmd, long set_op);
-int lind_socket (int domain, int type, int protocol);
 int lind_bind (int sockfd, socklen_t addrlen, const struct sockaddr *addr);
 int lind_send (int sockfd, size_t len, int flags, const void *buf);
 int lind_recv (int sockfd, size_t len, int flags, void *buf);
