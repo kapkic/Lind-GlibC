@@ -81,8 +81,6 @@
 #define LIND_comp_accept                107
 #define LIND_comp_recv                  108
 
-#define LIND_safe_net_gethostname       125
-
 struct select_results {
     struct timeval used_t;
     fd_set r;
@@ -157,7 +155,6 @@ ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
 ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
 void lind_exit(int status);
-int lind_gethostname(char *name, size_t len);
 
 #endif /* _LIND_SYSCALLS_H_ */
 
