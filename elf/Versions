@@ -187,7 +187,6 @@ ld {
     lind_listen;
     lind_sendto;
     lind_accept;
-    lind_gethostname;
     lind_getpeername;
     lind_setsockopt;
     lind_getsockopt;
