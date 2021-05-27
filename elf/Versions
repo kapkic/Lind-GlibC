@@ -179,7 +179,6 @@ ld {
     lind_getdents;
     lind_fcntl_get;
     lind_fcntl_set;
-    lind_socket;
     lind_bind;
     lind_send;
     lind_recv;
