@@ -159,6 +159,7 @@ ld {
     lind_access;
     lind_unlink;
     lind_link;
+    lind_chdir;
     lind_mkdir;
     lind_rmdir;
     lind_xstat;
