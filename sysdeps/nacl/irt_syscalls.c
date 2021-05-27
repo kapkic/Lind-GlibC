@@ -474,7 +474,7 @@ static int nacl_irt_select_lind (int nfds, fd_set *readfds,
 
 static int nacl_irt_socket_lind(int domain, int type, int protocol, int *sd)
 {
-    int rv = lind_socket(domain, type, protocol);
+    int rv = NACL_SYSCALL (socket) (domain, type, protocol);
     if (rv < 0)
         return -rv;
     *sd=rv;
