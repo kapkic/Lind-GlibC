@@ -67,6 +67,12 @@
 
 /* 50-58 previously used for multimedia syscalls */
 
+//Experimental
+#define NACL_sys_epoll_create           56    
+#define NACL_sys_epoll_ctl              57
+#define NACL_sys_epoll_wait             58
+//Experimental
+
 #define NACL_sys_imc_makeboundsock      60
 #define NACL_sys_imc_accept             61
 #define NACL_sys_imc_connect            62
@@ -229,6 +235,12 @@ typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
 typedef int (*TYPE_nacl_wait) (int *stat_loc);
 typedef int (*TYPE_nacl_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
 typedef int (*TYPE_nacl_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
+
+//Experimental
+typedef int (*TYPE_nacl_epoll_create) (int size);
+typedef int (*TYPE_nacl_epoll_ctl) (int epfd, int op, int fd, struct epoll_event *event);
+typedef int (*TYPE_nacl_epoll_wait) (int epfd, struct epoll_event *events, int maxevents, int timeout);
+//Experimental
 
 typedef int (*TYPE_nacl_pread) (int desc, void *buf, size_t count, off_t offset);
 typedef int (*TYPE_nacl_pwrite) (int desc, const void *buf, size_t count, off_t offset);
