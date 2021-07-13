@@ -472,9 +472,9 @@ static int nacl_irt_select_lind (int nfds, fd_set *readfds,
     return 0;
 }
 
-static int nacl_irt_socket_lind(int domain, int type, int protocol, int *sd)
+static int nacl_irt_socket(int domain, int type, int protocol, int *sd)
 {
-    int rv = lind_socket(domain, type, protocol);
+    int rv = lind_socket(domain, type, protocol); //needs rechecking.
     if (rv < 0)
         return -rv;
     *sd=rv;
@@ -600,6 +600,7 @@ static int nacl_irt_setsockopt_lind (int sockfd, int level, int optname,
     return 0;
 }
 
+//Also uses socket. -AK
 static int nacl_irt_socketpair_lind (int domain, int type, int protocol, int sv[static 2])
 {
     int rv = lind_socketpair(domain, type, protocol, sv);
@@ -989,7 +990,7 @@ init_irt_table (void)
   __nacl_irt_epoll_wait = nacl_irt_epoll_wait_lind;
   __nacl_irt_poll = nacl_irt_poll_lind;
   __nacl_irt_ppoll = not_implemented;
-  __nacl_irt_socket = nacl_irt_socket_lind;
+  __nacl_irt_socket = nacl_irt_socket;
   __nacl_irt_accept = nacl_irt_accept_lind;
   __nacl_irt_bind = nacl_irt_bind_lind;
   __nacl_irt_listen = nacl_irt_listen_lind;

@@ -125,6 +125,7 @@
 
 #define NACL_sys_pread                  126
 #define NACL_sys_pwrite                 127
+#define NACL_sys_socket                 128 //32 in lind, nacl has sched_yield.
 
 #define NACL_MAX_SYSCALLS               256
 
@@ -241,6 +242,8 @@ typedef int (*TYPE_nacl_epoll_create) (int size);
 typedef int (*TYPE_nacl_epoll_ctl) (int epfd, int op, int fd, struct epoll_event *event);
 typedef int (*TYPE_nacl_epoll_wait) (int epfd, struct epoll_event *events, int maxevents, int timeout);
 //Experimental
+
+typedef int (*TYPE_nacl_socket) (int domain, int type, int protocol);
 
 typedef int (*TYPE_nacl_pread) (int desc, void *buf, size_t count, off_t offset);
 typedef int (*TYPE_nacl_pwrite) (int desc, const void *buf, size_t count, off_t offset);

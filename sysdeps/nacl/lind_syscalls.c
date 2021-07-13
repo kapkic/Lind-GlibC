@@ -181,11 +181,7 @@ int lind_fcntl_set (int fd, int cmd, long set_op)
     return NACL_SYSCALL(lind_api)(LIND_safe_fs_fcntl, 3, in_args, 0, NULL);
 }
 
-int lind_socket (int domain, int type, int protocol)
-{
-    LindArg in_args[3] = {{AT_INT, domain, 0}, {AT_INT, type, 0}, {AT_INT, protocol, 0}};
-    return NACL_SYSCALL(lind_api)(LIND_safe_net_socket, 3, in_args, 0, NULL);
-}
+// lind_socket here already moved to lind_platform.c
 
 int lind_bind (int sockfd, socklen_t addrlen, const struct sockaddr *addr)
 {

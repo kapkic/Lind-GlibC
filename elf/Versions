@@ -159,6 +159,7 @@ ld {
     __nacl_irt_sigprocmask;
     __nacl_irt_pread;
     __nacl_irt_pwrite;
+    __nacl_irt_socket;
     lind_access;
     lind_unlink;
     lind_link;
@@ -182,7 +183,6 @@ ld {
     lind_getdents;
     lind_fcntl_get;
     lind_fcntl_set;
-    lind_socket;
     lind_bind;
     lind_send;
     lind_recv;
