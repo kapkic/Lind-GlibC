@@ -1,3 +1,4 @@
+#include <stdio.h> 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -125,10 +126,14 @@ int lind_noop (void)
     return NACL_SYSCALL(lind_api)(LIND_debug_noop, 0, NULL, 0, NULL);
 }
 
-int lind_getpid (pid_t *buf)
+int lind_getpid ()
 {
-    LindArg out_args[1] = {{AT_DATA, (uintptr_t)buf, sizeof(pid_t)}};
-    return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 1, out_args);
+    return NACL_SYSCALL(lind_api)(LIND_sys_getpid, 0, NULL, 0, NULL);
+}
+
+int lind_getppid ()
+{
+    return NACL_SYSCALL(lind_api)(LIND_sys_getppid, 0, NULL, 0, NULL);
 }
 
 int lind_pipe (int *pipedes)
@@ -461,4 +466,17 @@ int lind_fork(int newcageid)
 {
     LindArg in_args[1] = {{AT_INT, newcageid, 0}};
     return NACL_SYSCALL(lind_api)(LIND_safe_fs_fork, 1, in_args, 0, NULL);
+}
+
+void lind_exit(int status)
+{
+    LindArg in_args[1] = {{AT_INT, status, 0}};
+    NACL_SYSCALL(lind_api)(LIND_sys_exit, 1, in_args, 0, NULL);
+}
+
+int lind_gethostname(char *name, size_t len)
+{
+    LindArg in_args[1] = {{AT_INT, len, 0}};
+    LindArg out_args[1] = {{AT_STRING,(uintptr_t) name, len}};
+    return NACL_SYSCALL(lind_api)(LIND_safe_net_gethostname, 1, in_args, 1, out_args);
 }

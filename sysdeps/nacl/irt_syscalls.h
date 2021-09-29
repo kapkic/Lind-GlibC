@@ -98,6 +98,10 @@ extern int (*__nacl_irt_close) (int fd);
 extern int (*__nacl_irt_read) (int fd, void *buf, size_t count, size_t *nread);
 extern int (*__nacl_irt_write) (int fd, const void *buf, size_t count,
                                 size_t *nwrote);
+extern int (*__nacl_irt_pread) (int fd, void *buf, size_t count, size_t *nread, off_t offset);
+extern int (*__nacl_irt_pwrite) (int fd, const void *buf, size_t count,
+                                size_t *nwrote, off_t offset);
+
 extern int (*__nacl_irt_seek) (int fd, nacl_abi_off_t offset, int whence,
                                nacl_abi_off_t *new_offset);
 extern int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
@@ -144,6 +148,8 @@ extern int (*__nacl_irt_open_resource) (const char* file, int *fd);
 
 extern int (*__nacl_irt_clock_getres) (clockid_t clk_id, struct timespec *res);
 extern int (*__nacl_irt_clock_gettime) (clockid_t clk_id, struct timespec *tp);
+
+extern int (*__nacl_irt_gethostname) (char *name, size_t len);
 
 extern pid_t (*__nacl_irt_getpid) (void);
 extern pid_t (*__nacl_irt_getppid) (void);

@@ -38,9 +38,9 @@
 #define LIND_safe_fs_dup2               25
 #define LIND_safe_fs_statfs             26
 #define LIND_safe_fs_fcntl              28
-
+#define LIND_sys_getppid                29
+#define LIND_sys_exit                   30
 #define LIND_sys_getpid                 31
-
 #define LIND_safe_net_socket            32
 #define LIND_safe_net_bind              33
 #define LIND_safe_net_send              34
@@ -81,6 +81,7 @@
 #define LIND_comp_accept                107
 #define LIND_comp_recv                  108
 
+#define LIND_safe_net_gethostname       125
 
 struct select_results {
     struct timeval used_t;
@@ -115,7 +116,8 @@ int lind_fxstat (int fd, int version, struct stat *buf);
 int lind_fstatfs (int fd, struct statfs *buf);
 int lind_statfs (const char *path, struct statfs *buf);
 int lind_noop (void);
-int lind_getpid (pid_t * buf);
+int lind_getpid (void);
+int lind_getppid (void);
 int lind_pipe (int* pipedes);
 int lind_pipe2 (int* pipedes, int flags);
 int lind_dup (int oldfd);
@@ -154,6 +156,8 @@ int lind_epoll_wait(int epfd, struct epoll_event *events,
 ssize_t lind_sendmsg(int sockfd, const struct msghdr *msg, int flags);
 ssize_t lind_recvmsg(int socket, struct msghdr *message, int flags);
 int lind_fork(int newcageid);
+void lind_exit(int status);
+int lind_gethostname(char *name, size_t len);
 
 #endif /* _LIND_SYSCALLS_H_ */
 
