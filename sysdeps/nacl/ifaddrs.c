@@ -42,12 +42,7 @@
    Kernel, so include the old implementation as fallback.  */
 #if __ASSUME_NETLINK_SUPPORT == 0
 int __no_netlink_support attribute_hidden;
-
-# define getifaddrs fallback_getifaddrs
-# include "ifaddrs_fallback.c"
-# undef getifaddrs
 #endif
-
 
 /* There is a problem with this type.  The address length for
    Infiniband sockets is much longer than the 8 bytes allocated in the
@@ -345,12 +340,6 @@ getifaddrs (struct ifaddrs **ifap)
       return -1;
 #endif
     }
-
-#if __ASSUME_NETLINK_SUPPORT == 0
-  if (__no_netlink_support) {
-    return fallback_getifaddrs (ifap);
-  }
-#endif
 
   /* Tell the kernel that we wish to get a list of all
      active interfaces, collect all data for every interface.  */
@@ -830,11 +819,9 @@ getifaddrs (struct ifaddrs **ifap)
 libc_hidden_def (getifaddrs)
 
 
-#if __ASSUME_NETLINK_SUPPORT != 0
 void
 freeifaddrs (struct ifaddrs *ifa)
 {
   free (ifa);
 }
 libc_hidden_def (freeifaddrs)
-#endif

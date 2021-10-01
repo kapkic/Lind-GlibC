@@ -20,7 +20,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
-
+#include <sys/statfs.h>
+#include <sys/poll.h>
+#include <sys/select.h>
 
 /* intentionally not using zero */
 
@@ -31,6 +33,8 @@
 #define NACL_sys_null                    1
 #define NACL_sys_nameservice             2
 
+#define NACL_sys_unlink                  4
+#define NACL_sys_link                    5
 /*
  * TODO: why is there a gap here? -jp
  */
@@ -59,13 +63,25 @@
 #define NACL_sys_getpid                 31
 #define NACL_sys_sched_yield            32
 #define NACL_sys_sysconf                33
+#define NACL_sys_send                   34
+#define NACL_sys_sendto                 35
+#define NACL_sys_recv                   36
+#define NACL_sys_recvfrom               37
 #define NACL_sys_gettimeofday           40
 #define NACL_sys_clock                  41
 #define NACL_sys_nanosleep              42
 #define NACL_sys_clock_getres           43
 #define NACL_sys_clock_gettime          44
-
-/* 50-58 previously used for multimedia syscalls */
+#define NACL_sys_shutdown               45
+#define NACL_sys_select                 46
+#define NACL_sys_getcwd                 47
+#define NACL_sys_poll                   48
+#define NACL_sys_socketpair             49
+#define NACL_sys_getuid                 50
+#define NACL_sys_geteuid                51
+#define NACL_sys_getgid                 52
+#define NACL_sys_getegid                53
+#define NACL_sys_flock                  54
 
 #define NACL_sys_imc_makeboundsock      60
 #define NACL_sys_imc_accept             61
@@ -116,6 +132,33 @@
 #define NACL_sys_wait4                  122
 #define NACL_sys_sigprocmask            123
 #define NACL_sys_lstat                  124
+#define NACL_sys_gethostname            125
+#define NACL_sys_pread                  126
+#define NACL_sys_pwrite                 127
+
+#define NACL_sys_fcntl_get              128
+#define NACL_sys_fcntl_set              129
+
+#define NACL_sys_chdir                  130
+#define NACL_sys_mkdir                  131
+#define NACL_sys_rmdir                  132
+#define NACL_sys_statfs                 133
+#define NACL_sys_fstatfs                134
+#define NACL_sys_socket                 136
+#define NACL_sys_getsockopt             137
+#define NACL_sys_setsockopt             138
+#define NACL_sys_access                 139
+#define NACL_sys_accept                 140
+#define NACL_sys_connect                141
+#define NACL_sys_bind                   142
+#define NACL_sys_listen                 143
+
+#define NACL_sys_getsockname            144
+#define NACL_sys_getpeername            145
+
+#define NACL_sys_epoll_create           157
+#define NACL_sys_epoll_ctl              158
+#define NACL_sys_epoll_wait             159
 
 #define NACL_sys_pread                  126
 #define NACL_sys_pwrite                 127
@@ -134,29 +177,47 @@ struct nacl_abi_stat;
 struct timeval;
 struct timespec;
 
+#define socklen_t unsigned int
+
 typedef int (*TYPE_nacl_nameservice)(int *desc_in_out);
+typedef int (*TYPE_nacl_link)(char *from, char *to);
+typedef int (*TYPE_nacl_unlink)(char *name);
 typedef int (*TYPE_nacl_dup)(int oldfd);
 typedef int (*TYPE_nacl_dup2)(int oldfd, int newfd);
 typedef int (*TYPE_nacl_dup3)(int oldfd, int newfd, int flags);
 typedef int (*TYPE_nacl_read) (int desc, void *buf, size_t count);
 typedef int (*TYPE_nacl_close) (int desc);
 typedef int (*TYPE_nacl_fstat) (int fd, struct nacl_abi_stat *stbp);
+typedef int (*TYPE_nacl_fstatfs) (int fd, struct statfs *buf);
+typedef int (*TYPE_nacl_statfs) (const char *path, struct statfs *buf);
+typedef int (*TYPE_nacl_access) (const char *name, int mode);
 typedef int (*TYPE_nacl_write) (int desc, void const *buf, size_t count);
 typedef int (*TYPE_nacl_open) (char const *pathname, int flags, mode_t mode);
 typedef int (*TYPE_nacl_lseek) (int desc, nacl_abi_off_t *offset, int whence);
 typedef int (*TYPE_nacl_stat) (const char *file, struct nacl_abi_stat *st);
 typedef int (*TYPE_nacl_lstat) (const char *file, struct nacl_abi_stat *st);
 
-typedef int (*TYPE_nacl_imc_recvmsg) (int desc,
-                                      struct NaClImcMsgHdr *nmhp,
-                                      int flags);
-typedef int (*TYPE_nacl_imc_sendmsg) (int desc,
-                                      struct NaClImcMsgHdr const *nmhp,
-                                      int flags);
+typedef int (*TYPE_nacl_getuid) (void);
+typedef int (*TYPE_nacl_geteuid) (void);
+typedef int (*TYPE_nacl_getgid) (void);
+typedef int (*TYPE_nacl_getegid) (void);
+typedef int (*TYPE_nacl_chdir) (const char* pathname);
+typedef int (*TYPE_nacl_mkdir) (const char* pathname, mode_t mode);
+typedef int (*TYPE_nacl_rmdir) (const char* pathname);
+
+typedef int (*TYPE_nacl_send) (int sockfd, size_t len, int flags, const void *buf);
+typedef int (*TYPE_nacl_sendto) (int sockfd, const void *buf, size_t len, int flags,
+                                     const struct sockaddr *dest_addr, socklen_t addrlen);
+typedef int (*TYPE_nacl_recv) (int sockfd, size_t len, int flags, void *buf);
+typedef int (*TYPE_nacl_recvfrom) (int sockfd, void* buf, size_t len, int flags,
+                                   struct sockaddr *src_addr, socklen_t* addrlen);
 typedef int (*TYPE_nacl_imc_accept) (int d);
 typedef int (*TYPE_nacl_imc_connect) (int d);
+typedef int (*TYPE_nacl_accept) (int sockfd, struct sockaddr *addr, socklen_t addrlen);
+typedef int (*TYPE_nacl_connect) (int sockfd, socklen_t addrlen, const struct sockaddr *src_addr);
 typedef int (*TYPE_nacl_imc_makeboundsock) (int *dp);
 typedef int (*TYPE_nacl_imc_socketpair) (int *d2);
+typedef int (*TYPE_nacl_socketpair) (int domain, int type, int protocol, int *fds);
 typedef int (*TYPE_nacl_imc_mem_obj_create) (size_t nbytes);
 
 typedef void *(*TYPE_nacl_mmap) (void *start, size_t length,
@@ -203,6 +264,8 @@ typedef int (*TYPE_nacl_clock_getres) (clockid_t clk_id,
                                        struct timespec *res);
 typedef int (*TYPE_nacl_clock_gettime) (clockid_t clk_id,
                                         struct timespec *tp);
+typedef int (*TYPE_nacl_shutdown) (int sockfd, int how);
+
 /* Don't use __attribute__((noreturn)) on this because we want the
    wrapper to handle it if the syscall does happen to return. */
 typedef void (*TYPE_nacl_exit) (int status);
@@ -229,8 +292,25 @@ typedef int (*TYPE_nacl_waitpid) (int pid, int *stat_loc, int options);
 typedef int (*TYPE_nacl_wait) (int *stat_loc);
 typedef int (*TYPE_nacl_wait4) (pid_t pid, int *wstatus, int options, struct rusage *rusage);
 typedef int (*TYPE_nacl_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
-
+typedef int (*TYPE_nacl_gethostname) (char *name, size_t len);
 typedef int (*TYPE_nacl_pread) (int desc, void *buf, size_t count, off_t offset);
 typedef int (*TYPE_nacl_pwrite) (int desc, const void *buf, size_t count, off_t offset);
+typedef int (*TYPE_nacl_socket) (int domain, int type, int protocol);
+typedef int (*TYPE_nacl_flock) (int fd, int operation);
+typedef int (*TYPE_nacl_getsockopt) (int sockfd, int level, int optname,
+                                     void *optval, socklen_t *optlen);
+typedef int (*TYPE_nacl_setsockopt) (int sockfd, int level, int optname,
+                                     const void *optval, socklen_t optlen);
+typedef int (*TYPE_nacl_getsockname) (int sockfd, struct sockaddr * addr, socklen_t *addrlen);
+typedef int (*TYPE_nacl_getpeername) (int sockfd, struct sockaddr * addr, socklen_t *addrlen);
+typedef int (*TYPE_nacl_bind) (int sockfd, socklen_t addrlen, const struct sockaddr *addr);
+typedef int (*TYPE_nacl_listen) (int sockfd, int backlog);
+typedef int (*TYPE_nacl_fcntl_get) (int fd, int cmd);
+typedef int (*TYPE_nacl_fcntl_set) (int fd, int cmd, long set_op);
+typedef int (*TYPE_nacl_poll) (struct pollfd *fds, nfds_t nfds, int timeout);
+typedef int (*TYPE_nacl_select) (int nfds, fd_set * readfds, fd_set * writefds, fd_set * exceptfds, const struct timeval *timeout);
+typedef int (*TYPE_nacl_epoll_create) (int size);
+typedef int (*TYPE_nacl_epoll_ctl) (int epfd, int op, int fd, struct epoll_event *event);
+typedef int (*TYPE_nacl_epoll_wait) (int epfd, struct epoll_event *events, int maxevents, int timeout);
 
 #endif

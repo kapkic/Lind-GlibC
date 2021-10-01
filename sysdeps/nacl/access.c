@@ -1,9 +1,8 @@
 #include <errno.h>
 #include <stddef.h>
 #include <unistd.h>
-#include "lind_strace.h"
+#include <irt_syscalls.h>
 #include "lind_util.h"
-#include "lind_syscalls.h"
 
 /* Test for access to FILE.  */
 int
@@ -16,7 +15,7 @@ __access (const char* file, int type)
     }
 
   /* Since everything is okay, forward to lind server. */
-  int return_code = lind_access(type, file);
+  int return_code = __nacl_irt_access (file, type);
 
   if (return_code < 0) {
     __set_errno (-return_code);

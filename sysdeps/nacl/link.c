@@ -1,9 +1,7 @@
 #include <errno.h>
 #include <stddef.h>
 #include <unistd.h>
-#include "lind_strace.h"
-#include "lind_util.h"
-#include "lind_syscalls.h"
+#include <irt_syscalls.h>
 
 
 /* Make a link to FROM called TO.  */
@@ -16,7 +14,7 @@ __link (const char * from, const char * to) {
       return -1;
     }
   /* since everything is okay, forward to lind server. */
-  int return_code = lind_link(from, to);
+  int return_code = __nacl_irt_link(from, to);
 
   if (return_code < 0) {
     __set_errno ( -1 * return_code);

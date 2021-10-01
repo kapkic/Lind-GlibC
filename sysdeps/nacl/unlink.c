@@ -1,9 +1,6 @@
 #include <errno.h>
 #include <stddef.h>
 #include <unistd.h>
-#include "lind_strace.h"
-#include "lind_util.h"
-#include "lind_syscalls.h"
 
 /* Remove the link named NAME.  */
 int
@@ -14,7 +11,7 @@ __unlink (const char * name)  {
       return -1;
     }
   /* since everything is okay, forward to lind server. */
-  int return_code = lind_unlink(name);
+  int return_code = __nacl_irt_unlink(name);
 
   if (return_code < 0) {
     __set_errno ( -1 * return_code);

@@ -19,29 +19,19 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/types.h>
-#include "lind_syscalls.h"
-#include "lind_util.h"
 
 /* Get the effective group ID of the calling process.  */
 gid_t
 __getegid ()
 {
-    static int firstrun = 1;
-    if (firstrun) {
-        firstrun = 0;
-        __set_errno(ENOSYS);
-        return -1;
-    }
-     
-    uid_t buf = 0; 
-    int rc = lind_getegid(&buf);
-
-    if (sizeof(gid_t) != rc) {
-        __set_errno(ENOSYS);
+    static char firstcall = 1;
+    if(firstcall) {
+        firstcall = 0;
+        __set_errno(EAGAIN);
         return -1;
     }
 
-    return buf;
+    return (uid_t) __nacl_irt_getegid();
 }
 
 weak_alias (__getegid, getegid)

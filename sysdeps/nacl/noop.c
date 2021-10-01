@@ -21,15 +21,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "lind_strace.h"
 #include "lind_util.h"
-#include "lind_syscalls.h"
 
 /* Create a directory named PATH with protections MODE.  */
 int
 __lind_noop (void) {
-  nacl_strace("no-op");
-
   /* since everything is okay, forward to lind server. */
   int return_code = lind_noop_rpc();
 

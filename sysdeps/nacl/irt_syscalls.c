@@ -22,6 +22,13 @@ static void nacl_irt_exit (int status) {
   }
 }
 
+static int nacl_irt_link (const char *from, const char *to) {
+  return -NACL_SYSCALL (link) (from, to);
+}
+static int nacl_irt_unlink (const char *name) {
+  return -NACL_SYSCALL (unlink) (name);
+}
+
 static int nacl_irt_gettod (struct timeval *tv) {
   return -NACL_SYSCALL (gettimeofday) (tv, NULL);
 }
@@ -55,6 +62,14 @@ static int nacl_irt_open (const char *pathname, int oflag, mode_t cmode, int *ne
 
 static int nacl_irt_close (int fd) {
   return -NACL_SYSCALL (close) (fd);
+}
+
+
+static int nacl_irt_fcntl_get (int fd, int cmd) {
+  return NACL_SYSCALL (fcntl_get) (fd, cmd);
+}
+static int nacl_irt_fcntl_set (int fd, int cmd, long set_op) {
+  return NACL_SYSCALL (fcntl_set) (fd, cmd, set_op);
 }
 
 static int nacl_irt_read (int fd, void *buf, size_t count, size_t *nread) {
@@ -114,12 +129,24 @@ static int nacl_irt_fstat (int fd, struct nacl_abi_stat *st) {
   return -NACL_SYSCALL (fstat) (fd, st);
 }
 
+static int nacl_irt_fstatfs (int fd, struct statfs *buf) {
+  return -NACL_SYSCALL (fstatfs) (fd, buf);
+}
+
+static int nacl_irt_statfs (const char* path, struct statfs *buf) {
+  return -NACL_SYSCALL (statfs) (path, buf);
+}
+
 static int nacl_irt_stat (const char *pathname, struct nacl_abi_stat *st) {
   return -NACL_SYSCALL (stat) (pathname, st);
 }
 
 static int nacl_irt_lstat (const char *pathname, struct nacl_abi_stat *st) {
   return -NACL_SYSCALL (lstat) (pathname, st);
+}
+
+static int nacl_irt_access (const char *file, int mode) {
+  return -NACL_SYSCALL (access) (file, mode);
 }
 
 static int nacl_irt_getdents (int fd, struct dirent *buf, size_t count,
@@ -304,9 +331,15 @@ static int not_implemented() {
 size_t (*__nacl_irt_query) (const char *interface_ident,
                             void *table, size_t tablesize);
 
+int (*__nacl_irt_link) (const char *from, const char *to);
+int (*__nacl_irt_unlink) (const char *name);
 int (*__nacl_irt_mkdir) (const char* pathname, mode_t mode);
 int (*__nacl_irt_rmdir) (const char* pathname);
 int (*__nacl_irt_chdir) (const char* pathname);
+int (*__nacl_irt_getuid) (void);
+int (*__nacl_irt_geteuid) (void);
+int (*__nacl_irt_getgid) (void);
+int (*__nacl_irt_getegid) (void);
 int (*__nacl_irt_getcwd) (char* buf, size_t size, int *len);
 
 void (*__nacl_irt_exit) (int status);
@@ -315,6 +348,9 @@ int (*__nacl_irt_clock) (clock_t *ticks);
 int (*__nacl_irt_nanosleep) (const struct timespec *req, struct timespec *rem);
 int (*__nacl_irt_sched_yield) (void);
 int (*__nacl_irt_sysconf) (int name, int *value);
+
+int (*__nacl_irt_fcntl_get) (int fd, int cmd);
+int (*__nacl_irt_fcntl_set) (int fd, int cmd, long set_op);
 
 int (*__nacl_irt_open) (const char *pathname, int oflag, mode_t cmode,
                         int *newfd);
@@ -326,25 +362,24 @@ int (*__nacl_irt_pwrite) (int fd, const void *buf, size_t count, size_t *nwrote,
 int (*__nacl_irt_seek) (int fd, off_t offset, int whence, off_t *new_offset);
 int (*__nacl_irt_fstat) (int fd, struct nacl_abi_stat *);
 int (*__nacl_irt_stat) (const char *pathname, struct nacl_abi_stat *);
+int (*__nacl_irt_fstatfs) (int fd, struct statfs *buf);
+int (*__nacl_irt_statfs) (const char *path, struct statfs *buf);
 int (*__nacl_irt_lstat) (const char *pathname, struct nacl_abi_stat *);
 int (*__nacl_irt_getdents) (int fd, struct dirent *, size_t count,
                             size_t *nread);
+int (*__nacl_irt_access) (const char *file, int mode);
 int (*__nacl_irt_socket) (int domain, int type, int protocol, int *sd);
-int (*__nacl_irt_accept) (int sockfd, struct sockaddr *addr,
-                          socklen_t *addrlen, int *sd);
+int (*__nacl_irt_accept) (int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 int (*__nacl_irt_bind) (int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 int (*__nacl_irt_listen) (int sockfd, int backlog);
 int (*__nacl_irt_connect) (int sockfd, const struct sockaddr *addr,
                            socklen_t addrlen);
 int (*__nacl_irt_send) (int sockfd, const void *buf, size_t len, int flags,
                         int *count);
-int (*__nacl_irt_sendmsg) (int sockfd, const struct msghdr *msg, int flags,
-                           int *count);
 int (*__nacl_irt_sendto) (int sockfd, const void *buf, size_t len, int flags,
                           const struct sockaddr *dest_addr, socklen_t addrlen,
                           int *count);
 int (*__nacl_irt_recv) (int sockfd, void *buf, size_t len, int flags, int *count);
-int (*__nacl_irt_recvmsg) (int sockfd, struct msghdr *msg, int flags, int *count);
 int (*__nacl_irt_recvfrom) (int sockfd, void *buf, size_t len, int flags,
                             struct sockaddr *dest_addr, socklen_t* addrlen, int *count);
 
@@ -358,13 +393,12 @@ int (*__nacl_irt_epoll_pwait) (int epfd, struct epoll_event *events,
 int (*__nacl_irt_epoll_wait) (int epfd, struct epoll_event *events,
                                 int maxevents, int timeout, int *count);
 int (*__nacl_irt_poll) (struct pollfd *fds, nfds_t nfds,
-                          int timeout, int *count);
+                          int timeout);
 int (*__nacl_irt_ppoll) (struct pollfd *fds, nfds_t nfds,
     const struct timespec *timeout, const sigset_t *sigmask,
         size_t sigset_size, int *count);
 int (*__nacl_irt_select) (int nfds, fd_set *readfds,
-    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
-        int *count);
+    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout);
 int (*__nacl_irt_pselect) (int nfds, fd_set *readfds,
     fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
         void* sigmask, int *count);
@@ -433,93 +467,98 @@ int (*__nacl_irt_pipe2) (int pipedes[static 2], int flags);
 int (*__nacl_irt_execve) (char const *path, char *const *argv, char *const *envp);
 int (*__nacl_irt_execv) (char const *path, char *const *argv);
 int (*__nacl_irt_sigprocmask) (int how, const sigset_t *set, sigset_t *oset);
+int (*__nacl_irt_flock) (int fd, int operation);
 
-#include <lind_syscalls.h>
 size_t (*saved_nacl_irt_query)(const char *interface_ident, void *table, size_t tablesize);
 
-static int nacl_irt_mkdir_lind (const char *pathname, mode_t mode)
+static int nacl_irt_mkdir (const char *pathname, mode_t mode)
 {
-    return -lind_mkdir(mode, pathname);
+    int rv = NACL_SYSCALL (mkdir) (pathname, mode);
+    if (rv < 0)
+        return -rv;
+    return 0;
 }
 
-static int nacl_irt_rmdir_lind (const char *pathname)
+static int nacl_irt_rmdir (const char *pathname)
 {
-    return -lind_rmdir(pathname);
+    int rv = NACL_SYSCALL (rmdir) (pathname);
+    if (rv < 0)
+        return -rv;
+    return 0;
 }
 
-static int nacl_irt_chdir_lind (const char *pathname)
+static int nacl_irt_chdir (const char *pathname)
 {
-    return -lind_chdir(pathname);
+    int rv = NACL_SYSCALL (chdir) (pathname);
+    if (rv < 0)
+        return -rv;
+    return 0;
+}
+
+static int nacl_irt_getuid(void) {
+    return NACL_SYSCALL (getuid) ();
+}
+
+static int nacl_irt_geteuid(void) {
+    return NACL_SYSCALL (geteuid) ();
+}
+
+static int nacl_irt_getgid(void) {
+    return NACL_SYSCALL (getgid) ();
+}
+
+static int nacl_irt_getegid(void) {
+    return NACL_SYSCALL (getegid) ();
 }
 
 static int nacl_irt_select_lind (int nfds, fd_set *readfds,
-    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout,
-    int *count)
+    fd_set *writefds, fd_set *exceptfds, const struct timeval *timeout)
 {
-    struct select_results sr;
-    int rv = lind_select(nfds, readfds, writefds, exceptfds, timeout, &sr);
-    if(readfds)
-        *readfds = sr.r;
-    if(writefds)
-        *writefds = sr.w;
-    if(exceptfds)
-        *exceptfds = sr.e;
-    if(timeout)
-        *(struct timeval *)timeout = sr.used_t;
-    if (rv < 0)
-        return -rv;
-    *count = rv;
-    return 0;
+    return NACL_SYSCALL (select) (nfds, readfds, writefds, exceptfds, timeout);
 }
 
-static int nacl_irt_socket_lind(int domain, int type, int protocol, int *sd)
+static int nacl_irt_socket_lind (int domain, int type, int protocol, int *sd)
 {
-    int rv = lind_socket(domain, type, protocol);
+    int rv = NACL_SYSCALL (socket) (domain, type, protocol);
     if (rv < 0)
         return -rv;
     *sd=rv;
     return 0;
 }
 
-static int nacl_irt_accept_lind (int sockfd, struct sockaddr *addr,
-                          socklen_t *addrlen, int *sd)
+static int nacl_irt_accept (int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 {
-    int rv = lind_accept(sockfd, 0, addr, addrlen);
-    if (rv < 0)
-        return -rv;
-    *sd=rv;
-    return 0;
+    return NACL_SYSCALL (accept) (sockfd, addr, addrlen);
 }
 
-static int nacl_irt_bind_lind (int sockfd, const struct sockaddr *addr, socklen_t addrlen)
+static int nacl_irt_bind (int sockfd, const struct sockaddr *addr, socklen_t addrlen)
 {
-    int rv = lind_bind(sockfd, addrlen, addr);
+    int rv = NACL_SYSCALL (bind) (sockfd, addrlen, addr);
     if (rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_listen_lind (int sockfd, int backlog)
+static int nacl_irt_listen (int sockfd, int backlog)
 {
-    int rv = lind_listen(sockfd, backlog);
+    int rv = NACL_SYSCALL (listen) (sockfd, backlog);
     if (rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_connect_lind (int sockfd, const struct sockaddr *addr,
-                           socklen_t addrlen)
+static int nacl_irt_connect (int sockfd, const struct sockaddr *addr, socklen_t addrlen)
 {
-    int rv = lind_connect(sockfd, addrlen, addr);
+    int rv = NACL_SYSCALL (connect) (sockfd, addr, addrlen);
     if (rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_send_lind (int sockfd, const void *buf, size_t len, int flags,
+static int nacl_irt_send(int sockfd, const void *buf, size_t len, int flags,
                         int *count)
 {
-    int rv = lind_send(sockfd, len, flags, buf);
+    int rv = NACL_SYSCALL (send) (sockfd, len, flags, buf);
     if (rv < 0)
         return -rv;
     if(count)
@@ -527,9 +566,9 @@ static int nacl_irt_send_lind (int sockfd, const void *buf, size_t len, int flag
     return 0;
 }
 
-static int nacl_irt_recv_lind (int sockfd, void *buf, size_t len, int flags, int *count)
+static int nacl_irt_recv(int sockfd, void *buf, size_t len, int flags, int *count)
 {
-    int rv = lind_recv(sockfd, len, flags, buf);
+    int rv = NACL_SYSCALL (recv) (sockfd, len, flags, buf);
     if (rv < 0)
         return -rv;
     if(count)
@@ -537,11 +576,11 @@ static int nacl_irt_recv_lind (int sockfd, void *buf, size_t len, int flags, int
     return 0;
 }
 
-static int nacl_irt_sendto_lind(int sockfd, const void *buf, size_t len, int flags,
+static int nacl_irt_sendto(int sockfd, const void *buf, size_t len, int flags,
                           const struct sockaddr *dest_addr, socklen_t addrlen,
                           int *count)
 {
-    int rv = lind_sendto(sockfd, buf, len, flags, dest_addr, addrlen);
+    int rv = NACL_SYSCALL (sendto) (sockfd, buf, len, flags, dest_addr, addrlen);
     if (rv < 0)
         return -rv;
     if(count)
@@ -549,27 +588,26 @@ static int nacl_irt_sendto_lind(int sockfd, const void *buf, size_t len, int fla
     return 0;
 }
 
-static int nacl_irt_recvfrom_lind (int sockfd, void *buf, size_t len, int flags,
+static int nacl_irt_recvfrom(int sockfd, void *buf, size_t len, int flags,
                             struct sockaddr *dest_addr, socklen_t* addrlen, int *count)
 {
-    socklen_t in_len = addrlen ? *addrlen : sizeof(struct sockaddr);
-    socklen_t out_len;
+    socklen_t alen = addrlen ? *addrlen : sizeof(struct sockaddr);
     struct sockaddr outaddr;
-    int rv = lind_recvfrom(sockfd, len, flags, in_len, &out_len, buf, &outaddr);
+    int rv = NACL_SYSCALL (recvfrom) (sockfd, buf, len, flags, &alen, &outaddr);
     if (rv < 0)
         return -rv;
     if(dest_addr)
         *dest_addr = outaddr;
     if(addrlen)
-        *addrlen = out_len;
+        *addrlen = alen;
     if(count)
         *count = rv;
     return 0;
 }
 
-static int nacl_irt_shutdown_lind (int sockfd, int how)
+static int nacl_irt_shutdown (int sockfd, int how)
 {
-    int rv = lind_shutdown(sockfd, how);
+    int rv = NACL_SYSCALL (shutdown) (sockfd,how);
     if (rv < 0)
         return -rv;
     return 0;
@@ -578,11 +616,13 @@ static int nacl_irt_shutdown_lind (int sockfd, int how)
 static int nacl_irt_getsockopt_lind (int sockfd, int level, int optname,
                void *optval, socklen_t *optlen)
 {
-    socklen_t inlen = optlen ? *optlen : sizeof(int);
-    if (inlen > 0 && !optval)
-        return EFAULT;
-    int buf=0; //dummy, in case optval is no provided
-    int rv = lind_getsockopt(sockfd, level, optname, inlen, optval?optval:&buf);
+    int buf = 0; //dummy, in case optval is not provided
+    socklen_t bufsize = 4; //dummy, in case optlen is not provided
+    if(optlen == NULL)
+        optlen = &bufsize;
+    if(optval == NULL)
+        optval = &buf;
+    int rv = NACL_SYSCALL (getsockopt) (sockfd, level, optname, optval, optlen);
     if (rv < 0)
         return -rv;
     return 0;
@@ -594,7 +634,7 @@ static int nacl_irt_setsockopt_lind (int sockfd, int level, int optname,
     if (optlen > 0 && !optval)
         return EFAULT;
     int buf=0; //dummy, in case optval is no provided
-    int rv = lind_setsockopt(sockfd, level, optname, optlen, optval?optval:&buf);
+    int rv = NACL_SYSCALL (setsockopt) (sockfd, level, optname, optval?optval:&buf, optlen);
     if (rv < 0)
         return -rv;
     return 0;
@@ -602,34 +642,33 @@ static int nacl_irt_setsockopt_lind (int sockfd, int level, int optname,
 
 static int nacl_irt_socketpair_lind (int domain, int type, int protocol, int sv[static 2])
 {
-    int rv = lind_socketpair(domain, type, protocol, sv);
+    int rv = NACL_SYSCALL (socketpair) (domain, type, protocol, sv);
     if ( rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_getpeername_lind (int sockfd, struct sockaddr *addr,
+static int nacl_irt_getpeername (int sockfd, struct sockaddr *addr,
                                socklen_t *addrlen)
 {
-    int rv = lind_getpeername(sockfd, *addrlen, addr, addrlen);
+    int rv = NACL_SYSCALL(getpeername) (sockfd, addr, addrlen);
     if (rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_getsockname_lind (int sockfd, struct sockaddr *addr,
+static int nacl_irt_getsockname (int sockfd, struct sockaddr *addr,
                                socklen_t *addrlen)
 {
-    int rv = lind_getsockname(sockfd, *addrlen, addr, addrlen);
+    int rv = NACL_SYSCALL (getsockname) (sockfd, addr, addrlen);
     if (rv < 0)
         return -rv;
     return 0;
 }
 
-static int nacl_irt_poll_lind (struct pollfd *fds, nfds_t nfds,
-                          int timeout, int *count)
+static int nacl_irt_poll_lind (struct pollfd *fds, nfds_t nfds, int timeout)
 {
-    int rv = lind_poll(nfds, timeout, fds, fds);
+    int rv = NACL_SYSCALL (poll) (fds, nfds, timeout);
     if (rv < 0)
         return -rv;
     return 0;
@@ -637,7 +676,7 @@ static int nacl_irt_poll_lind (struct pollfd *fds, nfds_t nfds,
 
 static int nacl_irt_epoll_create_lind (int size, int *fd)
 {
-    int rv = lind_epoll_create(size);
+    int rv = NACL_SYSCALL (epoll_create)(size);
     if (rv < 0)
         return -rv;
     *fd = rv;
@@ -646,13 +685,13 @@ static int nacl_irt_epoll_create_lind (int size, int *fd)
 
 static int nacl_irt_epoll_ctl_lind (int epfd, int op, int fd, struct epoll_event *event)
 {
-    return -lind_epoll_ctl(epfd, op, fd, event);
+    return -NACL_SYSCALL (epoll_ctl)(epfd, op, fd, event);
 }
 
 static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
                                  int maxevents, int timeout, int *count)
 {
-    int rv = lind_epoll_wait(epfd, events, maxevents, timeout);
+    int rv = NACL_SYSCALL (epoll_wait) (epfd, events, maxevents, timeout);
     if (rv < 0)
         return -rv;
     *count = rv;
@@ -661,7 +700,11 @@ static int nacl_irt_epoll_wait_lind (int epfd, struct epoll_event *events,
 
 static int nacl_irt_gethostname (char *name, size_t len)
 { 
+<<<<<<< HEAD
+    return NACL_SYSCALL (gethostname) (name, len);
+=======
     return lind_gethostname(name, len);
+>>>>>>> main
 }
 
 /*
@@ -707,7 +750,7 @@ static int nacl_irt_pipe (int *pipedes)
 
 static int nacl_irt_pipe2 (int *pipedes,  int flags)
 {
-    return -lind_pipe2(pipedes, flags);
+    return NACL_SYSCALL (pipe2) (pipedes, flags);
 }
 
 static int nacl_irt_execve (char const *path, char *const *argv, char *const *envp)
@@ -725,22 +768,9 @@ static int nacl_irt_sigprocmask (int how, const sigset_t *set, sigset_t *oset)
     return NACL_SYSCALL (sigprocmask) (how, set, oset);
 }
 
-static int nacl_irt_sendmsg_lind (int sockfd, const struct msghdr *msg,
-                                  int flags, int *count) {
-    int rv = lind_sendmsg(sockfd, msg, flags);
-    if (rv < 0)
-        return -rv;
-    *count = rv;
-    return 0;
-}
-
-static int nacl_irt_recvmsg_lind (int sockfd, struct msghdr *msg,
-                                  int flags, int *count) {
-    int rv = lind_recvmsg(sockfd, msg, flags);
-    if (rv < 0)
-        return -rv;
-    *count = rv;
-    return 0;
+static int nacl_irt_flock (int fd, int operation)
+{
+  return NACL_SYSCALL (flock) (fd, operation);
 }
 
 void
@@ -971,9 +1001,15 @@ init_irt_table (void)
   if (!__nacl_irt_query)
     __nacl_irt_query = no_interface;
 
-  __nacl_irt_mkdir = nacl_irt_mkdir_lind;
-  __nacl_irt_chdir = nacl_irt_chdir_lind;
-  __nacl_irt_rmdir = nacl_irt_rmdir_lind;
+  __nacl_irt_link = nacl_irt_link;
+  __nacl_irt_unlink = nacl_irt_unlink;
+  __nacl_irt_mkdir = nacl_irt_mkdir;
+  __nacl_irt_chdir = nacl_irt_chdir;
+  __nacl_irt_rmdir = nacl_irt_rmdir;
+  __nacl_irt_getuid = nacl_irt_getuid;
+  __nacl_irt_geteuid = nacl_irt_geteuid;
+  __nacl_irt_getgid = nacl_irt_getgid;
+  __nacl_irt_getegid = nacl_irt_getegid;
   __nacl_irt_getcwd = not_implemented;
 
   __nacl_irt_epoll_create = nacl_irt_epoll_create_lind;
@@ -984,24 +1020,22 @@ init_irt_table (void)
   __nacl_irt_poll = nacl_irt_poll_lind;
   __nacl_irt_ppoll = not_implemented;
   __nacl_irt_socket = nacl_irt_socket_lind;
-  __nacl_irt_accept = nacl_irt_accept_lind;
-  __nacl_irt_bind = nacl_irt_bind_lind;
-  __nacl_irt_listen = nacl_irt_listen_lind;
-  __nacl_irt_connect = nacl_irt_connect_lind;
-  __nacl_irt_send = nacl_irt_send_lind;
-  __nacl_irt_sendmsg = nacl_irt_sendmsg_lind;
-  __nacl_irt_sendto = nacl_irt_sendto_lind;
-  __nacl_irt_recv = nacl_irt_recv_lind;
-  __nacl_irt_recvmsg = nacl_irt_recvmsg_lind;
-  __nacl_irt_recvfrom = nacl_irt_recvfrom_lind;
+  __nacl_irt_accept = nacl_irt_accept;
+  __nacl_irt_bind = nacl_irt_bind;
+  __nacl_irt_listen = nacl_irt_listen;
+  __nacl_irt_connect = nacl_irt_connect;
+  __nacl_irt_send = nacl_irt_send;
+  __nacl_irt_sendto = nacl_irt_sendto;
+  __nacl_irt_recv = nacl_irt_recv;
+  __nacl_irt_recvfrom = nacl_irt_recvfrom;
   __nacl_irt_select = nacl_irt_select_lind;
   __nacl_irt_pselect = not_implemented;
-  __nacl_irt_getpeername = nacl_irt_getpeername_lind;
-  __nacl_irt_getsockname = nacl_irt_getsockname_lind;
+  __nacl_irt_getpeername = nacl_irt_getpeername;
+  __nacl_irt_getsockname = nacl_irt_getsockname;
   __nacl_irt_getsockopt = nacl_irt_getsockopt_lind;
   __nacl_irt_setsockopt = nacl_irt_setsockopt_lind;
   __nacl_irt_socketpair = nacl_irt_socketpair_lind;
-  __nacl_irt_shutdown = nacl_irt_shutdown_lind;
+  __nacl_irt_shutdown = nacl_irt_shutdown;
   __nacl_irt_gethostname = nacl_irt_gethostname;
   __nacl_irt_getpid = nacl_irt_getpid;
   __nacl_irt_getppid = nacl_irt_getppid;
@@ -1022,6 +1056,12 @@ init_irt_table (void)
   __nacl_irt_execve = nacl_irt_execve;
   __nacl_irt_sigprocmask = nacl_irt_sigprocmask;
   __nacl_irt_lstat = nacl_irt_lstat;
+  __nacl_irt_flock = nacl_irt_flock;
+  __nacl_irt_statfs = nacl_irt_statfs;
+  __nacl_irt_fstatfs = nacl_irt_fstatfs;
+  __nacl_irt_access = nacl_irt_access;
+  __nacl_irt_fcntl_get = nacl_irt_fcntl_get;
+  __nacl_irt_fcntl_set = nacl_irt_fcntl_set;
 }
 
 size_t nacl_interface_query(const char *interface_ident,

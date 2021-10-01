@@ -20,14 +20,14 @@
 #include <errno.h>
 #include <sys/statfs.h>
 #include <stddef.h>
-#include "lind_syscalls.h"
+#include <irt_syscalls.h>
 
 /* Return information about the filesystem on which FILE resides.  */
 int
 __statfs (const char *file, struct statfs *buf)
 {
   int result;
-  result = lind_statfs(file, buf);
+  result = __nacl_irt_statfs(file, buf);
   if (result < 0) {
     errno = -result;
     result = -1;
